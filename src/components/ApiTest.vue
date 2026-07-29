@@ -25,5 +25,7 @@
         <p v-if="loading">Loading...</p>
         <p v-else-if="error" style="color: red">Error: {{ error }}</p>
         <pre v-else>{{ JSON.stringify(data, null, 2) }}</pre>
+        
+        <h1 class="text-3xl font-bold text-blue-600">Tailwind aktif</h1>
     </div>
 </template>
