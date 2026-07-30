@@ -1,9 +1,7 @@
 <script setup lang="ts">
-  import ApiTest from './components/ApiTest.vue'
-  import Button from './components/ui/Button.vue';
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <Button label="Login" :icon="true" />
-  <ApiTest />
+  <RouterView />
 </template>
