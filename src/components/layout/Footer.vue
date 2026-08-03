@@ -74,7 +74,7 @@ onMounted(() => {
           <img src="/src/assets/logo.png" class="w-14 h-14" />
           <div>
             <span class="font-bold text-2xl">{{ schoolName }}</span>
-            <p class="font-medium">{{ motto }}</p>
+            <p class="font-medium text-xl">{{ motto }}</p>
           </div>
         </div>
         <p class="leading-7 opacity-80">

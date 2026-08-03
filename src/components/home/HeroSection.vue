@@ -39,7 +39,7 @@ const fetchBanners = async () => {
   }
 }
 
-const fetchSchoolName = async () => {
+const fetchHero = async () => {
   try {
     const response = await api.get('/no-auth/global-config')
     schoolName.value = response.data.data.school_name
@@ -53,7 +53,7 @@ const fetchSchoolName = async () => {
 onMounted(async () => {
   await fetchBanners()
   intervalId = setInterval(nextImage, 5000)
-  fetchSchoolName()
+  fetchHero()
 })
 
 onUnmounted(() => {
@@ -93,7 +93,12 @@ onUnmounted(() => {
 
       <div class="flex items-center gap-4">
         <Button label="Selengkapnya" @click="scrollToSection('#profil')" class="text-" />
-        <Button label="Kompetensi Keahlian" variant="neutral" :icon-right="RiArrowRightUpLine" @click="scrollToSection('#kompetensi')" />
+        <Button
+          label="Kompetensi Keahlian"
+          variant="neutral"
+          :icon-right="RiArrowRightUpLine"
+          @click="scrollToSection('#kompetensi')"
+        />
       </div>
     </div>
   </section>
