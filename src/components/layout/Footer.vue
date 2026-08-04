@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import api from '@/services/api.ts'
 import { ref, onMounted } from 'vue'
-import {
-  RiYoutubeFill,
-  RiInstagramFill,
-  RiFacebookFill,
-  RiLinkedinFill,
-} from '@remixicon/vue'
+import { RiYoutubeFill, RiInstagramFill, RiFacebookFill, RiLinkedinFill } from '@remixicon/vue'
 
 const schoolName = ref('')
 const motto = ref('')
@@ -67,7 +62,6 @@ onMounted(() => {
 <template>
   <footer class="bg-primary text-neutral flex flex-col px-12 py-12 gap-12">
     <div class="flex items-start justify-between">
-
       <!-- Kolom Sekolah -->
       <div class="w-fit flex flex-col gap-4 max-w-md">
         <div class="flex items-center gap-4">
@@ -90,7 +84,7 @@ onMounted(() => {
             <a
               :href="item.href"
               @click.prevent="scrollToSection(item.href)"
-              class="text-lg font-light hover:underline cursor-pointer"
+              class="text-lg font-light opacity-80 hover:underline cursor-pointer"
             >
               {{ item.label }}
             </a>
@@ -107,7 +101,7 @@ onMounted(() => {
               v-for="major in majors.slice(0, Math.ceil(majors.length / 2))"
               :key="major.id"
               :href="`/${major.slug}`"
-              class="text-xl font-light hover:underline cursor-pointer"
+              class="text-lg font-light opacity-80 hover:underline cursor-pointer"
             >
               {{ major.code }}
             </a>
@@ -117,7 +111,7 @@ onMounted(() => {
               v-for="major in majors.slice(Math.ceil(majors.length / 2))"
               :key="major.id"
               :href="`/${major.slug}`"
-              class="text-xl font-light hover:underline cursor-pointer"
+              class="text-lg font-light opacity-80 hover:underline cursor-pointer"
             >
               {{ major.code }}
             </a>
@@ -145,7 +139,6 @@ onMounted(() => {
           </a>
         </div>
       </div>
-
     </div>
 
     <!-- Divider -->

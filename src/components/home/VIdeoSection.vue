@@ -9,7 +9,7 @@ const embedUrl = computed(() => {
 
   // ambil video ID dari berbagai format link YouTube
   const match = rawVideoUrl.value.match(
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
   )
   const videoId = match ? match[1] : null
 
@@ -34,14 +34,22 @@ onMounted(() => {
   <section class="px-12 py-16 flex flex-col items-center gap-8">
     <div
       v-if="embedUrl"
-      class="w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-lg"
+      class="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-lg"
     >
       <iframe
         :src="embedUrl"
         class="w-full h-full"
         title="Video Profil Sekolah"
         frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow="
+          accelerometer;
+          autoplay;
+          clipboard-write;
+          encrypted-media;
+          gyroscope;
+          picture-in-picture;
+          web-share;
+        "
         allowfullscreen
       ></iframe>
     </div>
