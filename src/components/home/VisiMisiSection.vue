@@ -3,6 +3,8 @@ import api from '@/services/api.ts'
 import { ref, computed, onMounted } from 'vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import MissionItem from '@/components/home/MissionItem.vue'
+import HighlightCard from '@/components/home/HighlightCard.vue'
+import { RiGraduationCapFill, RiTrophyFill, RiCharacterRecognitionFill } from '@remixicon/vue'
 
 interface Mission {
   id: number
@@ -44,7 +46,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="px-12 py-24 flex flex-col gap-24">
+  <section class="px-12 py-16 flex flex-col gap-16">
     <!-- Visi -->
     <div class="flex flex-col items-center gap-6">
       <SectionTitle title="Visi" />
@@ -67,6 +69,27 @@ onMounted(() => {
           :class="mission.order % 2 !== 0 ? 'pr-12' : ''"
         />
       </div>
+    </div>
+
+    <!-- Statistik -->
+    <div class="flex items-start justify-evenly">
+      <HighlightCard
+        :logo="RiGraduationCapFill"
+        label="2.000+&#10;Siswa Akitf"
+        description="Bergabung dalam lingkungan belajar yang positif"
+      />
+
+      <HighlightCard
+        :logo="RiCharacterRecognitionFill"
+        label="Akreditasi&#10;Sekolah"
+        description="Memberikan kualitas pendidikan terbaik dengan standar unggulan"
+      />
+
+      <HighlightCard
+        :logo="RiTrophyFill"
+        label="100+&#10;Prestasi Siswa"
+        description="Meraih berbagai penghargaan akademik dan non-akademik setiap tahunnya"
+      />
     </div>
   </section>
 </template>
