@@ -72,7 +72,7 @@ onMounted(() => {
     </div>
 
     <!-- Statistik -->
-    <div class="flex items-start justify-evenly">
+    <div class="flex items-start justify-center gap-30">
       <HighlightCard
         :logo="RiGraduationCapFill"
         label="2.000+&#10;Siswa Akitf"

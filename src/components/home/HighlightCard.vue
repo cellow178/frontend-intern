@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
   <div
-    class="w-76 h-82 flex flex-col items-center text-center gap-4 bg-neutral shadow-lg rounded-3xl p-8">
+    class="w-76 h-82 flex flex-col items-center text-center gap-4 bg-neutral shadow-md rounded-3xl p-8">
     <component :is="logo" class="w-18 h-18 text-primary" />
 
     <p class="font-extrabold text-[20px] text-primary leading-snug whitespace-pre-line">
