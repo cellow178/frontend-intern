@@ -4,6 +4,7 @@ import HeroSection from '@/components/home/HeroSection.vue'
 import ProfileSection from '@/components/home/ProfileSection.vue'
 import VisiMisiSection from '@/components/home/VisiMisiSection.vue'
 import VIdeoSection from '@/components/home/VIdeoSection.vue'
+import MajorSection from '@/components/home/MajorSection.vue'
 import Footer from '@/components/layout/Footer.vue'
 </script>
 
@@ -13,5 +14,6 @@ import Footer from '@/components/layout/Footer.vue'
   <ProfileSection />
   <VisiMisiSection />
   <VIdeoSection />
+  <MajorSection />
   <Footer />
 </template>
