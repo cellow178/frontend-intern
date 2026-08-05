@@ -29,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="profil" class="px-12 py-32">
+  <section id="profil" class="px-12 py-32 scroll-mt-5">
     <div class="flex justify-center items-center gap-16">
 
       <!-- Kolom Gambar -->

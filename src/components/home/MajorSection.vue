@@ -30,7 +30,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="kompetensi" class="px-12 py-16 flex flex-col items-center gap-16">
+  <section id="kompetensi" class="px-12 py-16 flex flex-col items-center gap-16 scroll-mt-20">
     <div class="flex flex-col items-center gap-4">
       <SectionTitle title="Kompetensi Keahlian" />
       <p class="text-lg text-text-neutral">Kompetensi Keahlian di SMKN 7 Semarang</p>
