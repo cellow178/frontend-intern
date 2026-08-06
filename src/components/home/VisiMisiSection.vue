@@ -3,7 +3,7 @@ import api from '@/services/api.ts'
 import { ref, computed, onMounted } from 'vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import MissionItem from '@/components/home/MissionItem.vue'
-import HighlightCard from '@/components/home/HighlightCard.vue'
+import HighlightCard from '@/components/cards/HighlightCard.vue'
 import { RiGraduationCapFill, RiTrophyFill, RiCharacterRecognitionFill } from '@remixicon/vue'
 
 interface Mission {

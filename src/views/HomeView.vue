@@ -6,6 +6,7 @@ import VisiMisiSection from '@/components/home/VisiMisiSection.vue'
 import VIdeoSection from '@/components/home/VIdeoSection.vue'
 import MajorSection from '@/components/home/MajorSection.vue'
 import EventSetion from '@/components/home/EventSetion.vue'
+import NewsSection from '@/components/home/NewsSection.vue'
 import Footer from '@/components/layout/Footer.vue'
 </script>
 
@@ -17,5 +18,6 @@ import Footer from '@/components/layout/Footer.vue'
   <VIdeoSection />
   <MajorSection />
   <EventSetion />
+  <NewsSection />
   <Footer />
 </template>

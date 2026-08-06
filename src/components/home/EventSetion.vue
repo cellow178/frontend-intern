@@ -2,7 +2,7 @@
 import api from '@/services/api.ts'
 import { ref, onMounted } from 'vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
-import EventCard from '@/components/home/EventCard.vue'
+import EventCard from '@/components/cards/EventCard.vue'
 import Button from '@/components/ui/Button.vue'
 import router from '@/router'
 
@@ -62,7 +62,7 @@ onMounted(() => {
       </p>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-16">
+    <div class="flex flex-wrap justify-center gap-12">
       <EventCard
         v-for="event in events"
         :key="event.id"

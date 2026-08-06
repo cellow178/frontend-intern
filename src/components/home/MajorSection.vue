@@ -2,7 +2,7 @@
 import api from '@/services/api.ts'
 import { ref, onMounted } from 'vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
-import MajorCard from '@/components/home/MajorCard.vue'
+import MajorCard from '@/components/cards/MajorCard.vue'
 
 interface Major {
   id: number

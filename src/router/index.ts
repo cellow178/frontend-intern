@@ -19,6 +19,21 @@ const router = createRouter({
       name: 'event',
       component: () => import('../views/EventView.vue'),
     },
+    {
+      path: '/event/:slug',
+      name: 'event-detail',
+      component: () => import('../views/EventDetailView.vue'),
+    },
+    {
+      path: '/berita',
+      name: 'berita',
+      component: () => import('../views/NewsView.vue'),
+    },
+    {
+      path: '/berita/:slug',
+      name: 'berita-detail',
+      component: () => import('../views/NewsDetailView.vue'),
+    },    
   ],
 })
 
