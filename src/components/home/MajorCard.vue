@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RiArrowRightLine } from '@remixicon/vue'
+import { RouterLink } from 'vue-router'
 
 defineProps<{
   imgLogo: string
@@ -11,8 +12,8 @@ defineProps<{
 </script>
 
 <template>
-  <a
-    :href="`/${slug}`"
+  <RouterLink
+    :to="`/jurusan/${slug}`"
     class="flex flex-col gap-4 bg-secondary rounded-2xl p-6 border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-[0_0_200px_#FF964470]"
   >
     <div class="flex items-center gap-3">
@@ -29,5 +30,5 @@ defineProps<{
       Lihat detail
       <RiArrowRightLine class="w-4 h-4 transition-transform group-hover:translate-x-1" />
     </div>
-  </a>
+  </RouterLink>
 </template>

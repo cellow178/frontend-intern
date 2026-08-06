@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RiMapPinLine, RiCalendarLine } from '@remixicon/vue'
+import { RouterLink } from 'vue-router'
 
 defineProps<{
   title: string
@@ -11,8 +12,8 @@ defineProps<{
 </script>
 
 <template>
-  <a
-    :href="`/event/${slug}`"
+  <RouterLink
+    :to="`/event/${slug}`"
     class="w-72 flex flex-col bg-neutral rounded-2xl overflow-hidden border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-[0_0_100px_#FF964440]"
   >
     <!-- Gambar / gradient fallback -->
@@ -38,5 +39,5 @@ defineProps<{
         </div>
       </div>
     </div>
-  </a>
+  </RouterLink>
 </template>

@@ -53,7 +53,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="event" class="max-w-7xl mx-auto px-12 py-16 flex flex-col items-center gap-12">
+  <section id="event" class="max-w-7xl mx-auto px-12 py-16 flex flex-col items-center gap-12 scroll-mt-20">
     <div class="flex flex-col items-center gap-4">
       <SectionTitle title="Event" />
       <p class="text-lg text-text-neutral text-center max-w-2xl">
