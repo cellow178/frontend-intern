@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
-import { ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 import { RiYoutubeFill, RiInstagramFill, RiFacebookFill, RiLinkedinFill } from '@remixicon/vue'
 
-const schoolName = ref('')
-const motto = ref('')
-const description = ref('')
-const email = ref('')
-const phone = ref('')
-const majors = ref<{ id: number; code: string; slug: string }[]>([])
+const store = useSiteDataStore()
+const { schoolName, motto, footer, majors } = storeToRefs(store)
+
+const description = computed(() => footer.value.description)
+const email = computed(() => footer.value.school_email)
+const phone = computed(() => footer.value.school_telephone)
 
 const menuItems = [
   { label: 'Beranda', href: '#beranda' },
@@ -19,43 +20,21 @@ const menuItems = [
   { label: 'Kritik & Saran', href: '#kritik-saran' },
 ]
 
-const socialLinks = [
-  { icon: RiYoutubeFill, href: 'https://youtube.com' },
-  { icon: RiInstagramFill, href: 'https://instagram.com' },
-  { icon: RiFacebookFill, href: 'https://facebook.com' },
-  { icon: RiLinkedinFill, href: 'https://linkedin.com' },
-]
+const socialLinks = computed(() => [
+  { icon: RiYoutubeFill, href: footer.value.yt },
+  { icon: RiInstagramFill, href: footer.value.ig },
+  { icon: RiFacebookFill, href: footer.value.fb },
+  { icon: RiLinkedinFill, href: footer.value.linkedin },
+])
 
 const scrollToSection = (href: string) => {
   const target = document.querySelector(href)
   target?.scrollIntoView({ behavior: 'smooth' })
 }
 
-const fetchGlobalConfig = async () => {
-  try {
-    const response = await api.get('/no-auth/global-config')
-    schoolName.value = response.data.data.school_name
-    motto.value = response.data.data.motto
-    description.value = response.data.data.footer.description
-    email.value = response.data.data.footer.school_email
-    phone.value = response.data.data.footer.school_telephone
-  } catch (err) {
-    console.error('Gagal ambil data global config:', err)
-  }
-}
-
-const fetchMajors = async () => {
-  try {
-    const response = await api.get('/no-auth/majors')
-    majors.value = response.data.data
-  } catch (err) {
-    console.error('Gagal ambil data majors:', err)
-  }
-}
-
 onMounted(() => {
-  fetchGlobalConfig()
-  fetchMajors()
+  store.fetchGlobalConfig()
+  store.fetchMajors()
 })
 </script>
 

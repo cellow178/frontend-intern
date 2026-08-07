@@ -1,37 +1,26 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
-import { ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 import { RiSchoolFill } from '@remixicon/vue'
 
-const motto =ref('')
-const title = ref('')
-const profileDesc = ref('')
-const img1 = ref('')
-const img2 = ref<string | null>(null)
+const store = useSiteDataStore()
+const { motto, profile } = storeToRefs(store)
 
-const fetchProfile = async () => {
-  try {
-    const response = await api.get('/no-auth/global-config')
-    motto.value = response.data.data.motto
-    title.value = response.data.data.profile.title
-    profileDesc.value = response.data.data.profile.description
-    img1.value = response.data.data.profile.img_1
-    img2.value = response.data.data.profile.img_2 ?? null
-  } catch (err) {
-    console.error('Gagal ambil data global config:', err)
-  }
-}
+const title = computed(() => profile.value.title)
+const profileDesc = computed(() => profile.value.description)
+const img1 = computed(() => profile.value.img_1)
+const img2 = computed(() => profile.value.img_2)
 
 onMounted(() => {
-  fetchProfile()
+  store.fetchGlobalConfig()
+  console.log('full store:', store)
 })
-
 </script>
 
 <template>
   <section id="profil" class="px-12 py-32 scroll-mt-5">
     <div class="flex justify-center items-center gap-16">
-
       <!-- Kolom Gambar -->
       <div class="flex flex-col gap-8">
         <img
@@ -40,11 +29,7 @@ onMounted(() => {
           class="aspect-video object-cover"
           :class="img2 ? 'w-104' : 'w-150'"
         />
-        <img
-          v-if="img2"
-          :src="img2"
-          class="w-104 aspect-video object-cover"
-        />
+        <img v-if="img2" :src="img2" class="w-104 aspect-video object-cover" />
       </div>
 
       <!-- Kolom Teks -->

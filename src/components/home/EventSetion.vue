@@ -1,31 +1,21 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { useSiteDataStore } from '@/stores/siteData'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import EventCard from '@/components/cards/EventCard.vue'
 import Button from '@/components/ui/Button.vue'
-import router from '@/router'
 
-interface Event {
-  id: number
-  slug: string
-  title: string
-  location: string
-  start_date: string
-  end_date: string
-  img_cover: string | null
-}
+const store = useSiteDataStore()
+const router = useRouter()
+const { events } = storeToRefs(store)
 
-const events = ref<Event[]>([])
-
-// gabungin start_date & end_date jadi label ringkas
-// contoh: "25 Mei 2026" & "27 Mei 2026" -> "25-27 Mei 2026"
-// kalau tanggal sama -> tampilkan sekali aja
 const formatDateRange = (start: string, end: string) => {
   if (!end || start === end) return start
 
-  const startParts = start.split(' ') // ["25", "Mei", "2026"]
-  const endParts = end.split(' ') // ["27", "Mei", "2026"]
+  const startParts = start.split(' ')
+  const endParts = end.split(' ')
 
   const sameMonthYear = startParts[1] === endParts[1] && startParts[2] === endParts[2]
 
@@ -36,19 +26,8 @@ const formatDateRange = (start: string, end: string) => {
   return `${start} - ${end}`
 }
 
-const fetchEvents = async () => {
-  try {
-    const response = await api.get('/no-auth/events', {
-      params: { sort_by: 'start_date', sort: 'asc', limit: 3 },
-    })
-    events.value = response.data.data
-  } catch (err) {
-    console.error('Gagal ambil data events:', err)
-  }
-}
-
 onMounted(() => {
-  fetchEvents()
+  store.fetchEvents()
 })
 </script>
 

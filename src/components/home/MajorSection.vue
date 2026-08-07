@@ -1,31 +1,15 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
 import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import MajorCard from '@/components/cards/MajorCard.vue'
 
-interface Major {
-  id: number
-  slug: string
-  img_logo: string
-  code: string
-  major_name: string
-  summary: string
-}
-
-const majors = ref<Major[]>([])
-
-const fetchMajors = async () => {
-  try {
-    const response = await api.get('/no-auth/majors')
-    majors.value = response.data.data
-  } catch (err) {
-    console.error('Gagal ambil data majors:', err)
-  }
-}
+const store = useSiteDataStore()
+const { majors } = storeToRefs(store)
 
 onMounted(() => {
-  fetchMajors()
+  store.fetchMajors()
 })
 </script>
 

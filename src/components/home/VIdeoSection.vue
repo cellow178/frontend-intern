@@ -1,32 +1,25 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
 import { ref, onMounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 
-const rawVideoUrl = ref('')
+const store = useSiteDataStore()
+const { videoProfile } = storeToRefs(store)
 
 const embedUrl = computed(() => {
-  if (!rawVideoUrl.value) return ''
+  if (!videoProfile.value) return ''
 
   // ambil video ID dari berbagai format link YouTube
-  const match = rawVideoUrl.value.match(
+  const match = videoProfile.value.match(
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
   )
   const videoId = match ? match[1] : null
 
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : rawVideoUrl.value
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : videoProfile.value
 })
 
-const fetchVideo = async () => {
-  try {
-    const response = await api.get('/no-auth/global-config')
-    rawVideoUrl.value = response.data.data.video_profile
-  } catch (err) {
-    console.error('Gagal ambil data video:', err)
-  }
-}
-
 onMounted(() => {
-  fetchVideo()
+  store.fetchGlobalConfig()
 })
 </script>
 
@@ -41,15 +34,7 @@ onMounted(() => {
         class="w-full h-full"
         title="Video Profil Sekolah"
         frameborder="0"
-        allow="
-          accelerometer;
-          autoplay;
-          clipboard-write;
-          encrypted-media;
-          gyroscope;
-          picture-in-picture;
-          web-share;
-        "
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
       ></iframe>
     </div>

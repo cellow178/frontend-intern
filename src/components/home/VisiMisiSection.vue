@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
 import { ref, computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import MissionItem from '@/components/home/MissionItem.vue'
 import HighlightCard from '@/components/cards/HighlightCard.vue'
 import { RiGraduationCapFill, RiTrophyFill, RiCharacterRecognitionFill } from '@remixicon/vue'
+
+const store = useSiteDataStore()
+const { vision, missions } = storeToRefs(store)
 
 interface Mission {
   id: number
   order: number
   content: string
 }
-
-const vision = ref('')
-const missions = ref<Mission[]>([])
 
 // susun ulang jadi berpasangan per baris: [1,4,2,5,3,6]
 const orderedMissions = computed(() => {
@@ -30,18 +31,8 @@ const orderedMissions = computed(() => {
   return result
 })
 
-const fetchVisionMission = async () => {
-  try {
-    const response = await api.get('/no-auth/vision-mission')
-    vision.value = response.data.data.vision
-    missions.value = response.data.data.missions
-  } catch (err) {
-    console.error('Gagal ambil data vision-mission:', err)
-  }
-}
-
 onMounted(() => {
-  fetchVisionMission()
+  store.fetchVisionMission()
 })
 </script>
 

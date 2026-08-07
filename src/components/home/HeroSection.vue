@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 import { RiArrowRightUpLine, RiSchoolFill } from '@remixicon/vue'
 import Button from '@/components/ui/Button.vue'
 
-interface Banner {
-  id: number
-  title: string
-  img_cover: string
-  url: string
-}
+const store = useSiteDataStore()
+const { banners, schoolName, motto, heroDescription } = storeToRefs(store)
 
-const banners = ref<Banner[]>([])
 const currentIndex = ref(0)
-const schoolName = ref('')
-const motto = ref('')
-const heroDesc = ref('')
 let intervalId: ReturnType<typeof setInterval> | undefined
 
 const currentBanner = computed(() => banners.value[currentIndex.value])
@@ -30,30 +23,10 @@ const scrollToSection = (href: string) => {
   target?.scrollIntoView({ behavior: 'smooth' })
 }
 
-const fetchBanners = async () => {
-  try {
-    const response = await api.get('/no-auth/banners')
-    banners.value = response.data.data
-  } catch (err) {
-    console.error('Gagal ambil data banners:', err)
-  }
-}
-
-const fetchHero = async () => {
-  try {
-    const response = await api.get('/no-auth/global-config')
-    schoolName.value = response.data.data.school_name
-    motto.value = response.data.data.motto
-    heroDesc.value = response.data.data.hero_description
-  } catch (err) {
-    console.error('Gagal ambil data global config:', err)
-  }
-}
-
 onMounted(async () => {
-  await fetchBanners()
+  await store.fetchBanners()
   intervalId = setInterval(nextImage, 5000)
-  fetchHero()
+  store.fetchGlobalConfig()
 })
 
 onUnmounted(() => {
@@ -88,11 +61,11 @@ onUnmounted(() => {
       </h1>
 
       <p class="text-neutral text-2xl mb-8">
-        {{ heroDesc }}
+        {{ heroDescription }}
       </p>
 
       <div class="flex items-center gap-4">
-        <Button label="Selengkapnya" @click="scrollToSection('#profil')" class="text-" />
+        <Button label="Selengkapnya" @click="scrollToSection('#profil')" />
         <Button
           label="Kompetensi Keahlian"
           variant="neutral"

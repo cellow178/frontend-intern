@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import api from '@/services/api.ts'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSiteDataStore } from '@/stores/siteData'
 import Button from '../ui/Button.vue'
 import { RiLoginBoxLine, RiArrowDownSLine, RiArrowRightSLine } from '@remixicon/vue'
 
@@ -13,10 +14,11 @@ const props = withDefaults(
   },
 )
 
+const store = useSiteDataStore()
+const { schoolName, majors } = storeToRefs(store)
+
 const isScrolled = ref(false)
-const schoolName = ref('')
 const isDropdownOpen = ref(false)
-const majors = ref<{ id: number; code: string; slug: string }[]>([])
 
 const menuItems = [
   { label: 'Beranda', href: '#beranda' },
@@ -41,30 +43,12 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 10
 }
 
-const fetchSchoolName = async () => {
-  try {
-    const response = await api.get('/no-auth/global-config')
-    schoolName.value = response.data.data.school_name
-  } catch (err) {
-    console.error('Gagal ambil data global config:', err)
-  }
-}
-
-const fetchMajors = async () => {
-  try {
-    const response = await api.get('/no-auth/majors')
-    majors.value = response.data.data
-  } catch (err) {
-    console.error('Gagal ambil data majors:', err)
-  }
-}
-
 onMounted(() => {
   if (props.transparent) {
     window.addEventListener('scroll', handleScroll)
   }
-  fetchSchoolName()
-  fetchMajors()
+  store.fetchGlobalConfig()
+  store.fetchMajors()
 })
 
 onUnmounted(() => {
