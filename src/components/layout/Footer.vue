@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
 import { RiYoutubeFill, RiInstagramFill, RiFacebookFill, RiLinkedinFill } from '@remixicon/vue'

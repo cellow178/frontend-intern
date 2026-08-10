@@ -5,15 +5,15 @@ import { RouterLink } from 'vue-router'
 const props = defineProps<{
   slug: string
   title: string
-  summary: string // HTML string API
+  content: string // HTML string API
   imgCover: string | null
   author: string
   createdAt: string
 }>()
 
 // erase html tag, display as plain text
-const plainSummary = computed(() => {
-  return props.summary.replace(/<[^>]*>/g, '')
+const plainContent = computed(() => {
+  return props.content.replace(/<[^>]*>/g, '')
 })
 </script>
 
@@ -39,7 +39,7 @@ const plainSummary = computed(() => {
         {{ title }}
       </h3>
       <p class="text-sm text-text-alt leading-relaxed line-clamp-4">
-        {{ plainSummary }}
+        {{ plainContent }}
       </p>
     </div>
   </RouterLink>

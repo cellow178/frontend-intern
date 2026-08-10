@@ -9,6 +9,7 @@ import EventSetion from '@/components/home/EventSetion.vue'
 import VotingSection from '@/components/home/VotingSection.vue'
 import NewsSection from '@/components/home/NewsSection.vue'
 import Footer from '@/components/layout/Footer.vue'
+import FeedbackSection from '@/components/home/FeedbackSection.vue'
 </script>
 
 <template>
@@ -21,5 +22,6 @@ import Footer from '@/components/layout/Footer.vue'
   <EventSetion />
   <NewsSection />
   <VotingSection />
+  <FeedbackSection />
   <Footer />
 </template>

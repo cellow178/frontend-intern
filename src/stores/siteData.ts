@@ -37,7 +37,7 @@ interface News {
   id: number
   slug: string
   title: string
-  summary: string
+  content: string
   img_cover: string | null
   author: string
   created_at: string
