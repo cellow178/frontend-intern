@@ -31,12 +31,14 @@ interface Event {
   start_date: string
   end_date: string
   img_cover: string | null
+  is_highlight: boolean
 }
 
 interface News {
   id: number
   slug: string
   title: string
+  category_name: string
   content: string
   img_cover: string | null
   author: string
@@ -52,7 +54,15 @@ export const useSiteDataStore = defineStore('siteData', {
     profile: { title: '', description: '', img_1: '', img_2: null as string | null },
     videoProfile: '',
     highlightVoting: null as any,
-    footer: { description: '', school_email: '', school_telephone: '', ig: '', yt: '', fb: '', linkedin: '' },
+    footer: {
+      description: '',
+      school_email: '',
+      school_telephone: '',
+      ig: '',
+      yt: '',
+      fb: '',
+      linkedin: '',
+    },
 
     // data lain
     majors: [] as Major[],
@@ -60,6 +70,7 @@ export const useSiteDataStore = defineStore('siteData', {
     vision: '',
     missions: [] as Mission[],
     events: [] as Event[],
+    highlightEvent: null as Event | null,
     news: [] as News[],
 
     // flag biar fetch cuma sekali per endpoint
@@ -130,9 +141,13 @@ export const useSiteDataStore = defineStore('siteData', {
       if (this.loaded.events) return
       try {
         const response = await api.get('/no-auth/events', {
-          params: { sort_by: 'start_date', sort: 'asc', limit: 3 },
+          params: { sort_by: 'start_date', sort: 'asc' },
         })
-        this.events = response.data.data
+        const allEvents: Event[] = response.data.data
+
+        this.highlightEvent = allEvents.find((e) => e.is_highlight) ?? null
+        this.events = allEvents.filter((e) => !e.is_highlight).slice(0, 3)
+
         this.loaded.events = true
       } catch (err) {
         console.error('Gagal ambil events:', err)

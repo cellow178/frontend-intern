@@ -5,11 +5,12 @@ import { useRouter } from 'vue-router'
 import { useSiteDataStore } from '@/stores/siteData'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import EventCard from '@/components/cards/EventCard.vue'
+import EventBannerCard from '@/components/cards/EventHighlightCard.vue'
 import Button from '@/components/ui/Button.vue'
 
 const store = useSiteDataStore()
 const router = useRouter()
-const { events } = storeToRefs(store)
+const { events, highlightEvent } = storeToRefs(store)
 
 const formatDateRange = (start: string, end: string) => {
   if (!end || start === end) return start
@@ -32,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="event" class="max-w-7xl mx-auto px-12 py-16 flex flex-col items-center gap-12 scroll-mt-20">
+  <section id="event" class="max-w-7xl mx-auto px-12 py-16 flex flex-col items-center gap-20 scroll-mt-20">
     <div class="flex flex-col items-center gap-4">
       <SectionTitle title="Event" />
       <p class="text-lg text-text-neutral text-center max-w-2xl">
@@ -40,6 +41,15 @@ onMounted(() => {
         7 Semarang
       </p>
     </div>
+
+    <EventBannerCard
+      v-if="highlightEvent"
+      :title="highlightEvent.title"
+      :location="highlightEvent.location"
+      :date-label="formatDateRange(highlightEvent.start_date, highlightEvent.end_date)"
+      :img-cover="highlightEvent.img_cover"
+      :slug="highlightEvent.slug"
+    />
 
     <div class="flex flex-wrap justify-center gap-12">
       <EventCard

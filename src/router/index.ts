@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/auth/LoginView.vue'),
+    },
+    {
       path: '/jurusan/:slug',
       name: 'jurusan-detail',
       component: () => import('../views/MajorDetailView.vue'),
@@ -33,7 +38,7 @@ const router = createRouter({
       path: '/berita/:slug',
       name: 'berita-detail',
       component: () => import('../views/NewsDetailView.vue'),
-    },    
+    },
   ],
 })
 

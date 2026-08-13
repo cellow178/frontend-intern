@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router'
 const props = defineProps<{
   slug: string
   title: string
+  categoryName: string
   content: string // HTML string API
   imgCover: string | null
   author: string
@@ -35,10 +36,16 @@ const plainContent = computed(() => {
 
     <!-- Konten -->
     <div class="flex flex-col gap-2 p-5">
+      <span
+        class="w-fit text-xs font-semibold text-primary bg-secondary p-2 rounded-md"
+      >
+        {{ categoryName }}
+      </span>
+
       <h3 class="font-bold text-lg text-text-neutral leading-snug line-clamp-3">
         {{ title }}
       </h3>
-      <p class="text-sm text-text-alt leading-relaxed line-clamp-4">
+      <p class="text-sm text-text-alt leading-relaxed line-clamp-3">
         {{ plainContent }}
       </p>
     </div>

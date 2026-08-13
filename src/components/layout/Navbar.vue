@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useSiteDataStore } from '@/stores/siteData'
 import Button from '../ui/Button.vue'
 import { RiLoginBoxLine, RiArrowDownSLine, RiArrowRightSLine } from '@remixicon/vue'
@@ -17,6 +17,8 @@ const props = withDefaults(
 )
 
 const store = useSiteDataStore()
+const router = useRouter()
+const route = useRoute()
 const { schoolName, majors } = storeToRefs(store)
 
 const isScrolled = ref(false)
@@ -35,10 +37,22 @@ const menuItemsAfter = [
 
 const isWhiteMode = computed(() => (props.transparent ? isScrolled.value : true))
 
-const scrollToSection = (href: string) => {
+const scrollToSection = async (href: string) => {
   isDropdownOpen.value = false
-  const target = document.querySelector(href)
-  target?.scrollIntoView({ behavior: 'smooth' })
+
+  // kalau lagi bukan di halaman utama, navigasi dulu ke sana
+  if (route.path !== '/') {
+    await router.push('/')
+    // tunggu DOM ke-render setelah pindah halaman
+    await nextTick()
+    // beri sedikit delay ekstra, jaga-jaga kalau ada async fetch/animasi
+    setTimeout(() => {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    }, 0)
+    return
+  }
+
+  document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
 }
 
 const handleScroll = () => {
@@ -63,7 +77,11 @@ onUnmounted(() => {
     class="fixed top-0 left-0 z-50 right-0 px-12 py-4 flex items-center justify-between transition-colors duration-300"
     :class="isWhiteMode ? 'bg-neutral shadow-sm' : 'bg-transparent'"
   >
-    <RouterLink to="/" class="flex items-center gap-2 cursor-pointer">
+    <RouterLink
+      to="/"
+      @click="scrollToSection('#beranda')"
+      class="flex items-center gap-2 cursor-pointer"
+    >
       <img :src="logoImg" class="w-7 h-7" />
       <span class="font-bold text-xl" :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'">
         {{ schoolName }}
@@ -128,6 +146,8 @@ onUnmounted(() => {
       </li>
     </ul>
 
-    <Button label="Login" :icon-right="RiLoginBoxLine" />
+    <RouterLink to="/login">
+      <Button label="Login Siswa & Guru" size="sm" :icon-right="RiLoginBoxLine" />
+    </RouterLink>
   </nav>
 </template>

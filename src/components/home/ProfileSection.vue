@@ -12,28 +12,22 @@ const profileDesc = computed(() => profile.value.description)
 const img1 = computed(() => profile.value.img_1)
 const img2 = computed(() => profile.value.img_2)
 
+// kalau deskripsi lebih panjang dari batas ini, font-size diperkecil
+const DESC_LENGTH_THRESHOLD = 400
+const descTextSize = computed(() =>
+  profileDesc.value.length > DESC_LENGTH_THRESHOLD ? 'text-base' : 'text-lg',
+)
+
 onMounted(() => {
   store.fetchGlobalConfig()
-  console.log('full store:', store)
 })
 </script>
 
 <template>
   <section id="profil" class="px-12 py-32 scroll-mt-5">
     <div class="flex justify-center items-center gap-16">
-      <!-- Kolom Gambar -->
-      <div class="flex flex-col gap-8">
-        <img
-          v-if="img1"
-          :src="img1"
-          class="aspect-video object-cover"
-          :class="img2 ? 'w-104' : 'w-150'"
-        />
-        <img v-if="img2" :src="img2" class="w-104 aspect-video object-cover" />
-      </div>
-
       <!-- Kolom Teks -->
-      <div class="w-fit flex flex-col max-w-142">
+      <div class="w-fit flex flex-col max-w-160">
         <div class="flex items-center gap-2 text-primary font-bold text-lg mb-2">
           <RiSchoolFill class="w-6 h-6" />
           <span>{{ motto }}</span>
@@ -43,9 +37,20 @@ onMounted(() => {
           {{ title }}
         </h2>
 
-        <p class="text-lg leading-relaxed whitespace-pre-line">
+        <p class="leading-relaxed whitespace-pre-line" :class="descTextSize">
           {{ profileDesc }}
         </p>
+      </div>
+
+      <!-- Kolom Gambar -->
+      <div class="flex flex-col gap-8">
+        <img
+          v-if="img1"
+          :src="img1"
+          class="aspect-video object-cover"
+          :class="img2 ? 'w-104' : 'w-150'"
+        />
+        <img v-if="img2" :src="img2" class="w-104 aspect-video object-cover" />
       </div>
     </div>
   </section>
