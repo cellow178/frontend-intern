@@ -3,9 +3,8 @@ import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useSiteDataStore } from '@/stores/siteData'
-import { useAuthStore } from '@/stores/auth'
 import Button from '../ui/Button.vue'
-import { RiLoginBoxLine, RiArrowDownSLine, RiArrowRightSLine, RiUserLine } from '@remixicon/vue'
+import { RiLoginBoxLine, RiArrowDownSLine, RiArrowRightSLine } from '@remixicon/vue'
 import logoImg from '@/assets/logo.png'
 
 const props = withDefaults(
@@ -19,9 +18,6 @@ const props = withDefaults(
 
 const store = useSiteDataStore()
 const { schoolName, majors } = storeToRefs(store)
-
-const authStore = useAuthStore()
-const { user } = storeToRefs(authStore)
 
 const router = useRouter()
 const route = useRoute()
@@ -39,8 +35,6 @@ const menuItemsAfter = [
   { label: 'Berita', href: '#berita' },
   { label: 'Kritik Saran', href: '#kritik-saran' },
 ]
-
-const isLoggedIn = computed(() => !!authStore.token)
 
 const isWhiteMode = computed(() => (props.transparent ? isScrolled.value : true))
 
@@ -153,12 +147,8 @@ onUnmounted(() => {
       </li>
     </ul>
 
-    <RouterLink v-if="!isLoggedIn" to="/login">
+    <RouterLink to="/login">
       <Button label="Login Siswa & Guru" size="sm" :icon-right="RiLoginBoxLine" />
-    </RouterLink>
-
-    <RouterLink v-else to="/dashboard">
-      <Button :label="user?.role_name ?? 'Admin'" size="sm" :icon-right="RiUserLine" />
     </RouterLink>
   </nav>
 </template>

@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import api from '@/services/api.ts'
 import { ref, onMounted } from 'vue'
-import {
-  RiPencilLine,
-  RiSendPlane2Fill,
-  RiCheckboxCircleFill,
-  RiCloseCircleFill,
-} from '@remixicon/vue'
+import { useToastStore } from '@/stores/toast'
+import { RiPencilLine, RiSendPlane2Fill } from '@remixicon/vue'
 import Switch from '@/components/ui/Switch.vue'
 import Radio from '../ui/Radio.vue'
 import Input from '@/components/ui/Input.vue'
@@ -29,21 +25,7 @@ const isSubmitting = ref(false)
 
 const errors = ref<Record<string, string[]>>({})
 
-const toast = ref<{ show: boolean; type: 'success' | 'error'; text: string }>({
-  show: false,
-  type: 'success',
-  text: '',
-})
-
-let toastTimeout: ReturnType<typeof setTimeout> | undefined
-
-const showToast = (type: 'success' | 'error', text: string) => {
-  toast.value = { show: true, type, text }
-  clearTimeout(toastTimeout)
-  toastTimeout = setTimeout(() => {
-    toast.value.show = false
-  }, 4000)
-}
+const toastStore = useToastStore()
 
 const fetchCategories = async () => {
   try {
@@ -93,15 +75,18 @@ const submitFeedback = async () => {
     isAnonymous.value = false
     errors.value = {}
 
-    showToast('success', response.data.message || 'Terima kasih, masukan kamu sudah terkirim!')
+    toastStore.show(
+      response.data.message || 'Terima kasih, masukan kamu sudah terkirim!',
+      'success',
+    )
   } catch (err: any) {
     console.error('Gagal kirim feedback:', err)
 
     if (err.response?.status === 422) {
       errors.value = err.response.data.errors || {}
-      showToast('error', err.response.data.message || 'Validasi gagal.')
+      toastStore.show(err.response.data.message || 'Validasi gagal.', 'error')
     } else {
-      showToast('error', 'Gagal mengirim masukan, coba lagi nanti.')
+      toastStore.show('Gagal mengirim masukan, coba lagi nanti.', 'error')
     }
   } finally {
     isSubmitting.value = false
@@ -115,26 +100,6 @@ onMounted(() => {
 
 <template>
   <section id="kritik-saran" class="bg-secondary px-12 py-16 scroll-mt-15 relative">
-    <!-- Toast -->
-    <transition name="toast">
-      <div
-        v-if="toast.show"
-        class="fixed top-24 right-8 z-200 flex items-center gap-3 px-5 py-4 rounded-xl shadow-lg max-w-sm"
-        :class="
-          toast.type === 'success'
-            ? 'bg-neutral border-2 border-primary'
-            : 'bg-neutral border-2 border-red-500'
-        "
-      >
-        <RiCheckboxCircleFill
-          v-if="toast.type === 'success'"
-          class="w-6 h-6 text-primary shrink-0"
-        />
-        <RiCloseCircleFill v-else class="w-6 h-6 text-red-500 shrink-0" />
-        <p class="text-text-neutral text-sm">{{ toast.text }}</p>
-      </div>
-    </transition>
-
     <div class="max-w-7xl mx-auto grid grid-cols-2 gap-20 items-start">
       <!-- Kolom kiri: judul -->
       <div class="flex flex-col justify-between h-full">
@@ -226,15 +191,3 @@ onMounted(() => {
     </div>
   </section>
 </template>
-
-<style scoped>
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-</style>

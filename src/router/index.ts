@@ -13,6 +13,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../views/auth/LoginView.vue'),
+      meta: { requiresAuth: false, hasNavbar: false },
     },
     {
       path: '/jurusan/:slug',

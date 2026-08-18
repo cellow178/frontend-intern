@@ -3,12 +3,28 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
+import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import { RiArrowRightUpLine, RiSchoolFill } from '@remixicon/vue'
 import Button from '@/components/ui/Button.vue'
 
 const router = useRouter()
+
 const store = useSiteDataStore()
 const { banners, schoolName, motto, heroDescription } = storeToRefs(store)
+
+const authStore = useAuthStore()
+const isLoggedIn = computed(() => !!authStore.token)
+
+const toastStore = useToastStore()
+const handleVotingClick = () => {
+  if (!isLoggedIn.value) {
+    toastStore.show('Silakan login terlebih dahulu untuk mengakses Pusat Voting', 'info')
+    router.push('/login')
+    return
+  }
+  router.push('/voting')
+}
 
 const currentIndex = ref(0)
 let intervalId: ReturnType<typeof setInterval> | undefined
@@ -72,7 +88,7 @@ onUnmounted(() => {
           label="Pusat Voting"
           variant="neutral"
           :icon-right="RiArrowRightUpLine"
-          @click="router.push('/voting')"
+          @click="handleVotingClick"
         />
       </div>
     </div>
