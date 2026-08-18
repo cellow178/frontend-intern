@@ -14,7 +14,7 @@ defineProps<{
 <template>
   <RouterLink
     :to="`/jurusan/${slug}`"
-    class="flex flex-col gap-4 bg-secondary rounded-2xl p-6 border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-[0_0_200px_#FF964470]"
+    class="flex flex-col gap-4 bg-secondary rounded-2xl p-6 border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-[0_0_200px_#FF964440]"
   >
     <div class="flex items-center gap-3">
       <img :src="imgLogo" class="w-10 h-10 object-contain" />

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import MissionItem from '@/components/home/MissionItem.vue'
-import HighlightCard from '@/components/cards/HighlightCard.vue'
+import StatHighlightCard from '@/components/cards/StatHighlightCard.vue'
 import { RiGraduationCapFill, RiTrophyFill, RiCharacterRecognitionFill } from '@remixicon/vue'
 
 const store = useSiteDataStore()
@@ -64,19 +64,19 @@ onMounted(() => {
 
     <!-- Statistik -->
     <div class="flex items-start justify-center gap-30">
-      <HighlightCard
+      <StatHighlightCard
         :logo="RiGraduationCapFill"
         label="2.000+&#10;Siswa Akitf"
         description="Bergabung dalam lingkungan belajar yang positif"
       />
 
-      <HighlightCard
+      <StatHighlightCard
         :logo="RiCharacterRecognitionFill"
         label="Akreditasi&#10;Sekolah"
         description="Memberikan kualitas pendidikan terbaik dengan standar unggulan"
       />
 
-      <HighlightCard
+      <StatHighlightCard
         :logo="RiTrophyFill"
         label="100+&#10;Prestasi Siswa"
         description="Meraih berbagai penghargaan akademik dan non-akademik setiap tahunnya"

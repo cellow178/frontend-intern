@@ -4,7 +4,6 @@ import { ref, onMounted } from 'vue'
 import {
   RiPencilLine,
   RiSendPlane2Fill,
-  RiArrowDownSLine,
   RiCheckboxCircleFill,
   RiCloseCircleFill,
 } from '@remixicon/vue'
@@ -12,6 +11,7 @@ import Switch from '@/components/ui/Switch.vue'
 import Radio from '../ui/Radio.vue'
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
+import Select from '@/components/ui/Select.vue'
 import ilustrasiKritikSaran from '@/assets/illustrations/ilustrasi-feedback.png'
 
 interface Category {
@@ -195,35 +195,13 @@ onMounted(() => {
         </div>
 
         <!-- Kategori -->
-        <div>
-          <label class="font-bold text-text-neutral block mb-2">Kategori</label>
-          <div class="relative w-full">
-            <select
-              v-model="categoryId"
-              class="w-full border rounded-xl px-4 py-3 pr-10 bg-neutral text-text-neutral focus:outline-none appearance-none cursor-pointer"
-              :class="
-                errors.category_id ? 'border-red-500' : 'border-text-alt/30 focus:border-primary'
-              "
-            >
-              <option :value="null" disabled>Pilih kategori sesuai pesan anda</option>
-              <option
-                v-for="cat in categories"
-                :key="cat.id"
-                :value="cat.id"
-                class="hover:bg-secondary"
-              >
-                {{ cat.category_name }}
-              </option>
-            </select>
-
-            <RiArrowDownSLine
-              class="w-5 h-5 text-text-alt absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-            />
-          </div>
-          <p v-if="errors.category_id" class="text-sm text-red-500 mt-1">
-            {{ errors.category_id[0] }}
-          </p>
-        </div>
+        <Select
+          v-model="categoryId"
+          variant="square"
+          :options="categories.map((c) => ({ value: c.id, label: c.category_name }))"
+          placeholder="Pilih kategori sesuai pesan anda"
+          :error="!!errors.category_id"
+        />
 
         <!-- Pesan -->
         <div>
@@ -231,7 +209,7 @@ onMounted(() => {
           <Input
             v-model="message"
             type="textarea"
-            placeholder="Bagikan pendapatmu..."
+            placeholder="Bagikan pendapat..."
             :rows="3"
             :error="!!errors.message"
           />

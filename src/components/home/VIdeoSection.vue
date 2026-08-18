@@ -24,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="px-12 py-16 flex flex-col items-center gap-8">
+  <section id="video-profil" class="px-12 py-16 flex flex-col items-center gap-8 scroll-m-20">
     <div
       v-if="embedUrl"
       class="w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-lg"

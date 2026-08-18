@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
 import { RiArrowRightUpLine, RiSchoolFill } from '@remixicon/vue'
 import Button from '@/components/ui/Button.vue'
 
+const router = useRouter()
 const store = useSiteDataStore()
 const { banners, schoolName, motto, heroDescription } = storeToRefs(store)
 
@@ -46,7 +48,7 @@ onUnmounted(() => {
       ></div>
     </transition>
 
-    <!-- Overlay gelap biar teks kebaca -->
+    <!-- Overlay gelap -->
     <div class="absolute inset-0 bg-black/50"></div>
 
     <!-- Konten -->
@@ -65,12 +67,12 @@ onUnmounted(() => {
       </p>
 
       <div class="flex items-center gap-4">
-        <Button label="Selengkapnya" @click="scrollToSection('#profil')" />
+        <Button label="Video Profil" @click="scrollToSection('#video-profil')" />
         <Button
-          label="Kompetensi Keahlian"
+          label="Pusat Voting"
           variant="neutral"
           :icon-right="RiArrowRightUpLine"
-          @click="scrollToSection('#kompetensi')"
+          @click="router.push('/voting')"
         />
       </div>
     </div>

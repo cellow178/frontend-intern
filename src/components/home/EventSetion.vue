@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import { useSiteDataStore } from '@/stores/siteData'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import EventCard from '@/components/cards/EventCard.vue'
-import EventBannerCard from '@/components/cards/EventHighlightCard.vue'
+import EventHighlightCard from '@/components/cards/EventHighlightCard.vue'
 import Button from '@/components/ui/Button.vue'
 
 const store = useSiteDataStore()
@@ -33,7 +33,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="event" class="max-w-7xl mx-auto px-12 py-16 flex flex-col items-center gap-20 scroll-mt-20">
+  <section
+    id="event"
+    class="max-w-7xl mx-auto px-12 py-16 flex flex-col items-center gap-12 scroll-mt-20"
+  >
     <div class="flex flex-col items-center gap-4">
       <SectionTitle title="Event" />
       <p class="text-lg text-text-neutral text-center max-w-2xl">
@@ -42,7 +45,7 @@ onMounted(() => {
       </p>
     </div>
 
-    <EventBannerCard
+    <EventHighlightCard
       v-if="highlightEvent"
       :title="highlightEvent.title"
       :location="highlightEvent.location"

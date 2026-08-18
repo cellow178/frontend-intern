@@ -5,10 +5,11 @@ import { useSiteDataStore } from '@/stores/siteData'
 import { useRouter } from 'vue-router'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import NewsCard from '@/components/cards/NewsCard.vue'
+import NewsHighlightCard from '@/components/cards/NewsHighlightCard.vue'
 import Button from '@/components/ui/Button.vue'
 
 const store = useSiteDataStore()
-const { news } = storeToRefs(store)
+const { news, highlightNews } = storeToRefs(store)
 const router = useRouter()
 
 onMounted(() => {
@@ -29,6 +30,17 @@ onMounted(() => {
       </p>
     </div>
 
+    <NewsHighlightCard
+      v-if="highlightNews"
+      :title="highlightNews.title"
+      :content="highlightNews.content"
+      :img-cover="highlightNews.img_cover"
+      :author="highlightNews.author"
+      :created-at="highlightNews.created_at"
+      :category-name="highlightNews.category_name"
+      :slug="highlightNews.slug"
+    />
+
     <div class="flex flex-wrap justify-center gap-12">
       <NewsCard
         v-for="item in news"
@@ -37,7 +49,7 @@ onMounted(() => {
         :title="item.title"
         :category-name="item.category_name"
         :content="item.content"
-        :img-cover="null"
+        :img-cover="item.img_cover"
         :author="item.author"
         :created-at="item.created_at"
       />

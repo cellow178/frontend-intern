@@ -43,6 +43,7 @@ interface News {
   img_cover: string | null
   author: string
   created_at: string
+  is_highlight: boolean
 }
 
 export const useSiteDataStore = defineStore('siteData', {
@@ -72,6 +73,7 @@ export const useSiteDataStore = defineStore('siteData', {
     events: [] as Event[],
     highlightEvent: null as Event | null,
     news: [] as News[],
+    highlightNews: null as News | null,
 
     // flag biar fetch cuma sekali per endpoint
     loaded: {
@@ -158,7 +160,14 @@ export const useSiteDataStore = defineStore('siteData', {
       if (this.loaded.news) return
       try {
         const response = await api.get('/no-auth/news')
-        this.news = [...response.data.data].sort((a: News, b: News) => b.id - a.id).slice(0, 3)
+        const allNews: News[] = response.data.data
+
+        this.highlightNews = allNews.find((n) => n.is_highlight) ?? null
+        this.news = allNews
+          .filter((n) => !n.is_highlight)
+          .sort((a, b) => b.id - a.id)
+          .slice(0, 3)
+
         this.loaded.news = true
       } catch (err) {
         console.error('Gagal ambil news:', err)

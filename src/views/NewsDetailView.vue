@@ -56,7 +56,9 @@ watch(
 <template>
   <Navbar />
 
-  <main class="pt-24 pb-16">
+  <main class="pt-24 pb-16 px-12">
+    <BackButton />
+
     <div v-if="isLoading" class="min-h-[50vh] flex items-center justify-center">
       <p class="text-text-alt">Memuat...</p>
     </div>
@@ -66,8 +68,6 @@ watch(
     </div>
 
     <div v-else-if="news" class="px-12">
-      <BackButton />
-
       <article class="max-w-4xl mx-auto">
         <h1 class="font-extrabold text-4xl text-text-neutral text-center leading-snug my-4">
           {{ news.title }}

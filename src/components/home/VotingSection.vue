@@ -29,7 +29,7 @@ onMounted(() => {
   >
     <div class="flex flex-col items-center gap-4 text-center">
       <div class="flex items-center gap-4">
-        <span class="bg-neutral text-primary font-bold px-6 py-2 rounded-full">
+        <span class="bg-neutral text-primary font-bold px-6 py-2 rounded-2xl">
           Highlight Voting
         </span>
         <span class="text-neutral font-bold">{{ startDate }} - {{ endDate }}</span>

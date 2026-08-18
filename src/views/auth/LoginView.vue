@@ -28,26 +28,21 @@ const showPassword = ref(false)
 const usernameError = ref(false)
 const passwordError = ref(false)
 
-const usernameErrorMessage = ref('')
-const passwordErrorMessage = ref('')
+const loginError = ref('')
 
 const handleLogin = async () => {
   // Reset error
   usernameError.value = false
   passwordError.value = false
-
-  usernameErrorMessage.value = ''
-  passwordErrorMessage.value = ''
+  loginError.value = ''
 
   // Validasi input kosong
   if (!username.value) {
     usernameError.value = true
-    usernameErrorMessage.value = 'Username wajib diisi.'
   }
 
   if (!password.value) {
     passwordError.value = true
-    passwordErrorMessage.value = 'Password wajib diisi.'
   }
 
   if (!username.value || !password.value) {
@@ -62,29 +57,20 @@ const handleLogin = async () => {
     return
   }
 
-  // Username tidak ditemukan
-  if (result.message === 'message.userNotFound') {
-    usernameError.value = true
-    usernameErrorMessage.value = 'User tidak ditemukan.'
-    return
-  }
-
-  // Password / credential salah
-  if (result.message === 'message.loginCredentialFalse') {
-    passwordError.value = true
-    passwordErrorMessage.value = 'Password salah.'
-    return
-  }
+  // Semua kegagalan login
+  usernameError.value = true
+  passwordError.value = true
+  loginError.value = 'Username atau password salah.'
 }
 
 watch(username, () => {
   usernameError.value = false
-  usernameErrorMessage.value = ''
+  loginError.value = ''
 })
 
 watch(password, () => {
   passwordError.value = false
-  passwordErrorMessage.value = ''
+  loginError.value = ''
 })
 
 onMounted(() => {
@@ -159,8 +145,8 @@ onMounted(() => {
                   :error="usernameError"
                 />
 
-                <p v-if="usernameErrorMessage" class="mt-1 text-sm text-red-500">
-                  {{ usernameErrorMessage }}
+                <p v-if="loginError" class="mt-1 text-sm text-red-500">
+                  {{ loginError }}
                 </p>
               </div>
 
@@ -194,8 +180,8 @@ onMounted(() => {
                   </button>
                 </div>
 
-                <p v-if="passwordErrorMessage" class="mt-1 text-sm text-red-500">
-                  {{ passwordErrorMessage }}
+                <p v-if="loginError" class="mt-1 text-sm text-red-500">
+                  {{ loginError }}
                 </p>
               </div>
 
@@ -214,7 +200,6 @@ onMounted(() => {
                 <Button
                   type="submit"
                   :label="loading ? 'Memproses...' : 'Masuk'"
-                  size="sm"
                   :disabled="loading"
                 />
               </div>

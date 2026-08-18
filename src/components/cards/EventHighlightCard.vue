@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { RiMapPinLine, RiCalendarLine, RiArrowRightLine } from '@remixicon/vue'
+import { RiMapPinFill, RiCalendarFill, RiArrowRightLine } from '@remixicon/vue'
 
 defineProps<{
   title: string
@@ -14,33 +14,29 @@ defineProps<{
 <template>
   <RouterLink
     :to="`/event/${slug}`"
-    class="event-glow w-full max-w-3xl flex bg-neutral rounded-2xl overflow-hidden shadow-lg outline-2 outline-transparent transition-all duration-300 hover:outline-primary"
+    class="event-glow w-full max-w-3xl mb-16 flex bg-linear-to-br from-primary to-accent rounded-2xl overflow-hidden shadow-lg outline-3 outline-transparent transition-all duration-300 hover:outline-primary hover:-translate-y-2"
   >
-    <!-- Gambar / gradient fallback -->
-    <div class="w-1/3 shrink-0" :class="!imgCover ? 'bg-linear-to-br from-primary to-accent' : ''">
-      <img v-if="imgCover" :src="imgCover" class="w-full h-full object-cover" />
+    <!-- Gambar -->
+    <div v-if="imgCover" class="w-1/3 shrink-0">
+      <img :src="imgCover" class="w-full h-full object-cover" />
     </div>
 
     <!-- Konten -->
     <div class="flex-1 flex flex-col justify-center gap-3 p-6">
-      <span class="w-fit text-lg font-bold text-primary bg-secondary px-3 py-1 rounded-md">
-        Highlight Event
-      </span>
+      <h3 class="font-bold text-3xl text-neutral leading-snug">{{ title }}</h3>
 
-      <h3 class="font-bold text-3xl text-text-neutral leading-snug">{{ title }}</h3>
-
-      <div class="flex flex-col gap-2 text-sm text-text-alt">
+      <div class="flex flex-col gap-2 text-sm text-secondary">
         <div class="flex items-center gap-1.5">
-          <RiMapPinLine class="w-4 h-4 text-accent shrink-0" />
+          <RiMapPinFill class="w-4 h-4 text-primary shrink-0" />
           <span>{{ location }}</span>
         </div>
         <div class="flex items-center gap-1.5">
-          <RiCalendarLine class="w-4 h-4 text-accent shrink-0" />
+          <RiCalendarFill class="w-4 h-4 text-primary shrink-0" />
           <span>{{ dateLabel }}</span>
         </div>
       </div>
 
-      <span class="flex items-center gap-1 text-sm text-primary font-semibold w-fit group">
+      <span class="flex items-center gap-1 text-sm text-neutral font-semibold w-fit group mt-2">
         Lihat detail
         <RiArrowRightLine class="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </span>
@@ -61,7 +57,7 @@ defineProps<{
   }
   50% {
     filter: brightness(1.05);
-    box-shadow: 0 0px 100px rgba(225, 150, 68, 50%);
+    box-shadow: 0 0px 100px rgba(225, 150, 68, 70%);
   }
 }
 </style>

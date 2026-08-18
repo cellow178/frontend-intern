@@ -13,7 +13,7 @@ defineProps<{
 
 <template>
   <div
-    class="w-90 flex flex-col items-center text-center gap-4 bg-neutral rounded-3xl p-8 border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-[0_25px_200px_#FF964440] hover:-translate-y-2"
+    class="w-90 flex flex-col items-center text-center gap-4 bg-neutral rounded-2xl p-8 border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-[0_25px_200px_#FF964440] hover:-translate-y-2"
   >
     <span class="font-semibold text-lg text-text-alt">Pilihan #{{ order }}</span>
 
