@@ -31,9 +31,9 @@ defineEmits<{
     <select
       :value="modelValue"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
-      class="w-full appearance-none border pl-5 pr-10 py-3 bg-neutral text-text-neutral cursor-pointer focus:outline-none transition-colors"
+      class="w-full appearance-none border pl-4 pr-9 py-2.5 text-sm bg-neutral text-text-neutral cursor-pointer focus:outline-none transition-colors sm:pl-5 sm:pr-10 sm:py-3 sm:text-base"
       :class="[
-        variant === 'full' ? 'rounded-full' : 'rounded-2xl',
+        variant === 'full' ? 'rounded-full' : 'rounded-xl sm:rounded-2xl',
         error ? 'border-red-500' : 'border-text-alt/30 focus:border-primary',
       ]"
     >
@@ -44,7 +44,7 @@ defineEmits<{
     </select>
 
     <RiArrowDownSLine
-      class="w-5 h-5 text-text-alt absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+      class="w-4 h-4 text-text-alt absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none sm:w-5 sm:h-5 sm:right-4"
     />
   </div>
 </template>

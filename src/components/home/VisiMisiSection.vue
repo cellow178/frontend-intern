@@ -37,19 +37,29 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="px-12 py-16 flex flex-col gap-16">
+  <section class="p-6 flex flex-col gap-10 sm:px-8 sm:gap-12 md:px-12 lg:py-16 lg:gap-16">
     <!-- Visi -->
-    <div class="flex flex-col items-center gap-6">
+    <div class="flex flex-col items-center gap-4 text-center sm:gap-5 lg:gap-6">
       <SectionTitle title="Visi" />
-      <p class="text-2xl text-text-neutral">{{ vision }}</p>
+      <p class="text-lg text-text-neutral sm:text-xl lg:text-2xl">{{ vision }}</p>
     </div>
 
     <!-- Misi -->
-    <div class="flex flex-col items-center gap-12">
+    <div class="flex flex-col items-center gap-8 lg:gap-12">
       <SectionTitle title="Misi" />
 
-      <div class="relative grid grid-cols-2 w-full max-w-6xl gap-x-24 gap-y-10">
-        <!-- Garis pembatas -->
+      <!-- Mobile & tablet: 1 kolom, urutan asli -->
+      <div class="flex flex-col w-full max-w-6xl gap-6 sm:gap-7 lg:hidden">
+        <MissionItem
+          v-for="mission in missions"
+          :key="mission.id"
+          :order="mission.order"
+          :content="mission.content"
+        />
+      </div>
+
+      <!-- Desktop (lg+): 2 kolom, urutan interleaved -->
+      <div class="relative hidden w-full max-w-6xl gap-x-24 gap-y-10 lg:grid lg:grid-cols-2">
         <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px bg-text-alt/30"></div>
 
         <MissionItem
@@ -61,9 +71,10 @@ onMounted(() => {
         />
       </div>
     </div>
-
     <!-- Statistik -->
-    <div class="flex items-start justify-center gap-30">
+    <div
+      class="flex flex-col items-start gap-6 sm:flex-row sm:flex-nowrap sm:items-stretch sm:justify-center sm:gap-4 md:gap-6 lg:flex-wrap lg:gap-16 xl:gap-30"
+    >
       <StatHighlightCard
         :logo="RiGraduationCapFill"
         label="2.000+&#10;Siswa Akitf"

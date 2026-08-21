@@ -46,7 +46,7 @@ watch(
     :disabled="disabled"
     :rows="rows"
     @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
-    class="w-full bg-neutral border rounded-2xl px-4 py-3 resize-y disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-colors"
+    class="w-full bg-neutral border rounded-xl px-3 py-2.5 text-sm resize-y disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-colors sm:rounded-2xl sm:px-4 sm:py-3 sm:text-base"
     :class="error ? 'border-red-500' : 'border-text-alt/30 focus:border-primary'"
   />
 
@@ -58,7 +58,7 @@ watch(
     :placeholder="disabled ? disabledPlaceholder : placeholder"
     :disabled="disabled"
     @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    class="w-full bg-neutral border rounded-2xl px-4 py-3 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-colors"
+    class="w-full bg-neutral border rounded-xl px-3 py-2.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-colors sm:rounded-2xl sm:px-4 sm:py-3 sm:text-base"
     :class="error ? 'border-red-500' : 'border-text-alt/30 focus:border-primary'"
   />
 </template>

@@ -11,13 +11,13 @@ defineEmits<{
 </script>
 
 <template>
-  <label class="flex items-center gap-3 cursor-pointer">
+  <label class="flex items-center gap-2 cursor-pointer sm:gap-3">
     <span
-      class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors shrink-0"
+      class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 sm:w-6 sm:h-6"
       :class="modelValue === value ? 'border-primary' : 'border-text-alt/40'"
     >
       <span
-        class="w-3.5 h-3.5 rounded-full bg-primary transition-transform duration-150"
+        class="w-3 h-3 rounded-full bg-primary transition-transform duration-150 sm:w-3.5 sm:h-3.5"
         :class="modelValue === value ? 'scale-100' : 'scale-0'"
       ></span>
     </span>
@@ -27,6 +27,6 @@ defineEmits<{
       :checked="modelValue === value"
       @change="$emit('update:modelValue', value)"
     />
-    <span class="text-lg text-text-neutral">{{ label }}</span>
+    <span class="text-base text-text-neutral sm:text-lg">{{ label }}</span>
   </label>
 </template>

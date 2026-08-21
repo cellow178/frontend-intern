@@ -14,13 +14,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="kompetensi" class="px-12 py-16 flex flex-col items-center gap-16 scroll-mt-20">
-    <div class="flex flex-col items-center gap-4">
+  <section
+    id="kompetensi"
+    class="px-6 py-10 flex flex-col items-center gap-10 scroll-mt-10 md:px-12 md:py-16 md:gap-16"
+  >
+    <div class="flex flex-col items-center gap-3 text-center md:gap-4">
       <SectionTitle title="Kompetensi Keahlian" />
-      <p class="text-lg text-text-neutral">Kompetensi Keahlian di SMKN 7 Semarang</p>
+      <p class="text-base text-text-neutral md:text-lg">Kompetensi Keahlian di SMKN 7 Semarang</p>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-14 max-w-14xl">
+    <div
+      class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14 lg:max-w-14xl"
+    >
       <MajorCard
         v-for="major in majors"
         :key="major.id"
@@ -29,7 +34,7 @@ onMounted(() => {
         :major-name="major.major_name"
         :summary="major.summary"
         :slug="major.slug"
-        class="w-90"
+        class="w-full lg:w-90"
       />
     </div>
   </section>

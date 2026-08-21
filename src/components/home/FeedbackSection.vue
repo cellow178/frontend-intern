@@ -99,28 +99,41 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="kritik-saran" class="bg-secondary px-12 py-16 scroll-mt-15 relative">
-    <div class="max-w-7xl mx-auto grid grid-cols-2 gap-20 items-start">
+  <section
+    id="kritik-saran"
+    class="bg-secondary px-6 py-10 scroll-mt-15 relative sm:px-8 lg:px-12 lg:py-16"
+  >
+    <div
+      class="max-w-7xl mx-auto flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-start"
+    >
       <!-- Kolom kiri: judul -->
-      <div class="flex flex-col justify-between h-full">
-        <div class="flex items-center gap-4">
-          <div class="w-16 h-16 bg-accent rounded-2xl flex items-center justify-center shrink-0">
-            <RiPencilLine class="w-12 h-12 text-neutral" />
+      <div class="flex flex-col gap-6 lg:justify-between lg:h-full lg:gap-0">
+        <div class="flex items-center gap-3 sm:gap-4">
+          <div
+            class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center shrink-0 sm:w-16 sm:h-16 sm:rounded-2xl"
+          >
+            <RiPencilLine class="w-8 h-8 text-neutral sm:w-12 sm:h-12" />
           </div>
           <div>
-            <h2 class="font-extrabold text-3xl text-text-neutral">Form Kritik dan Saran</h2>
-            <p class="text-text-alt">Sampaikan kritik dan saran anda</p>
+            <h2 class="font-extrabold text-xl text-text-neutral sm:text-2xl lg:text-3xl">
+              Form Kritik dan Saran
+            </h2>
+            <p class="text-text-alt text-sm sm:text-base">Sampaikan kritik dan saran anda</p>
           </div>
         </div>
-        <img :src="ilustrasiKritikSaran" class="w-full" alt="Ilustrasi kritik dan saran" />
+        <img
+          :src="ilustrasiKritikSaran"
+          class="hidden w-full lg:block"
+          alt="Ilustrasi kritik dan saran"
+        />
       </div>
 
       <!-- Kolom kanan: form -->
-      <form @submit.prevent="submitFeedback" class="flex flex-col gap-6" novalidate>
+      <form @submit.prevent="submitFeedback" class="flex flex-col gap-5 sm:gap-6" novalidate>
         <!-- Anonim -->
         <div class="flex items-center justify-between">
           <span
-            class="font-bold transition-colors"
+            class="font-bold text-sm transition-colors sm:text-base"
             :class="isAnonymous ? 'text-primary' : 'text-text-neutral'"
           >
             Kirim sebagai anonim
@@ -130,7 +143,9 @@ onMounted(() => {
 
         <!-- Nama pengirim -->
         <div>
-          <label class="font-bold text-text-neutral flex items-center justify-between mb-2">
+          <label
+            class="font-bold text-text-neutral text-sm flex items-center justify-between mb-2 sm:text-base"
+          >
             <span> Nama Pengirim <span class="font-normal text-text-alt">(Opsional)</span> </span>
             <span
               class="text-xs font-normal"
@@ -152,8 +167,8 @@ onMounted(() => {
 
         <!-- Tipe -->
         <div>
-          <label class="font-bold text-text-neutral block mb-2">Tipe</label>
-          <div class="flex items-center gap-6">
+          <label class="font-bold text-text-neutral text-sm block mb-2 sm:text-base">Tipe</label>
+          <div class="flex items-center gap-4 sm:gap-6">
             <Radio v-model="type" :value="false" label="Kritik" />
             <Radio v-model="type" :value="true" label="Saran" />
           </div>
@@ -170,7 +185,7 @@ onMounted(() => {
 
         <!-- Pesan -->
         <div>
-          <label class="font-bold text-text-neutral block mb-2">Pesan</label>
+          <label class="font-bold text-text-neutral text-sm block mb-2 sm:text-base">Pesan</label>
           <Input
             v-model="message"
             type="textarea"
