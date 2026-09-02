@@ -14,6 +14,9 @@ import {
   RiCloseLine,
   RiUserLine,
   RiLoader4Line,
+  RiUser3Line,
+  RiDashboardLine,
+  RiLogoutBoxRLine,
 } from '@remixicon/vue'
 import logoImg from '@/assets/logo.png'
 
@@ -75,12 +78,9 @@ const scrollToSection = async (href: string) => {
   isMobileMenuOpen.value = false
   isMobileKompetensiOpen.value = false
 
-  // kalau lagi bukan di halaman utama, navigasi dulu ke sana
   if (route.path !== '/') {
     await router.push('/')
-    // tunggu DOM ke-render setelah pindah halaman
     await nextTick()
-    // beri sedikit delay ekstra, jaga-jaga kalau ada async fetch/animasi
     setTimeout(() => {
       document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
     }, 0)
@@ -176,7 +176,7 @@ onUnmounted(() => {
         </button>
         <div
           v-if="isDropdownOpen"
-          class="absolute top-full left-1/2 -translate-x-1/2 pt-3 bg-transparent w-96"
+          class="absolute top-full left-1/2 -translate-x-1/2 pt-2 bg-transparent w-96"
         >
           <div
             class="bg-neutral text-text-neutral rounded-2xl shadow-lg p-6 grid grid-cols-2 gap-x-8 gap-y-6"
@@ -207,40 +207,51 @@ onUnmounted(() => {
 
     <!-- Login/Akun (desktop) + toggle mobile -->
     <div class="flex items-center gap-3">
-      <!-- Akun dengan dropdown (super-admin & guru) -->
-      <div v-if="hasAccountDropdown" ref="accountDropdownRef" class="hidden lg:block relative">
+      <!-- Akun dengan dropdown (super-admin & guru) HOVER MODE -->
+      <div
+        v-if="hasAccountDropdown"
+        ref="accountDropdownRef"
+        class="hidden lg:block relative"
+        @mouseenter="isAccountDropdownOpen = true"
+        @mouseleave="isAccountDropdownOpen = false"
+      >
         <Button
           :label="accountLabel"
           size="sm"
           :icon-left="RiUserLine"
-          @click="isAccountDropdownOpen = !isAccountDropdownOpen"
+          :icon-right="RiArrowDownSLine"
         />
         <div
           v-if="isAccountDropdownOpen"
-          class="absolute top-full right-0 pt-3 bg-transparent w-48"
+          class="absolute top-full right-0 pt-2 bg-transparent w-48"
         >
           <div class="bg-neutral text-text-neutral rounded-2xl shadow-lg p-2 flex flex-col">
             <RouterLink
               to="/profil"
               @click="isAccountDropdownOpen = false"
-              class="px-4 py-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors"
+              class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
             >
-              Profil
+              <RiUser3Line class="w-4 h-4 shrink-0" />
+              <span>Profil</span>
             </RouterLink>
+
             <RouterLink
               to="/dashboard"
               @click="isAccountDropdownOpen = false"
-              class="px-4 py-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors"
+              class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
             >
-              Dashboard
+              <RiDashboardLine class="w-4 h-4 shrink-0" />
+              <span>Dashboard</span>
             </RouterLink>
+
             <button
               @click="handleLogout"
               :disabled="isLoggingOut"
-              class="text-left px-4 py-2 rounded-lg hover:bg-secondary hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              class="text-left px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2.5 text-sm font-medium"
             >
-              <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin" />
-              {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+              <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin shrink-0" />
+              <RiLogoutBoxRLine v-else class="w-4 h-4 shrink-0 text-red-500" />
+              <span>{{ isLoggingOut ? 'Logging out...' : 'Logout' }}</span>
             </button>
           </div>
         </div>
@@ -345,24 +356,29 @@ onUnmounted(() => {
             <RouterLink
               to="/profil"
               @click="isMobileMenuOpen = false"
-              class="px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors"
+              class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
             >
-              Profil
+              <RiUser3Line class="w-4 h-4 shrink-0" />
+              <span>Profil</span>
             </RouterLink>
+
             <RouterLink
               to="/dashboard"
               @click="isMobileMenuOpen = false"
-              class="px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors"
+              class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
             >
-              Dashboard
+              <RiDashboardLine class="w-4 h-4 shrink-0" />
+              <span>Dashboard</span>
             </RouterLink>
+
             <button
               @click="handleLogout"
               :disabled="isLoggingOut"
-              class="text-left px-4 py-3 text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              class="text-left px-4 py-3 text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2.5 text-sm font-medium"
             >
-              <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin" />
-              {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+              <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin shrink-0" />
+              <RiLogoutBoxRLine v-else class="w-4 h-4 shrink-0" />
+              <span>{{ isLoggingOut ? 'Logging out...' : 'Logout' }}</span>
             </button>
           </div>
         </div>
