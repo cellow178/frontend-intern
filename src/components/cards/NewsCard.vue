@@ -51,7 +51,7 @@ const plainContent = computed(() => {
       >
         {{ title }}
       </h3>
-      <p class="text-xs text-text-alt leading-relaxed line-clamp-2 lg:text-sm lg:line-clamp-3">
+      <p class="text-xs text-text-alt leading-relaxed line-clamp-3 lg:text-sm">
         {{ plainContent }}
       </p>
     </div>

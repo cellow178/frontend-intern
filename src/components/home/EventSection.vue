@@ -28,18 +28,15 @@ const formatDateRange = (start: string, end: string) => {
   return `${start} - ${end}`
 }
 
-// Grid 3 kolom (tablet): hitung berapa placeholder dibutuhkan biar baris terakhir rata
 const tabletPlaceholderCount = computed(() => {
   const remainder = events.value.length % 3
   return remainder === 0 ? 0 : 3 - remainder
 })
 
-// Desktop (flex-wrap): tampilkan 1 placeholder kalau jumlah event ganjil dan minimal 2
 const showDesktopPlaceholder = computed(
   () => events.value.length === 1 || (events.value.length >= 2 && events.value.length % 3 !== 0),
 )
 
-// Belum ada event sama sekali
 const isEventsEmpty = computed(() => events.value.length === 0)
 
 onMounted(() => {
@@ -50,11 +47,11 @@ onMounted(() => {
 <template>
   <section
     id="event"
-    class="max-w-7xl mx-auto px-6 py-10 flex flex-col items-center gap-8 scroll-mt-10 lg:px-12 lg:py-16 md:gap-12"
+    class="max-w-7xl mx-auto px-6 py-10 flex flex-col items-center gap-8 scroll-mt-16 lg:px-12 lg:py-16 md:gap-12"
   >
     <div class="flex flex-col items-center gap-3 md:gap-4">
       <SectionTitle title="Event" />
-      <p class="text-base text-text-neutral text-center max-w-2xl md:text-lg">
+      <p class="text-sm text-text-neutral text-center max-w-2xl md:text-lg">
         Ikuti berbagai kegiatan, acara, lomba, dan informasi terbaru yang diselenggarakan oleh SMKN
         7 Semarang
       </p>
@@ -86,7 +83,7 @@ onMounted(() => {
 
     <div
       v-else
-      class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-12"
+      class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16"
     >
       <EventCard
         v-for="event in events"

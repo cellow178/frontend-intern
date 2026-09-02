@@ -101,7 +101,7 @@ onMounted(() => {
 <template>
   <section
     id="kritik-saran"
-    class="bg-secondary px-6 py-10 scroll-mt-15 relative sm:px-8 lg:px-12 lg:py-16"
+    class="bg-secondary px-6 py-10 scroll-mt-16 relative sm:px-8 lg:px-12 lg:py-16"
   >
     <div
       class="max-w-7xl mx-auto flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-start"
@@ -116,7 +116,7 @@ onMounted(() => {
           </div>
           <div>
             <h2 class="font-extrabold text-xl text-text-neutral sm:text-2xl lg:text-3xl">
-              Form Kritik dan Saran
+              Kritik dan Saran
             </h2>
             <p class="text-text-alt text-sm sm:text-base">Sampaikan kritik dan saran anda</p>
           </div>

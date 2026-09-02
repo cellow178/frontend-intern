@@ -18,7 +18,7 @@ defineProps<{
   >
     <!-- Gambar -->
     <div v-if="imgCover" class="w-full sm:h-100 md:h-auto md:w-[40%] md:aspect-auto md:shrink-0">
-      <img :src="imgCover" class="w-full h-full object-cover" />
+      <img :src="imgCover" class="w-full h-88 object-cover" />
     </div>
 
     <!-- Konten -->

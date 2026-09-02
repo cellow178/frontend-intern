@@ -16,7 +16,7 @@ onMounted(() => {
 <template>
   <section
     id="kompetensi"
-    class="px-6 py-10 flex flex-col items-center gap-10 scroll-mt-10 md:px-12 md:py-16 md:gap-16"
+    class="px-6 py-10 flex flex-col items-center gap-10 scroll-mt-20 md:px-12 md:py-16 md:gap-16"
   >
     <div class="flex flex-col items-center gap-3 text-center md:gap-4">
       <SectionTitle title="Kompetensi Keahlian" />
@@ -24,7 +24,7 @@ onMounted(() => {
     </div>
 
     <div
-      class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14 lg:max-w-14xl"
+      class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 lg:max-w-14xl"
     >
       <MajorCard
         v-for="major in majors"

@@ -26,7 +26,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section id="profil" class="px-6 py-16 scroll-mt-5 sm:px-8 lg:scroll-m-8 md:px-12 lg:py-32">
+  <section id="profil-sekolah" class="px-6 py-16 scroll-mt-5 sm:px-8 lg:scroll-m-4 md:px-12 lg:py-32">
     <div
       class="flex flex-col justify-center items-start gap-10 sm:gap-12 lg:flex-row lg:items-center lg:gap-16"
     >

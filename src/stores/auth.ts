@@ -79,5 +79,30 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false
       }
     },
+    async fetchUser() {
+      if (!this.token) return
+
+      try {
+        const response = await api.get<{ success: boolean; user: User; permissions: string[] }>(
+          '/me',
+        )
+        if (response.data.success) {
+          this.user = response.data.user
+          this.permissions = response.data.permissions
+        }
+      } catch (error) {
+        // token invalid/expired -> logout paksa
+        this.logout()
+      }
+    },
+
+    async logout() {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      this.user = null
+      this.token = null
+      this.permissions = []
+      localStorage.removeItem('token')
+    },
   },
 })

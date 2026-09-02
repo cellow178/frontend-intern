@@ -41,6 +41,9 @@ const fetchNewsDetail = async (slug: string) => {
   }
 }
 
+// Dummy picture
+const dummyPic = 'https://picsum.photos/1600/1200'
+
 onMounted(() => {
   fetchNewsDetail(route.params.slug as string)
 })
@@ -51,13 +54,14 @@ watch(
     if (newSlug) fetchNewsDetail(newSlug as string)
   },
 )
+
 </script>
 
 <template>
   <Navbar />
 
-  <main class="pt-24 pb-16 px-12">
-    <BackButton />
+  <main class="pt-24 pb-16 px-6 lg:px-12">
+    <BackButton class="mb-6 sm:mb-8" />
 
     <div v-if="isLoading" class="min-h-[50vh] flex items-center justify-center">
       <p class="text-text-alt">Memuat...</p>
@@ -67,25 +71,30 @@ watch(
       <p class="text-text-alt">Berita tidak ditemukan.</p>
     </div>
 
-    <div v-else-if="news" class="px-12">
+    <div v-else-if="news">
       <article class="max-w-4xl mx-auto">
-        <h1 class="font-extrabold text-4xl text-text-neutral text-center leading-snug my-4">
+        <h1
+          class="font-extrabold text-2xl text-text-neutral text-center leading-snug my-4 sm:text-3xl lg:text-4xl"
+        >
           {{ news.title }}
         </h1>
 
-        <div class="text-center mb-8">
+        <div class="text-center mb-6 sm:mb-8">
           <p class="font-medium text-text-neutral">{{ news.author }}</p>
           <p class="text-sm text-text-alt">{{ news.created_at }}</p>
         </div>
 
         <div
-          class="w-full aspect-video rounded-2xl overflow-hidden mb-10"
+          class="w-full aspect-video rounded-xl overflow-hidden mb-6 sm:rounded-2xl sm:mb-10"
           :class="!news.img_cover ? 'bg-linear-to-b from-primary to-accent' : ''"
         >
-          <img v-if="news.img_cover" :src="news.img_cover" class="w-full h-full object-cover" />
+          <img v-if="news.img_cover" :src="dummyPic" class="w-full h-full object-cover" />
         </div>
 
-        <div class="prose max-w-none text-text-neutral leading-relaxed" v-html="news.content"></div>
+        <div
+          class="prose prose-sm max-w-none max-sm:text-sm text-text-neutral leading-relaxed sm:prose-base"
+          v-html="news.content"
+        ></div>
       </article>
     </div>
   </main>

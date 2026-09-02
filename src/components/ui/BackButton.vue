@@ -3,38 +3,35 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { RiArrowLeftLine } from '@remixicon/vue'
 
-const props = withDefaults(
-  defineProps<{
-    label?: string
-    fallback?: string // path tujuan kalau tidak ada history untuk kembali
-    variant?: 'neutral' | 'white'
-    animated?: boolean
-  }>(),
-  {
-    label: 'Kembali',
-    fallback: '/',
-    variant: 'neutral',
-    animated: false, // Default false sesuai permintaan (tanpa animasi hover)
-  },
-)
+export interface BackButtonProps {
+  label?: string
+  fallback?: string
+  variant?: 'neutral' | 'white'
+  animated?: boolean
+}
+
+const props = withDefaults(defineProps<BackButtonProps>(), {
+  label: 'Kembali',
+  fallback: '/',
+  variant: 'neutral',
+  animated: false,
+})
 
 const router = useRouter()
 
 const goBack = () => {
-  // Jika ada history halaman sebelumnya, gunakan router.back(), jika tidak arahkan ke fallback
-  if (window.history.state?.back) {
+  if (window.history.length > 1 && window.history.state?.back) {
     router.back()
   } else {
     router.push(props.fallback)
   }
 }
 
-// Class warna dasar & hover berdasarkan variant
 const colorClasses = computed(() => {
   if (props.variant === 'white') {
-    return 'text-neutral hover:text-neutral/70'
+    return 'text-white hover:text-white/80 active:text-white/60'
   }
-  return 'text-text-neutral hover:text-primary'
+  return 'text-text-neutral hover:text-primary active:text-primary/80'
 })
 </script>
 
@@ -42,11 +39,9 @@ const colorClasses = computed(() => {
   <button
     type="button"
     @click="goBack"
-    class="flex items-center gap-2 font-medium cursor-pointer select-none"
-    :class="[
-      colorClasses,
-      animated ? 'transition-colors duration-200' : 'transition-none'
-    ]"
+    :aria-label="label"
+    class="btn-slide-left-anim inline-flex items-center gap-2 text-sm md:text-base font-medium cursor-pointer py-2 px-1 -ml-1 rounded-lg"
+    :class="[colorClasses]"
   >
     <RiArrowLeftLine class="w-5 h-5 shrink-0" />
     <span>{{ label }}</span>

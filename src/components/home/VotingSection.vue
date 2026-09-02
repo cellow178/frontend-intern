@@ -76,7 +76,7 @@ onMounted(() => {
     </div>
 
     <div
-      class="flex flex-col items-start gap-4 w-full max-w-90 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6 lg:w-auto lg:gap-8"
+      class="flex flex-col items-start gap-4 w-full max-w-90 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6 lg:w-auto lg:gap-12"
     >
       <VoteCard
         @click="handleVotingDetail"

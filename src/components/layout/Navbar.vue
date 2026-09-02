@@ -3,6 +3,8 @@ import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useSiteDataStore } from '@/stores/siteData'
+import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import Button from '../ui/Button.vue'
 import {
   RiLoginBoxLine,
@@ -10,6 +12,8 @@ import {
   RiArrowRightSLine,
   RiMenuLine,
   RiCloseLine,
+  RiUserLine,
+  RiLoader4Line,
 } from '@remixicon/vue'
 import logoImg from '@/assets/logo.png'
 
@@ -25,6 +29,9 @@ const props = withDefaults(
 const store = useSiteDataStore()
 const { schoolName, majors } = storeToRefs(store)
 
+const authStore = useAuthStore()
+const { user, isAuthenticated } = storeToRefs(authStore)
+
 const router = useRouter()
 const route = useRoute()
 
@@ -32,10 +39,20 @@ const isScrolled = ref(false)
 const isDropdownOpen = ref(false)
 const isMobileMenuOpen = ref(false)
 const isMobileKompetensiOpen = ref(false)
+const isAccountDropdownOpen = ref(false)
+const accountDropdownRef = ref<HTMLElement | null>(null)
+const toastStore = useToastStore()
+const isLoggingOut = ref(false)
+
+const hasAccountDropdown = computed(
+  () =>
+    isAuthenticated.value &&
+    ['super-admin', 'guru', 'developer'].includes(user.value?.role_code ?? ''),
+)
 
 const menuItems = [
   { label: 'Beranda', href: '#beranda' },
-  { label: 'Profil', href: '#profil' },
+  { label: 'Profil Sekolah', href: '#profil-sekolah' },
 ]
 
 const menuItemsAfter = [
@@ -46,6 +63,11 @@ const menuItemsAfter = [
 
 const isWhiteMode = computed(() =>
   props.transparent ? isScrolled.value || isMobileMenuOpen.value : true,
+)
+
+const accountHref = computed(() => (isAuthenticated.value ? '/dashboard' : '/login'))
+const accountLabel = computed(() =>
+  isAuthenticated.value ? (user.value?.fullname ?? 'Akun Saya') : 'Login Siswa & Guru',
 )
 
 const scrollToSection = async (href: string) => {
@@ -72,16 +94,36 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 10
 }
 
+const handleClickOutside = (event: MouseEvent) => {
+  if (accountDropdownRef.value && !accountDropdownRef.value.contains(event.target as Node)) {
+    isAccountDropdownOpen.value = false
+  }
+}
+
+const handleLogout = async () => {
+  isAccountDropdownOpen.value = false
+  isLoggingOut.value = true
+
+  await authStore.logout()
+
+  isLoggingOut.value = false
+  isMobileMenuOpen.value = false
+  toastStore.show('Berhasil logout.', 'success')
+  router.push('/login')
+}
+
 onMounted(() => {
   if (props.transparent) {
     window.addEventListener('scroll', handleScroll)
   }
+  window.addEventListener('click', handleClickOutside)
   store.fetchGlobalConfig()
   store.fetchMajors()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -95,9 +137,9 @@ onUnmounted(() => {
       @click="scrollToSection('#beranda')"
       class="flex items-center gap-2 cursor-pointer shrink-0"
     >
-      <img :src="logoImg" class="w-7 h-7" />
+      <img :src="logoImg" class="w-5 h-5" />
       <span
-        class="font-bold text-lg lg:text-xl"
+        class="font-bold text-base lg:text-lg"
         :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'"
       >
         {{ schoolName }}
@@ -106,7 +148,7 @@ onUnmounted(() => {
 
     <!-- Menu desktop -->
     <ul
-      class="hidden lg:flex items-center gap-8 text-lg font-normal"
+      class="hidden lg:flex items-center gap-8 text-base font-normal"
       :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'"
     >
       <li v-for="item in menuItems" :key="item.href">
@@ -163,10 +205,55 @@ onUnmounted(() => {
       </li>
     </ul>
 
-    <!-- Login (desktop) + toggle mobile -->
+    <!-- Login/Akun (desktop) + toggle mobile -->
     <div class="flex items-center gap-3">
-      <RouterLink to="/login" class="hidden lg:block">
-        <Button label="Login Siswa & Guru" size="sm" :icon-right="RiLoginBoxLine" />
+      <!-- Akun dengan dropdown (super-admin & guru) -->
+      <div v-if="hasAccountDropdown" ref="accountDropdownRef" class="hidden lg:block relative">
+        <Button
+          :label="accountLabel"
+          size="sm"
+          :icon-left="RiUserLine"
+          @click="isAccountDropdownOpen = !isAccountDropdownOpen"
+        />
+        <div
+          v-if="isAccountDropdownOpen"
+          class="absolute top-full right-0 pt-3 bg-transparent w-48"
+        >
+          <div class="bg-neutral text-text-neutral rounded-2xl shadow-lg p-2 flex flex-col">
+            <RouterLink
+              to="/profil"
+              @click="isAccountDropdownOpen = false"
+              class="px-4 py-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors"
+            >
+              Profil
+            </RouterLink>
+            <RouterLink
+              to="/dashboard"
+              @click="isAccountDropdownOpen = false"
+              class="px-4 py-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors"
+            >
+              Dashboard
+            </RouterLink>
+            <button
+              @click="handleLogout"
+              :disabled="isLoggingOut"
+              class="text-left px-4 py-2 rounded-lg hover:bg-secondary hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin" />
+              {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Akun tanpa dropdown (siswa & belum login) -->
+      <RouterLink v-else :to="accountHref" class="hidden lg:block">
+        <Button
+          :label="accountLabel"
+          size="sm"
+          :icon-right="isAuthenticated ? undefined : RiLoginBoxLine"
+          :icon-left="isAuthenticated ? RiUserLine : undefined"
+        />
       </RouterLink>
 
       <button
@@ -176,22 +263,31 @@ onUnmounted(() => {
       >
         <RiCloseLine
           v-if="isMobileMenuOpen"
-          class="w-7 h-7"
+          class="w-5 h-5"
           :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'"
         />
         <RiMenuLine
           v-else
-          class="w-7 h-7"
+          class="w-5 h-5"
           :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'"
         />
       </button>
     </div>
 
+    <!-- Backdrop overlay saat mobile menu terbuka -->
+    <transition name="backdrop-fade">
+      <div
+        v-if="isMobileMenuOpen"
+        class="lg:hidden fixed inset-0 top-18 bg-black/50 -z-10"
+        @click="isMobileMenuOpen = false"
+      />
+    </transition>
+
     <!-- Menu mobile -->
     <transition name="mobile-menu">
       <div
         v-if="isMobileMenuOpen"
-        class="lg:hidden absolute top-full left-0 right-0 bg-neutral shadow-lg px-6 py-4 flex flex-col gap-1 text-text-neutral max-h-[calc(100vh-4rem)] overflow-y-auto"
+        class="lg:hidden absolute top-full left-0 right-0 bg-neutral shadow-lg px-6 py-4 flex flex-col gap-1 text-text-neutral max-h-[calc(100vh-4rem)] overflow-y-auto z-50"
       >
         <a
           v-for="item in menuItems"
@@ -240,11 +336,44 @@ onUnmounted(() => {
           {{ item.label }}
         </a>
 
-        <RouterLink to="/login" @click="isMobileMenuOpen = false" class="mt-4">
+        <!-- Mobile: super-admin & guru dapat 3 opsi -->
+        <div v-if="hasAccountDropdown" class="mt-2 pt-3 border-t-2 border-primary/20">
+          <p class="text-xs font-semibold text-primary uppercase tracking-wide px-1 mb-2">
+            Akun Saya
+          </p>
+          <div class="bg-secondary rounded-xl overflow-hidden flex flex-col">
+            <RouterLink
+              to="/profil"
+              @click="isMobileMenuOpen = false"
+              class="px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors"
+            >
+              Profil
+            </RouterLink>
+            <RouterLink
+              to="/dashboard"
+              @click="isMobileMenuOpen = false"
+              class="px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors"
+            >
+              Dashboard
+            </RouterLink>
+            <button
+              @click="handleLogout"
+              :disabled="isLoggingOut"
+              class="text-left px-4 py-3 text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin" />
+              {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile: siswa & belum login tetap tombol biasa -->
+        <RouterLink v-else :to="accountHref" @click="isMobileMenuOpen = false" class="mt-2">
           <Button
-            label="Login Siswa & Guru"
+            :label="accountLabel"
             size="sm"
-            :icon-right="RiLoginBoxLine"
+            :icon-right="isAuthenticated ? undefined : RiLoginBoxLine"
+            :icon-left="isAuthenticated ? RiUserLine : undefined"
             class="w-full justify-center"
           />
         </RouterLink>
@@ -262,5 +391,14 @@ onUnmounted(() => {
 .mobile-menu-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+
+.backdrop-fade-enter-active,
+.backdrop-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.backdrop-fade-enter-from,
+.backdrop-fade-leave-to {
+  opacity: 0;
 }
 </style>

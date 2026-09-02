@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import api from '@/services/api.ts'
 import Navbar from '@/components/layout/Navbar.vue'
 import BackButton from '@/components/ui/BackButton.vue'
+import SectionTitle from '@/components/ui/SectionTitle.vue'
 import Select from '@/components/ui/Select.vue'
 import NewsCard from '@/components/cards/NewsCard.vue'
 import Pagination from '@/components/ui/Pagination.vue'
@@ -40,7 +41,7 @@ const sortOrder = ref<'desc' | 'asc'>('desc')
 const currentPage = ref(1)
 const totalPage = ref(1)
 
-const LIMIT = 9
+const LIMIT = 18
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
 // Fetch Categories
@@ -100,6 +101,9 @@ const onSearchInput = () => {
   }, 400)
 }
 
+// Dummy picture
+const dummyPic = 'https://picsum.photos/1600/1200'
+
 const onCategoryChange = () => {
   currentPage.value = 1
   fetchNews()
@@ -125,21 +129,21 @@ onMounted(async () => {
 <template>
   <Navbar />
 
-  <main class="pt-24 pb-16 px-12">
-    <BackButton />
+  <main class="pt-24 pb-16 px-6 lg:px-12">
+    <BackButton class="mb-6 sm:mb-8" />
 
     <div class="flex flex-col items-center gap-4 text-center mb-10">
-      <h1 class="font-extrabold text-4xl text-text-neutral border-b-4 border-primary pb-2">
-        Berita
-      </h1>
-      <p class="text-lg text-text-neutral max-w-xl">
+      <SectionTitle title="Berita Terkini" />
+      <p class="text-sm text-text-neutral max-w-xl md:text-lg">
         Dapatkan informasi dan kabar terbaru seputar kegiatan, prestasi, dan perkembangan di SMKN 7
         Semarang
       </p>
     </div>
 
     <!-- Search, Filter Kategori, & Sort -->
-    <div class="flex flex-wrap items-center justify-center gap-4 mb-10">
+    <div
+      class="flex flex-col items-center gap-3 mb-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4"
+    >
       <!-- Search Bar -->
       <div class="relative w-full max-w-md">
         <RiSearchLine class="w-5 h-5 text-text-alt absolute left-4 top-1/2 -translate-y-1/2" />
@@ -152,27 +156,28 @@ onMounted(async () => {
         />
       </div>
 
-      <!-- Filter Kategori Dropdown -->
-      <div class="w-full max-w-50">
-        <Select
-          v-model="selectedCategoryId"
-          placeholder="Pilih Kategori"
-          :options="[
-            { value: null, label: 'Semua Kategori' },
-            ...categories.map((c) => ({ value: c.id, label: c.name })),
-          ]"
-          @update:model-value="onCategoryChange"
-        />
-      </div>
+      <!-- Filter Kategori Dropdown + Sort Toggle: sejajar & center di mobile -->
+      <div class="flex items-center justify-center gap-3 w-full sm:w-auto sm:gap-4">
+        <div class="w-full max-w-50 sm:w-auto">
+          <Select
+            v-model="selectedCategoryId"
+            placeholder="Pilih Kategori"
+            :options="[
+              { value: null, label: 'Semua Kategori' },
+              ...categories.map((c) => ({ value: c.id, label: c.name })),
+            ]"
+            @update:model-value="onCategoryChange"
+          />
+        </div>
 
-      <!-- Sort Toggle -->
-      <button
-        @click="toggleSort"
-        class="flex items-center gap-2 border border-text-alt/30 rounded-full px-5 py-3 text-text-neutral hover:border-primary hover:text-primary transition-colors cursor-pointer shrink-0"
-      >
-        <RiTimeLine class="w-5 h-5" />
-        {{ sortOrder === 'desc' ? 'Terbaru' : 'Terlama' }}
-      </button>
+        <button
+          @click="toggleSort"
+          class="flex items-center gap-2 border border-text-alt/30 rounded-full px-4 py-3 sm:px-5 text-sm text-text-neutral hover:border-primary hover:text-primary transition-colors cursor-pointer shrink-0"
+        >
+          <RiTimeLine class="w-5 h-5" />
+          {{ sortOrder === 'desc' ? 'Terbaru' : 'Terlama' }}
+        </button>
+      </div>
     </div>
 
     <!-- Grid berita -->
@@ -182,14 +187,17 @@ onMounted(async () => {
       Tidak ada berita ditemukan.
     </div>
 
-    <div v-else class="flex flex-wrap justify-center gap-16 max-w-7xl mx-auto">
+    <div
+      v-else
+      class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
+    >
       <NewsCard
         v-for="item in newsList"
         :key="item.id"
         :slug="item.slug"
         :title="item.title"
         :content="item.content"
-        :img-cover="item.img_cover"
+        :img-cover="dummyPic"
         :author="item.author"
         :created-at="item.created_at"
         :category-name="item.category_name"

@@ -27,7 +27,7 @@ const iconClass = {
 <template>
   <!-- Wrapper dibuat fleksibel: rata tengah & lebar penuh di mobile, kanan atas di desktop -->
   <div 
-    class="fixed inset-x-4 sm:inset-x-auto sm:right-6 lg:right-8 z-200 flex flex-col items-center sm:items-end gap-2.5 sm:gap-3 pointer-events-none"
+    class="fixed inset-x-4 sm:inset-x-auto sm:right-6 lg:right-12 z-200 flex flex-col items-center sm:items-end gap-2.5 sm:gap-3 pointer-events-none"
     :class="topPositionClass"
   >
     <TransitionGroup name="toast" tag="div" class="w-full flex flex-col items-center sm:items-end gap-2.5 sm:gap-3">

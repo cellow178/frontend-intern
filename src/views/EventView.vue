@@ -7,6 +7,7 @@ import EventCard from '@/components/cards/EventCard.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import Footer from '@/components/layout/Footer.vue'
 import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
+import SectionTitle from '@/components/ui/SectionTitle.vue'
 
 interface EventItem {
   id: number
@@ -26,7 +27,7 @@ const sortOrder = ref<'asc' | 'desc'>('asc') // asc = terdekat duluan
 const currentPage = ref(1)
 const totalPage = ref(1)
 
-const LIMIT = 9
+const LIMIT = 18
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
 // Format Date Logic
@@ -97,21 +98,21 @@ onMounted(() => {
 <template>
   <Navbar />
 
-  <main class="pt-24 pb-16 px-12">
-    <BackButton />
+  <main class="pt-24 pb-16 px-6 lg:px-12">
+    <BackButton class="mb-6 sm:mb-8" />
 
     <div class="flex flex-col items-center gap-4 text-center mb-10">
-      <h1 class="font-extrabold text-4xl text-text-neutral border-b-4 border-primary pb-2">
-        Event
-      </h1>
-      <p class="text-lg text-text-neutral max-w-xl">
+      <SectionTitle title="Event" />
+      <p class="text-sm text-text-neutral max-w-xl md:text-lg">
         Ikuti berbagai kegiatan, acara, lomba, dan informasi terbaru yang diselenggarakan oleh SMKN
         7 Semarang.
       </p>
     </div>
 
     <!-- Search & Sort -->
-    <div class="flex flex-wrap items-center justify-center gap-4 mb-10">
+    <div
+      class="flex flex-col items-center gap-3 mb-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4"
+    >
       <div class="relative w-full max-w-md">
         <RiSearchLine class="w-5 h-5 text-text-alt absolute left-4 top-1/2 -translate-y-1/2" />
         <input
@@ -139,7 +140,10 @@ onMounted(() => {
       Tidak ada event ditemukan.
     </div>
 
-    <div v-else class="flex flex-wrap justify-center gap-16 max-w-7xl mx-auto">
+    <div
+      v-else
+      class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
+    >
       <EventCard
         v-for="item in eventList"
         :key="item.id"

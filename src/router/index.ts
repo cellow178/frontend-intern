@@ -41,6 +41,15 @@ const router = createRouter({
       component: () => import('../views/NewsDetailView.vue'),
     },
   ],
+  scrollBehavior(to, _from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    if (to.hash) {
+      return { el: to.hash, behavior: 'smooth' }
+    }
+    return { top: 0 }
+  },
 })
 
 export default router

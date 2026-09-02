@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { RiSkipLeftLine, RiSkipRightLine } from '@remixicon/vue'
+import {
+  RiSkipLeftLine,
+  RiSkipRightLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+} from '@remixicon/vue'
 
 const props = defineProps<{
   currentPage: number
@@ -36,7 +41,6 @@ const goToNextPage = () => changePage(props.currentPage + 1)
 const goToFirstPage = () => changePage(1)
 const goToLastPage = () => changePage(props.totalPage)
 
-// sinkronkan input manual kalau currentPage berubah dari luar (misal search reset ke 1)
 watch(
   () => props.currentPage,
   (newPage) => {
@@ -46,24 +50,25 @@ watch(
 </script>
 
 <template>
-  <div v-if="totalPage > 1" class="flex items-center justify-center gap-4">
+  <div v-if="totalPage > 1" class="flex items-center justify-center gap-2 sm:gap-4">
     <button
       @click="goToFirstPage"
       :disabled="currentPage === 1"
       class="text-text-neutral disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-primary transition-colors cursor-pointer disabled:pointer-events-none"
     >
-      <RiSkipLeftLine class="w-6 h-6" />
+      <RiSkipLeftLine class="w-5 h-5 sm:w-6 sm:h-6" />
     </button>
 
     <button
       @click="goToPrevPage"
       :disabled="currentPage === 1"
-      class="text-text-neutral font-medium disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-primary transition-colors cursor-pointer disabled:pointer-events-none"
+      class="flex items-center gap-1 text-text-neutral font-medium disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-primary transition-colors cursor-pointer disabled:pointer-events-none"
     >
-      Sebelumnya
+      <RiArrowLeftSLine class="w-5 h-5 sm:hidden" />
+      <span class="hidden sm:inline">Sebelumnya</span>
     </button>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5 sm:gap-2">
       <input
         v-model="pageInput"
         type="number"
@@ -71,17 +76,18 @@ watch(
         :max="totalPage"
         @keyup.enter="handlePageInputSubmit"
         @blur="handlePageInputSubmit"
-        class="w-14 h-10 text-center border border-text-alt/30 rounded-lg text-text-neutral focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        class="w-11 h-9 text-sm sm:w-14 sm:h-10 sm:text-base text-center border border-text-alt/30 rounded-lg text-text-neutral focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
-      <span class="text-text-alt font-medium">/ {{ totalPage }}</span>
+      <span class="text-text-alt font-medium text-sm sm:text-base">/ {{ totalPage }}</span>
     </div>
 
     <button
       @click="goToNextPage"
       :disabled="currentPage === totalPage"
-      class="text-text-neutral font-medium disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-primary transition-colors cursor-pointer disabled:pointer-events-none"
+      class="flex items-center gap-1 text-text-neutral font-medium disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-primary transition-colors cursor-pointer disabled:pointer-events-none"
     >
-      Selanjutnya
+      <span class="hidden sm:inline">Selanjutnya</span>
+      <RiArrowRightSLine class="w-5 h-5 sm:hidden" />
     </button>
 
     <button
@@ -89,7 +95,7 @@ watch(
       :disabled="currentPage === totalPage"
       class="text-text-neutral disabled:opacity-30 disabled:cursor-not-allowed enabled:hover:text-primary transition-colors cursor-pointer disabled:pointer-events-none"
     >
-      <RiSkipRightLine class="w-6 h-6" />
+      <RiSkipRightLine class="w-5 h-5 sm:w-6 sm:h-6" />
     </button>
   </div>
 </template>

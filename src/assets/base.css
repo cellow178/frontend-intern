@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -15,7 +17,9 @@ body {
   font-family: var(--font-body);
 }
 
-img, picture, video {
+img,
+picture,
+video {
   max-width: 100%;
   display: block;
 }
@@ -27,7 +31,12 @@ img, picture, video {
   --font-body: 'Poppins', sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.2;
@@ -38,9 +47,28 @@ a {
   text-decoration: none;
 }
 
-button, input, textarea, select {
+button,
+input,
+textarea,
+select {
   font: inherit;
   cursor: pointer;
   border: none;
   background: none;
+}
+
+@layer utilities {
+  /* Animasi Tekan Tombol (Button.vue) */
+  .btn-press-anim {
+    @apply select-none touch-manipulation transform-gpu transition-all duration-200 ease-out
+           active:scale-95 md:active:scale-[0.98] md:active:translate-y-0.5
+           disabled:active:scale-100 disabled:active:translate-y-0 [-webkit-tap-highlight-color:transparent];
+  }
+
+  /* Animasi Menyamping (BackButton.vue) */
+  .btn-slide-left-anim {
+    @apply select-none touch-manipulation transform-gpu transition-all duration-200 ease-out
+           active:scale-95 md:active:scale-100 md:active:-translate-x-1
+           disabled:active:scale-100 disabled:active:translate-x-0 [-webkit-tap-highlight-color:transparent];
+  }
 }

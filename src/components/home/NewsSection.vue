@@ -36,11 +36,11 @@ onMounted(() => {
 <template>
   <section
     id="berita"
-    class="max-w-7xl mx-auto px-6 py-10 flex flex-col items-center gap-8 scroll-mt-10 lg:scroll-m-20 lg:px-12 lg:py-16 md:gap-12"
+    class="max-w-7xl mx-auto px-6 py-10 flex flex-col items-center gap-8 scroll-mt-10 lg:scroll-m-24 lg:px-12 lg:py-16 md:gap-12"
   >
     <div class="flex flex-col items-center gap-3 md:gap-4">
-      <SectionTitle title="Berita Terkini" />
-      <p class="text-base text-text-neutral text-center max-w-2xl md:text-lg">
+      <SectionTitle title="Berita" />
+      <p class="text-sm text-text-neutral text-center max-w-2xl md:text-lg">
         Dapatkan informasi dan kabar terbaru seputar kegiatan, prestasi, dan perkembangan di SMKN 7
         Semarang
       </p>
@@ -74,7 +74,7 @@ onMounted(() => {
 
     <div
       v-else
-      class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-12"
+      class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16"
     >
       <NewsCard
         v-for="item in news"
@@ -119,7 +119,7 @@ onMounted(() => {
       </div>
 
       <!-- Placeholder dekoratif: desktop (flex-wrap) -->
-      <div v-if="showDesktopPlaceholder" class="relative h-full min-h-120 hidden lg:block lg:w-80">
+      <div v-if="showDesktopPlaceholder" class="relative h-full min-h-94 hidden lg:block lg:w-72">
         <div
           class="absolute inset-0 bg-neutral border-2 border-secondary rounded-xl -rotate-6 shadow-sm"
         ></div>
