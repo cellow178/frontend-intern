@@ -2,13 +2,11 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api.ts'
-import Navbar from '@/components/layout/Navbar.vue'
 import BackButton from '@/components/ui/BackButton.vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import Select from '@/components/ui/Select.vue'
 import NewsCard from '@/components/cards/NewsCard.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import Footer from '@/components/layout/Footer.vue'
 import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
 
 const route = useRoute()
@@ -127,13 +125,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Navbar />
-
   <main class="pt-24 pb-16 px-6 lg:px-12">
     <BackButton class="mb-6 sm:mb-8" />
 
     <div class="flex flex-col items-center gap-4 text-center mb-10">
-      <SectionTitle title="Berita Terkini" />
+      <SectionTitle title="Berita" />
       <p class="text-sm text-text-neutral max-w-xl md:text-lg">
         Dapatkan informasi dan kabar terbaru seputar kegiatan, prestasi, dan perkembangan di SMKN 7
         Semarang
@@ -207,6 +203,4 @@ onMounted(async () => {
     <!-- Pagination -->
     <Pagination v-model:current-page="currentPage" :total-page="totalPage" class="mt-12" />
   </main>
-
-  <Footer />
 </template>

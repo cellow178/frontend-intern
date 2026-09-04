@@ -28,7 +28,7 @@ defineProps<{
         {{ majorName }}
       </h3>
       <p
-        class="text-xs sm:text-sm lg:text-base text-text-alt/80 leading-relaxed line-clamp-3 sm:line-clamp-4 lg:line-clamp-none"
+        class="text-xs font-medium sm:text-sm lg:text-base text-text-alt/80 leading-relaxed line-clamp-3 sm:line-clamp-4 lg:line-clamp-none"
       >
         {{ summary }}
       </p>

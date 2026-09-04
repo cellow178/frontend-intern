@@ -32,7 +32,7 @@ defineProps<{
         <div class="w-8 h-0.5 bg-primary mt-1.5 lg:w-12 lg:mt-2"></div>
       </div>
 
-      <div class="flex flex-col gap-1 text-xs text-text-alt lg:gap-1.5 lg:text-sm">
+      <div class="flex flex-col gap-1 text-xs font-medium text-text-alt lg:gap-1.5 lg:text-sm">
         <div class="flex items-center gap-1.5 lg:gap-2">
           <RiMapPinLine class="w-3.5 h-3.5 text-accent shrink-0 lg:w-4 lg:h-4" />
           <span class="truncate lg:whitespace-normal lg:wrap-break-word">{{ location }}</span>

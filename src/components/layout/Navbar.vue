@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue'
+import { computed, onMounted, onUnmounted, ref, nextTick, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { useSiteDataStore } from '@/stores/siteData'
@@ -30,7 +30,7 @@ const props = withDefaults(
 )
 
 const store = useSiteDataStore()
-const { schoolName, majors } = storeToRefs(store)
+const { schoolName, majors, isFullyLoaded } = storeToRefs(store)
 
 const authStore = useAuthStore()
 const { user, isAuthenticated } = storeToRefs(authStore)
@@ -47,6 +47,7 @@ const accountDropdownRef = ref<HTMLElement | null>(null)
 const toastStore = useToastStore()
 const isLoggingOut = ref(false)
 
+// Filter role dropdown menu
 const hasAccountDropdown = computed(
   () =>
     isAuthenticated.value &&
@@ -59,13 +60,14 @@ const menuItems = [
 ]
 
 const menuItemsAfter = [
-  { label: 'Event', href: '#event' },
-  { label: 'Berita', href: '#berita' },
-  { label: 'Kritik Saran', href: '#kritik-saran' },
+  { label: 'Event', to: '/event' },
+  { label: 'Berita', to: '/berita' },
 ]
 
+const menuItemsScroll = [{ label: 'Kritik Saran', href: '#kritik-saran' }]
+
 const isWhiteMode = computed(() =>
-  props.transparent ? isScrolled.value || isMobileMenuOpen.value : true,
+  props.transparent ? isScrolled.value || isMobileMenuOpen.value || !isFullyLoaded.value : true,
 )
 
 const accountHref = computed(() => (isAuthenticated.value ? '/dashboard' : '/login'))
@@ -94,6 +96,20 @@ const handleScroll = () => {
   isScrolled.value = window.scrollY > 10
 }
 
+watch(
+  () => props.transparent,
+  (isTransparent) => {
+    window.removeEventListener('scroll', handleScroll) // hindari listener dobel
+    if (isTransparent) {
+      window.addEventListener('scroll', handleScroll)
+      handleScroll() // langsung cek posisi scroll saat ini, jangan tunggu event scroll berikutnya
+    } else {
+      isScrolled.value = false // reset, supaya halaman non-transparent tidak kebawa state lama
+    }
+  },
+  { immediate: true }, // jalankan langsung saat komponen pertama kali mount
+)
+
 const handleClickOutside = (event: MouseEvent) => {
   if (accountDropdownRef.value && !accountDropdownRef.value.contains(event.target as Node)) {
     isAccountDropdownOpen.value = false
@@ -108,14 +124,11 @@ const handleLogout = async () => {
 
   isLoggingOut.value = false
   isMobileMenuOpen.value = false
-  toastStore.show('Berhasil logout.', 'success')
+  toastStore.show('Logout berhasil.', 'info')
   router.push('/login')
 }
 
 onMounted(() => {
-  if (props.transparent) {
-    window.addEventListener('scroll', handleScroll)
-  }
   window.addEventListener('click', handleClickOutside)
   store.fetchGlobalConfig()
   store.fetchMajors()
@@ -194,7 +207,13 @@ onUnmounted(() => {
           </div>
         </div>
       </li>
-      <li v-for="item in menuItemsAfter" :key="item.href">
+      <li v-for="item in menuItemsAfter" :key="item.to">
+        <RouterLink :to="item.to" class="hover:text-primary transition-colors cursor-pointer">
+          {{ item.label }}
+        </RouterLink>
+      </li>
+
+      <li v-for="item in menuItemsScroll" :key="item.href">
         <a
           :href="item.href"
           @click.prevent="scrollToSection(item.href)"
@@ -337,8 +356,20 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <a
+        <!-- Mobile: Event & Berita (route) -->
+        <RouterLink
           v-for="item in menuItemsAfter"
+          :key="item.to"
+          :to="item.to"
+          @click="isMobileMenuOpen = false"
+          class="py-3 border-b border-secondary hover:text-primary transition-colors cursor-pointer"
+        >
+          {{ item.label }}
+        </RouterLink>
+
+        <!-- Mobile: Kritik Saran (scroll) -->
+        <a
+          v-for="item in menuItemsScroll"
           :key="item.href"
           :href="item.href"
           @click.prevent="scrollToSection(item.href)"

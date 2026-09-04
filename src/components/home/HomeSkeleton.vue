@@ -2,30 +2,7 @@
 
 <template>
   <div class="animate-pulse">
-    <!-- Navbar Skeleton -->
-    <nav
-      class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between bg-neutral/80 backdrop-blur-md shadow-sm lg:px-12"
-    >
-      <!-- Brand Logo + Nama Sekolah -->
-      <div class="flex items-center gap-2">
-        <div class="w-5 h-5 rounded-full bg-text-alt/15 shrink-0"></div>
-        <div class="h-5 w-36 bg-text-alt/15 rounded lg:h-6 lg:w-44"></div>
-      </div>
-
-      <!-- Menu Desktop -->
-      <div class="hidden lg:flex items-center gap-8">
-        <div class="h-5 w-16 bg-text-alt/15 rounded" v-for="n in 6" :key="n"></div>
-      </div>
-
-      <!-- Right Actions (Login Button Desktop / Hamburger Icon Mobile) -->
-      <div class="flex items-center gap-3">
-        <!-- Button Skeleton Desktop -->
-        <div class="hidden lg:block h-9 w-46 bg-text-alt/15 rounded-xl"></div>
-        <!-- Hamburger Icon Skeleton Mobile -->
-        <div class="lg:hidden w-6 h-6 bg-text-alt/15 rounded"></div>
-      </div>
-    </nav>
-
+    
     <!-- Hero Skeleton -->
     <div class="relative h-screen w-full overflow-hidden bg-text-alt/5">
       <div
@@ -164,7 +141,7 @@
         class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14 lg:max-w-14xl"
       >
         <div
-          v-for="n in 8"
+          v-for="n in 9"
           :key="`major-skel-${n}`"
           class="w-full lg:w-90 bg-text-alt/5 rounded-xl p-4 sm:p-5 lg:p-6 flex flex-col gap-2 sm:gap-4"
         >

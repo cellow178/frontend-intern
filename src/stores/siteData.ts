@@ -86,6 +86,16 @@ export const useSiteDataStore = defineStore('siteData', {
     },
   }),
 
+  getters: {
+    isFullyLoaded: (state) =>
+      state.loaded.globalConfig &&
+      state.loaded.majors &&
+      state.loaded.banners &&
+      state.loaded.visionMission &&
+      state.loaded.events &&
+      state.loaded.news,
+  },
+
   actions: {
     async fetchGlobalConfig() {
       if (this.loaded.globalConfig) return

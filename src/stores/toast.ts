@@ -4,6 +4,7 @@ interface ToastItem {
   id: number
   message: string
   type: 'success' | 'error' | 'info'
+  duration: number
 }
 
 export const useToastStore = defineStore('toast', {
@@ -11,12 +12,16 @@ export const useToastStore = defineStore('toast', {
     toasts: [] as ToastItem[],
   }),
   actions: {
-    show(message: string, type: ToastItem['type'] = 'info', duration = 3000) {
+    show(message: string, type: ToastItem['type'] = 'info', duration = 5000) {
       const id = Date.now()
-      this.toasts.push({ id, message, type })
+      this.toasts.push({ id, message, type, duration })
       setTimeout(() => {
-        this.toasts = this.toasts.filter((t) => t.id !== id)
+        this.close(id)
       }, duration)
+    },
+
+    close(id: number) {
+      this.toasts = this.toasts.filter((t) => t.id !== id)
     },
   },
 })

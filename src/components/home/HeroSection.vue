@@ -65,7 +65,7 @@ onUnmounted(() => {
     </transition>
 
     <!-- Overlay gelap -->
-    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 bg-black/60"></div>
 
     <!-- Konten -->
     <div

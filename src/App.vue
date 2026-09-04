@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import ToastContainer from './components/ui/ToastContainer.vue'
+import Layout from '@/components/layout/Layout.vue'
+import Toast from '@/components/ui/ToastContainer.vue'
 
 const authStore = useAuthStore()
 
@@ -12,6 +12,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <RouterView />
-  <ToastContainer />
+  <Layout />
+  <Toast />
 </template>

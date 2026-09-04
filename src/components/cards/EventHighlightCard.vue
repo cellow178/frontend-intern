@@ -25,7 +25,7 @@ defineProps<{
     <div class="flex-1 flex flex-col justify-center gap-2 p-5 md:gap-3 md:p-6">
       <h3 class="font-bold text-xl text-neutral leading-snug md:text-3xl">{{ title }}</h3>
 
-      <div class="flex flex-col gap-1.5 text-xs text-secondary md:gap-2 md:text-sm">
+      <div class="flex flex-col gap-1.5 text-xs font-medium text-secondary md:gap-2 md:text-sm">
         <div class="flex items-center gap-1.5">
           <RiMapPinFill class="w-3.5 h-3.5 text-primary shrink-0 md:w-4 md:h-4" />
           <span>{{ location }}</span>
@@ -61,7 +61,7 @@ defineProps<{
   }
   50% {
     filter: brightness(1.05);
-    box-shadow: 0 0px 100px rgba(225, 150, 68, 70%);
+    box-shadow: 0 0px 35px rgba(225, 150, 68, 70%);
   }
 }
 </style>

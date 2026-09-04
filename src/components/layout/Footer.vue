@@ -2,7 +2,14 @@
 import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
-import { RiYoutubeFill, RiInstagramFill, RiFacebookFill, RiLinkedinFill, RiMailLine, RiPhoneLine } from '@remixicon/vue'
+import {
+  RiYoutubeFill,
+  RiInstagramFill,
+  RiFacebookFill,
+  RiLinkedinFill,
+  RiMailFill,
+  RiPhoneFill,
+} from '@remixicon/vue'
 
 const store = useSiteDataStore()
 const { schoolName, motto, footer, majors } = storeToRefs(store)
@@ -51,10 +58,10 @@ onMounted(() => {
           <img src="/src/assets/logo.png" class="w-11 h-11 sm:w-14 sm:h-14" />
           <div>
             <span class="font-bold text-lg">{{ schoolName }}</span>
-            <p class="font-medium text-base">{{ motto }}</p>
+            <p class="font-semibold text-base">{{ motto }}</p>
           </div>
         </div>
-        <p class="leading-relaxed text-sm opacity-80 sm:leading-7">
+        <p class="text-sm md:text-base leading-relaxed sm:leading-7">
           {{ description }}
         </p>
       </div>
@@ -67,7 +74,7 @@ onMounted(() => {
             <a
               :href="item.href"
               @click.prevent="scrollToSection(item.href)"
-              class="text-sm font-light opacity-80 hover:underline cursor-pointer sm:text-base"
+              class="text-sm hover:underline cursor-pointer sm:text-base"
             >
               {{ item.label }}
             </a>
@@ -84,7 +91,7 @@ onMounted(() => {
               v-for="major in majors.slice(0, Math.ceil(majors.length / 2))"
               :key="major.id"
               :href="`/${major.slug}`"
-              class="text-sm font-light opacity-80 hover:underline cursor-pointer sm:text-base"
+              class="text-sm hover:underline cursor-pointer sm:text-base"
             >
               {{ major.code }}
             </a>
@@ -94,7 +101,7 @@ onMounted(() => {
               v-for="major in majors.slice(Math.ceil(majors.length / 2))"
               :key="major.id"
               :href="`/${major.slug}`"
-              class="text-sm font-light opacity-80 hover:underline cursor-pointer sm:text-base"
+              class="text-sm hover:underline cursor-pointer sm:text-base"
             >
               {{ major.code }}
             </a>
@@ -110,12 +117,12 @@ onMounted(() => {
           :href="`mailto:${email}`"
           class="flex items-center gap-2 underline text-sm sm:text-base break-all"
         >
-          <RiMailLine class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
+          <RiMailFill class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
           <span>{{ email }}</span>
         </a>
 
         <p class="flex items-center gap-2 text-sm sm:text-base">
-          <RiPhoneLine class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
+          <RiPhoneFill class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
           <span>{{ phone }}</span>
         </p>
 
@@ -135,7 +142,7 @@ onMounted(() => {
     </div>
 
     <!-- Divider -->
-    <div class="border-t border-neutral"></div>
+    <div class="border-t border-neutral/50"></div>
 
     <!-- Copyright -->
     <p class="text-center text-xs opacity-90 sm:text-sm">

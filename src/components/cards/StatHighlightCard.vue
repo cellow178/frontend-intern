@@ -25,7 +25,7 @@ defineProps<{
       </p>
     </div>
 
-    <p class="text-sm text-text-alt leading-relaxed lg:text-base">
+    <p class="text-sm font-medium text-text-alt leading-relaxed lg:text-base">
       {{ description }}
     </p>
   </div>

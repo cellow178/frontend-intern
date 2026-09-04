@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import api from '@/services/api.ts'
-import Navbar from '@/components/layout/Navbar.vue'
 import BackButton from '@/components/ui/BackButton.vue'
 import EventCard from '@/components/cards/EventCard.vue'
+import EventHighlightCard from '@/components/cards/EventHighlightCard.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import Footer from '@/components/layout/Footer.vue'
 import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 
@@ -20,7 +19,9 @@ interface EventItem {
 }
 
 const eventList = ref<EventItem[]>([])
+const EventHighlight = ref<EventItem | null>(null)
 const isLoading = ref(true)
+const isHighlightLoading = ref(true)
 
 const searchQuery = ref('')
 const sortOrder = ref<'asc' | 'desc'>('asc') // asc = terdekat duluan
@@ -31,9 +32,6 @@ const LIMIT = 18
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
 // Format Date Logic
-// Start: 2024-06-01, End: 2024-06-02 => 2024-06-01 - 02
-// Start: 2024-06-01, End: 2024-07-01 => 2024-06-01 - 2024-07-01
-
 const formatDateRange = (start: string, end: string) => {
   if (!end || start === end) return start
 
@@ -48,6 +46,32 @@ const formatDateRange = (start: string, end: string) => {
 
   return `${start} - ${end}`
 }
+
+const fetchEventHighlight = async () => {
+  isHighlightLoading.value = true
+  try {
+    const response = await api.get('/no-auth/events', {
+      params: {
+        limit: 1,
+        sort_by: 'start_date',
+        sort: 'asc',
+      },
+    })
+    if (response.data.data && response.data.data.length > 0) {
+      EventHighlight.value = response.data.data[0]
+    }
+  } catch (err) {
+    console.error('Gagal ambil data highlight event:', err)
+  } finally {
+    isHighlightLoading.value = false
+  }
+}
+
+const filteredEventList = computed(() => {
+  if (!EventHighlight.value) return eventList.value
+
+  return eventList.value.filter((item) => item.id !== EventHighlight.value?.id)
+})
 
 const fetchEvents = async () => {
   isLoading.value = true
@@ -91,13 +115,12 @@ watch(currentPage, () => {
 })
 
 onMounted(() => {
+  fetchEventHighlight()
   fetchEvents()
 })
 </script>
 
 <template>
-  <Navbar />
-
   <main class="pt-24 pb-16 px-6 lg:px-12">
     <BackButton class="mb-6 sm:mb-8" />
 
@@ -108,6 +131,28 @@ onMounted(() => {
         7 Semarang.
       </p>
     </div>
+
+    <!-- ================= HIGHLIGHT EVENT SECTION ================= -->
+    <div class="flex justify-center w-full">
+      <!-- Loading Skeleton -->
+      <div
+        v-if="isHighlightLoading"
+        class="w-full max-w-3xl h-64 mb-10 md:mb-16 bg-slate-200/60 animate-pulse rounded-2xl flex items-center justify-center text-text-alt"
+      >
+        Memuat Highlight Event...
+      </div>
+
+      <!-- Komponen Highlight Kamu -->
+      <EventHighlightCard
+        v-else-if="EventHighlight"
+        :title="EventHighlight.title"
+        :location="EventHighlight.location"
+        :date-label="formatDateRange(EventHighlight.start_date, EventHighlight.end_date)"
+        :img-cover="EventHighlight.img_cover"
+        :slug="EventHighlight.slug"
+      />
+    </div>
+    <!-- ================= END HIGHLIGHT SECTION ================= -->
 
     <!-- Search & Sort -->
     <div
@@ -136,7 +181,8 @@ onMounted(() => {
     <!-- Grid event -->
     <div v-if="isLoading" class="text-center text-text-alt py-16">Memuat...</div>
 
-    <div v-else-if="eventList.length === 0" class="text-center text-text-alt py-16">
+    <!-- Ubah eventList.length menjadi filteredEventList.length -->
+    <div v-else-if="filteredEventList.length === 0" class="text-center text-text-alt py-16">
       Tidak ada event ditemukan.
     </div>
 
@@ -144,8 +190,9 @@ onMounted(() => {
       v-else
       class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
     >
+      <!-- Ubah item in eventList menjadi item in filteredEventList -->
       <EventCard
-        v-for="item in eventList"
+        v-for="item in filteredEventList"
         :key="item.id"
         :slug="item.slug"
         :title="item.title"
@@ -158,6 +205,4 @@ onMounted(() => {
     <!-- Pagination -->
     <Pagination v-model:current-page="currentPage" :total-page="totalPage" class="mt-12" />
   </main>
-
-  <Footer />
 </template>

@@ -2,8 +2,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api.ts'
-import Navbar from '@/components/layout/Navbar.vue'
-import Footer from '@/components/layout/Footer.vue'
 import BackButton from '@/components/ui/BackButton.vue'
 import { RiMapPinLine, RiCalendarEventLine } from '@remixicon/vue'
 
@@ -71,8 +69,6 @@ watch(
 </script>
 
 <template>
-  <Navbar />
-
   <main class="pt-24 pb-16 px-6 lg:px-12">
     <BackButton class="mb-6 sm:mb-8" />
 
@@ -120,6 +116,4 @@ watch(
       </article>
     </div>
   </main>
-
-  <Footer />
 </template>

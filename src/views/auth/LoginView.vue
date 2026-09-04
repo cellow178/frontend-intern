@@ -64,7 +64,6 @@ const handleLogin = async () => {
   usernameError.value = true
   passwordError.value = true
   loginError.value = 'Username atau password salah.'
-  toastStore.show('Gagal login.', 'error')
 }
 
 watch(username, () => {
@@ -82,7 +81,6 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col md:flex-row">
-    <!-- Gradient branding: full screen di mobile, half di md+ -->
     <div
       class="relative flex flex-col overflow-hidden bg-linear-to-br from-primary to-accent px-6 sm:px-10 py-6 sm:py-8 md:py-12 min-h-screen md:min-h-screen md:w-1/2"
     >
@@ -93,9 +91,17 @@ onMounted(() => {
         class="pointer-events-none absolute -bottom-20 -left-10 w-72 h-72 rounded-full bg-neutral/10 blur-2xl"
       ></div>
 
-      <BackButton variant="white" class="relative z-10" />
+      <!-- Back-Button Mobile -->
+      <div class="md:hidden relative z-10">
+        <BackButton variant="white" :sticky="false" />
+      </div>
 
-      <!-- Branding besar (logo + nama sekolah): disembunyikan di mobile, tampil dari md ke atas -->
+      <!-- Back-Button Desktop -->
+      <div class="hidden md:block absolute top-6 left-6 md:left-10 z-20">
+        <BackButton variant="white" :sticky="false" />
+      </div>
+
+      <!-- Branding desktop -->
       <div
         class="hidden md:flex relative z-10 flex-1 flex-col items-center justify-center text-center gap-6 py-8 md:py-0"
       >
@@ -116,12 +122,12 @@ onMounted(() => {
         <p class="text-neutral/85 text-base italic max-w-xs">"{{ motto }}"</p>
       </div>
 
-      <!-- Motto singkat: tampil di mobile juga, di atas card -->
+      <!-- Motto -->
       <p class="md:hidden relative z-10 text-neutral/85 text-sm italic text-center mt-4">
         "{{ motto }}"
       </p>
 
-      <!-- Card form: mengambang di tengah, khusus mobile -->
+      <!-- Card Form Mobile -->
       <div class="relative z-10 flex-1 flex items-center justify-center md:hidden">
         <div class="w-full max-w-sm bg-neutral rounded-2xl shadow-xl px-6 py-8">
           <div class="flex items-center gap-3 mb-6">
@@ -212,13 +218,13 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Deskripsi akses: tampil di semua ukuran layar -->
+      <!-- Deskripsi Akses -->
       <p class="relative z-10 text-neutral/60 text-sm text-center mt-4 md:mt-0">
         Akses khusus civitas sekolah — Siswa, Guru & Staff
       </p>
     </div>
 
-    <!-- Right: plain form half, hanya tampil dari md ke atas -->
+    <!-- Form Desktop -->
     <div
       class="hidden md:flex items-center justify-center bg-neutral px-6 sm:px-10 md:px-16 py-10 sm:py-14 md:w-1/2 md:min-h-screen"
     >

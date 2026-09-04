@@ -8,6 +8,7 @@ export interface BackButtonProps {
   fallback?: string
   variant?: 'neutral' | 'white'
   animated?: boolean
+  sticky?: boolean // baru
 }
 
 const props = withDefaults(defineProps<BackButtonProps>(), {
@@ -15,6 +16,7 @@ const props = withDefaults(defineProps<BackButtonProps>(), {
   fallback: '/',
   variant: 'neutral',
   animated: false,
+  sticky: true, // default tetap sticky, biar tidak mengubah behavior halaman lain (NewsView, dll)
 })
 
 const router = useRouter()
@@ -33,6 +35,8 @@ const colorClasses = computed(() => {
   }
   return 'text-text-neutral hover:text-primary active:text-primary/80'
 })
+
+const positionClasses = computed(() => (props.sticky ? 'lg:sticky lg:top-24 lg:z-10' : ''))
 </script>
 
 <template>
@@ -41,7 +45,7 @@ const colorClasses = computed(() => {
     @click="goBack"
     :aria-label="label"
     class="btn-slide-left-anim inline-flex items-center gap-2 text-sm md:text-base font-medium cursor-pointer py-2 px-1 -ml-1 rounded-lg"
-    :class="[colorClasses]"
+    :class="[colorClasses, positionClasses]"
   >
     <RiArrowLeftLine class="w-5 h-5 shrink-0" />
     <span>{{ label }}</span>
