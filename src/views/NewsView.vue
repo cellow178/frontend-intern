@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api.ts'
 import BackButton from '@/components/ui/BackButton.vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import Select from '@/components/ui/Select.vue'
 import NewsCard from '@/components/cards/NewsCard.vue'
+import NewsHighlightCard from '@/components/cards/NewsHighlightCard.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
 
@@ -29,8 +30,11 @@ interface Category {
 }
 
 const newsList = ref<NewsItem[]>([])
+const highlightNews = ref<NewsItem | null>(null)
 const categories = ref<Category[]>([])
+
 const isLoading = ref(true)
+const isHighlightLoading = ref(true)
 
 // Filter & Pagination States
 const searchQuery = ref('')
@@ -40,7 +44,35 @@ const currentPage = ref(1)
 const totalPage = ref(1)
 
 const LIMIT = 18
+const dummyPic = 'https://picsum.photos/1600/1200'
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
+
+// Computed filter: Menyaring newsList agar berita highlight tidak muncul ganda
+const filteredNewsList = computed(() => {
+  if (!highlightNews.value) return newsList.value
+  return newsList.value.filter((item) => item.id !== highlightNews.value?.id)
+})
+
+// Fetch Highlight News (Berita terbaru)
+const fetchHighlightNews = async () => {
+  isHighlightLoading.value = true
+  try {
+    const response = await api.get('/no-auth/news', {
+      params: {
+        limit: 1,
+        sort_by: 'created_at',
+        sort: 'desc',
+      },
+    })
+    if (response.data.data && response.data.data.length > 0) {
+      highlightNews.value = response.data.data[0]
+    }
+  } catch (err) {
+    console.error('Gagal ambil data highlight berita:', err)
+  } finally {
+    isHighlightLoading.value = false
+  }
+}
 
 // Fetch Categories
 const fetchCategories = async () => {
@@ -58,7 +90,6 @@ const fetchCategories = async () => {
       }
     }
 
-    // Cek jika ada query "sort" dari URL
     if (route.query.sort === 'asc' || route.query.sort === 'desc') {
       sortOrder.value = route.query.sort as 'asc' | 'desc'
     }
@@ -67,7 +98,7 @@ const fetchCategories = async () => {
   }
 }
 
-// Fetch News
+// Fetch News List
 const fetchNews = async () => {
   isLoading.value = true
   try {
@@ -99,9 +130,6 @@ const onSearchInput = () => {
   }, 400)
 }
 
-// Dummy picture
-const dummyPic = 'https://picsum.photos/1600/1200'
-
 const onCategoryChange = () => {
   currentPage.value = 1
   fetchNews()
@@ -120,6 +148,7 @@ watch(currentPage, () => {
 
 onMounted(async () => {
   await fetchCategories()
+  await fetchHighlightNews()
   fetchNews()
 })
 </script>
@@ -135,6 +164,30 @@ onMounted(async () => {
         Semarang
       </p>
     </div>
+
+    <!-- ================= HIGHLIGHT NEWS SECTION ================= -->
+    <div class="flex justify-center w-full">
+      <!-- Loading Skeleton -->
+      <div
+        v-if="isHighlightLoading"
+        class="w-full max-w-3xl h-64 mb-10 md:mb-16 bg-slate-200/60 animate-pulse rounded-2xl flex items-center justify-center text-text-alt"
+      >
+        Memuat Highlight Berita...
+      </div>
+
+      <!-- Komponen Highlight Berita -->
+      <NewsHighlightCard
+        v-else-if="highlightNews"
+        :title="highlightNews.title"
+        :content="highlightNews.content"
+        :category-name="highlightNews.category_name"
+        :author="highlightNews.author"
+        :created-at="highlightNews.created_at"
+        :img-cover="dummyPic"
+        :slug="highlightNews.slug"
+      />
+    </div>
+    <!-- ================= END HIGHLIGHT SECTION ================= -->
 
     <!-- Search, Filter Kategori, & Sort -->
     <div
@@ -152,7 +205,7 @@ onMounted(async () => {
         />
       </div>
 
-      <!-- Filter Kategori Dropdown + Sort Toggle: sejajar & center di mobile -->
+      <!-- Filter Kategori Dropdown + Sort Toggle -->
       <div class="flex items-center justify-center gap-3 w-full sm:w-auto sm:gap-4">
         <div class="w-full max-w-50 sm:w-auto">
           <Select
@@ -176,10 +229,10 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Grid berita -->
+    <!-- Grid Berita -->
     <div v-if="isLoading" class="text-center text-text-alt py-16">Memuat...</div>
 
-    <div v-else-if="newsList.length === 0" class="text-center text-text-alt py-16">
+    <div v-else-if="filteredNewsList.length === 0" class="text-center text-text-alt py-16">
       Tidak ada berita ditemukan.
     </div>
 
@@ -188,7 +241,7 @@ onMounted(async () => {
       class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
     >
       <NewsCard
-        v-for="item in newsList"
+        v-for="item in filteredNewsList"
         :key="item.id"
         :slug="item.slug"
         :title="item.title"
