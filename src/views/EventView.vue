@@ -28,7 +28,7 @@ const sortOrder = ref<'asc' | 'desc'>('asc') // asc = terdekat duluan
 const currentPage = ref(1)
 const totalPage = ref(1)
 
-const LIMIT = 18
+const LIMIT = 19
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
 // Format Date Logic

@@ -43,7 +43,7 @@ const sortOrder = ref<'desc' | 'asc'>('desc')
 const currentPage = ref(1)
 const totalPage = ref(1)
 
-const LIMIT = 18
+const LIMIT = 19
 const dummyPic = 'https://picsum.photos/1600/1200'
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
