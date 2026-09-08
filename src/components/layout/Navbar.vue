@@ -380,9 +380,10 @@ onUnmounted(() => {
 
         <!-- Mobile: super-admin & guru dapat 3 opsi -->
         <div v-if="hasAccountDropdown" class="mt-2 pt-3 border-t-2 border-primary/20">
-          <p class="text-xs font-semibold text-primary uppercase tracking-wide px-1 mb-2">
-            Akun Saya
-          </p>
+          <div class="px-1 mb-2">
+            <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.fullname }}</p>
+            <p class="text-xs text-primary uppercase tracking-wide">{{ user?.role_name }}</p>
+          </div>
           <div class="bg-secondary rounded-xl overflow-hidden flex flex-col">
             <RouterLink
               to="/profil"

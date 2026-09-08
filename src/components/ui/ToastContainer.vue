@@ -14,9 +14,15 @@ const route = useRoute()
 const toastStore = useToastStore()
 const { toasts } = storeToRefs(toastStore)
 
-const topPositionClass = computed(() =>
-  route.meta.hasLayout === false ? 'top-4 sm:top-6' : 'top-20 sm:top-24',
-)
+const topPositionClass = computed(() => {
+  if (route.path.startsWith('/dashboard')) {
+    return 'top-18 sm:top-18'
+  }
+  if (route.meta.hasLayout === false) {
+    return 'top-4 sm:top-6'
+  }
+  return 'top-20 sm:top-20'
+})
 
 const borderClass = {
   success: 'border-success',

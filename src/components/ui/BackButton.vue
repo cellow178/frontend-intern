@@ -6,22 +6,29 @@ import { RiArrowLeftLine } from '@remixicon/vue'
 export interface BackButtonProps {
   label?: string
   fallback?: string
+  to?: string
   variant?: 'neutral' | 'white'
   animated?: boolean
-  sticky?: boolean // baru
+  sticky?: boolean
 }
 
 const props = withDefaults(defineProps<BackButtonProps>(), {
   label: 'Kembali',
   fallback: '/',
+  to: undefined,
   variant: 'neutral',
   animated: false,
-  sticky: true, // default tetap sticky, biar tidak mengubah behavior halaman lain (NewsView, dll)
+  sticky: true,
 })
 
 const router = useRouter()
 
 const goBack = () => {
+  if (props.to) {
+    router.push(props.to)
+    return
+  }
+
   if (window.history.length > 1 && window.history.state?.back) {
     router.back()
   } else {

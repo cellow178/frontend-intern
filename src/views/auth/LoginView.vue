@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToastStore } from '@/stores/toast'
 import { RiUserLine, RiLockLine, RiEyeLine, RiEyeOffLine } from '@remixicon/vue'
@@ -15,6 +15,7 @@ import logoImg from '@/assets/logo.png'
 import BackButton from '@/components/ui/BackButton.vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const siteDataStore = useSiteDataStore()
 const authStore = useAuthStore()
@@ -56,7 +57,17 @@ const handleLogin = async () => {
   // Login berhasil
   if (result.success) {
     toastStore.show('Login berhasil!', 'success')
-    router.push('/')
+
+    const redirectTo = route.query.redirect as string | undefined
+    const roleCode = authStore.user?.role_code
+
+    if (redirectTo) {
+      router.push(redirectTo)
+    } else if (['developer', 'super-admin'].includes(roleCode ?? '')) {
+      router.push('/dashboard')
+    } else {
+      router.push('/')
+    }
     return
   }
 
@@ -93,12 +104,12 @@ onMounted(() => {
 
       <!-- Back-Button Mobile -->
       <div class="md:hidden relative z-10">
-        <BackButton variant="white" :sticky="false" />
+        <BackButton variant="white" to="/" :sticky="false" />
       </div>
 
       <!-- Back-Button Desktop -->
       <div class="hidden md:block absolute top-6 left-6 md:left-10 z-20">
-        <BackButton variant="white" :sticky="false" />
+        <BackButton variant="white" to="/" :sticky="false" />
       </div>
 
       <!-- Branding desktop -->
