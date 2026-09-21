@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useSiteDataStore } from '@/stores/siteData'
 import api from '@/services/api.ts'
 import BackButton from '@/components/ui/BackButton.vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 import Select from '@/components/ui/Select.vue'
+import Input from '@/components/ui/Input.vue'
 import NewsCard from '@/components/cards/NewsCard.vue'
 import NewsHighlightCard from '@/components/cards/NewsHighlightCard.vue'
+import NewsCardSkeleton from '@/components/skeletons/NewsCardSkeleton.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
 
 const route = useRoute()
+const siteDataStore = useSiteDataStore()
 
 interface NewsItem {
   id: number
@@ -18,9 +22,10 @@ interface NewsItem {
   title: string
   category_name: string
   content: string
-  img_cover: string | null
+  img_cover: any
   author: string
   created_at: string
+  is_highlight?: boolean
 }
 
 interface Category {
@@ -30,11 +35,12 @@ interface Category {
 }
 
 const newsList = ref<NewsItem[]>([])
-const highlightNews = ref<NewsItem | null>(null)
 const categories = ref<Category[]>([])
 
 const isLoading = ref(true)
-const isHighlightLoading = ref(true)
+
+// Ambil highlightNews dari Pinia Store
+const highlightNews = computed(() => siteDataStore.highlightNews)
 
 // Filter & Pagination States
 const searchQuery = ref('')
@@ -44,35 +50,13 @@ const currentPage = ref(1)
 const totalPage = ref(1)
 
 const LIMIT = 19
-const dummyPic = 'https://picsum.photos/1600/1200'
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
-// Computed filter: Menyaring newsList agar berita highlight tidak muncul ganda
+// Filter agar berita yang sedang jadi highlight tidak muncul ganda di list utama
 const filteredNewsList = computed(() => {
   if (!highlightNews.value) return newsList.value
   return newsList.value.filter((item) => item.id !== highlightNews.value?.id)
 })
-
-// Fetch Highlight News (Berita terbaru)
-const fetchHighlightNews = async () => {
-  isHighlightLoading.value = true
-  try {
-    const response = await api.get('/no-auth/news', {
-      params: {
-        limit: 1,
-        sort_by: 'created_at',
-        sort: 'desc',
-      },
-    })
-    if (response.data.data && response.data.data.length > 0) {
-      highlightNews.value = response.data.data[0]
-    }
-  } catch (err) {
-    console.error('Gagal ambil data highlight berita:', err)
-  } finally {
-    isHighlightLoading.value = false
-  }
-}
 
 // Fetch Categories
 const fetchCategories = async () => {
@@ -98,7 +82,7 @@ const fetchCategories = async () => {
   }
 }
 
-// Fetch News List
+// Fetch News List Paginasi
 const fetchNews = async () => {
   isLoading.value = true
   try {
@@ -130,7 +114,8 @@ const onSearchInput = () => {
   }, 400)
 }
 
-const onCategoryChange = () => {
+const onCategoryChange = (val: string | number | null) => {
+  selectedCategoryId.value = val !== null && val !== '' ? Number(val) : null
   currentPage.value = 1
   fetchNews()
 }
@@ -148,14 +133,14 @@ watch(currentPage, () => {
 
 onMounted(async () => {
   await fetchCategories()
-  await fetchHighlightNews()
+  await siteDataStore.fetchNews()
   fetchNews()
 })
 </script>
 
 <template>
   <main class="pt-24 pb-16 px-6 lg:px-12">
-    <BackButton class="mb-6 sm:mb-8" />
+    <BackButton to="/" class="mb-6 sm:mb-8" />
 
     <div class="flex flex-col items-center gap-4 text-center mb-10">
       <SectionTitle title="Berita" />
@@ -165,43 +150,33 @@ onMounted(async () => {
       </p>
     </div>
 
-    <!-- ================= HIGHLIGHT NEWS SECTION ================= -->
-    <div class="flex justify-center w-full">
-      <!-- Loading Skeleton -->
-      <div
-        v-if="isHighlightLoading"
-        class="w-full max-w-3xl h-64 mb-10 md:mb-16 bg-slate-200/60 animate-pulse rounded-2xl flex items-center justify-center text-text-alt"
-      >
-        Memuat Highlight Berita...
-      </div>
-
-      <!-- Komponen Highlight Berita -->
+    <div v-if="highlightNews" class="flex justify-center w-full mb-10">
       <NewsHighlightCard
-        v-else-if="highlightNews"
+        :slug="highlightNews.slug"
         :title="highlightNews.title"
-        :content="highlightNews.content"
         :category-name="highlightNews.category_name"
+        :content="highlightNews.content"
+        :img-cover="highlightNews.img_cover"
         :author="highlightNews.author"
         :created-at="highlightNews.created_at"
-        :img-cover="dummyPic"
-        :slug="highlightNews.slug"
       />
     </div>
-    <!-- ================= END HIGHLIGHT SECTION ================= -->
 
     <!-- Search, Filter Kategori, & Sort -->
     <div
-      class="flex flex-col items-center gap-3 mb-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4"
+      class="flex flex-col items-center gap-3 my-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4"
     >
       <!-- Search Bar -->
-      <div class="relative w-full max-w-md">
-        <RiSearchLine class="w-5 h-5 text-text-alt absolute left-4 top-1/2 -translate-y-1/2" />
-        <input
+      <div class="w-full max-w-md">
+        <Input
           v-model="searchQuery"
-          @input="onSearchInput"
           type="text"
+          variant="rounded-full"
+          size="mobile"
           placeholder="Cari berita..."
-          class="w-full border border-text-alt/30 rounded-full pl-11 pr-4 py-3 focus:outline-none focus:border-primary transition-colors"
+          :icon="RiSearchLine"
+          icon-position="left"
+          @input="onSearchInput"
         />
       </div>
 
@@ -209,8 +184,10 @@ onMounted(async () => {
       <div class="flex items-center justify-center gap-3 w-full sm:w-auto sm:gap-4">
         <div class="w-full max-w-50 sm:w-auto">
           <Select
-            v-model="selectedCategoryId"
-            placeholder="Pilih Kategori"
+            :model-value="selectedCategoryId"
+            placeholder=""
+            variant="rounded-full"
+            size="mobile"
             :options="[
               { value: null, label: 'Semua Kategori' },
               ...categories.map((c) => ({ value: c.id, label: c.name })),
@@ -221,16 +198,21 @@ onMounted(async () => {
 
         <button
           @click="toggleSort"
-          class="flex items-center gap-2 border border-text-alt/30 rounded-full px-4 py-3 sm:px-5 text-sm text-text-neutral hover:border-primary hover:text-primary transition-colors cursor-pointer shrink-0"
+          class="flex items-center gap-2 border border-text-alt/30 rounded-full px-3.5 py-1.5 text-sm sm:px-5 sm:py-3 sm:text-base text-text-neutral hover:border-primary hover:text-primary transition-colors cursor-pointer shrink-0"
         >
-          <RiTimeLine class="w-5 h-5" />
+          <RiTimeLine class="w-4 h-4 sm:w-5 sm:h-5" />
           {{ sortOrder === 'desc' ? 'Terbaru' : 'Terlama' }}
         </button>
       </div>
     </div>
 
-    <!-- Grid Berita -->
-    <div v-if="isLoading" class="text-center text-text-alt py-16">Memuat...</div>
+    <!-- Grid Berita Skeleton / Content -->
+    <div
+      v-if="isLoading"
+      class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
+    >
+      <NewsCardSkeleton v-for="n in 6" :key="`skeleton-${n}`" />
+    </div>
 
     <div v-else-if="filteredNewsList.length === 0" class="text-center text-text-alt py-16">
       Tidak ada berita ditemukan.
@@ -245,11 +227,11 @@ onMounted(async () => {
         :key="item.id"
         :slug="item.slug"
         :title="item.title"
+        :category-name="item.category_name"
         :content="item.content"
-        :img-cover="dummyPic"
+        :img-cover="item.img_cover"
         :author="item.author"
         :created-at="item.created_at"
-        :category-name="item.category_name"
       />
     </div>
 

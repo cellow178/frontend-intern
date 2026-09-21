@@ -5,6 +5,7 @@ import BackButton from '@/components/ui/BackButton.vue'
 import EventCard from '@/components/cards/EventCard.vue'
 import EventHighlightCard from '@/components/cards/EventHighlightCard.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import Input from '@/components/ui/Input.vue'
 import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
 import SectionTitle from '@/components/ui/SectionTitle.vue'
 
@@ -122,7 +123,7 @@ onMounted(() => {
 
 <template>
   <main class="pt-24 pb-16 px-6 lg:px-12">
-    <BackButton class="mb-6 sm:mb-8" />
+    <BackButton to="/" class="mb-6 sm:mb-8" />
 
     <div class="flex flex-col items-center gap-4 text-center mb-10">
       <SectionTitle title="Event" />
@@ -158,14 +159,15 @@ onMounted(() => {
     <div
       class="flex flex-col items-center gap-3 mb-10 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4"
     >
-      <div class="relative w-full max-w-md">
-        <RiSearchLine class="w-5 h-5 text-text-alt absolute left-4 top-1/2 -translate-y-1/2" />
-        <input
+      <div class="w-full max-w-md">
+        <Input
           v-model="searchQuery"
-          @input="onSearchInput"
           type="text"
+          variant="rounded-full"
           placeholder="Cari event..."
-          class="w-full border border-text-alt/30 rounded-full pl-11 pr-4 py-3 focus:outline-none focus:border-primary transition-colors"
+          :icon="RiSearchLine"
+          icon-position="left"
+          @input="onSearchInput"
         />
       </div>
 
@@ -181,7 +183,6 @@ onMounted(() => {
     <!-- Grid event -->
     <div v-if="isLoading" class="text-center text-text-alt py-16">Memuat...</div>
 
-    <!-- Ubah eventList.length menjadi filteredEventList.length -->
     <div v-else-if="filteredEventList.length === 0" class="text-center text-text-alt py-16">
       Tidak ada event ditemukan.
     </div>
@@ -190,7 +191,6 @@ onMounted(() => {
       v-else
       class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
     >
-      <!-- Ubah item in eventList menjadi item in filteredEventList -->
       <EventCard
         v-for="item in filteredEventList"
         :key="item.id"

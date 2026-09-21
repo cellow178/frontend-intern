@@ -9,7 +9,7 @@ import {
   RiNewspaperLine,
   RiBarChartLine,
   RiChat3Line,
-  RiCopyrightLine,
+  RiLayoutBottomLine,
   RiDatabase2Line,
 } from '@remixicon/vue'
 import type { Component } from 'vue'
@@ -42,7 +42,7 @@ export const dashboardMenu: MenuGroup[] = [
       { label: 'Berita', routeName: 'dashboard-berita', icon: RiNewspaperLine },
       { label: 'Voting', routeName: 'dashboard-voting', icon: RiBarChartLine },
       { label: 'Kritik & Saran', routeName: 'dashboard-kritik-saran', icon: RiChat3Line },
-      { label: 'Footer', routeName: 'dashboard-footer', icon: RiCopyrightLine },
+      { label: 'Footer', routeName: 'dashboard-footer', icon: RiLayoutBottomLine },
     ],
   },
   {

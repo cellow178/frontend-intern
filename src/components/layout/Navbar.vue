@@ -125,7 +125,7 @@ const handleLogout = async () => {
   isLoggingOut.value = false
   isMobileMenuOpen.value = false
   toastStore.show('Logout berhasil.', 'info')
-  router.push('/login')
+  router.push('/')
 }
 
 onMounted(() => {

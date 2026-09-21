@@ -7,7 +7,7 @@ withDefaults(
     iconLeft?: Component
     iconRight?: Component
     variant?: 'primary' | 'neutral'
-    size?: 'lg' | 'sm'
+    size?: 'lg' | 'md' | 'sm'
     type?: 'button' | 'submit' | 'reset'
     disabled?: boolean
   }>(),
@@ -26,11 +26,15 @@ withDefaults(
   <button
     :type="type"
     :disabled="disabled"
-    class="btn-press-anim flex items-center justify-center gap-2 font-medium rounded-xl cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+    class="btn-press-anim flex items-center justify-center gap-2 font-medium rounded-xl cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200"
     :class="[
       size === 'lg'
         ? 'text-base px-5 py-2.5 shadow-md md:text-lg md:px-8 md:py-3 md:shadow-xl'
-        : 'text-sm px-4 py-2 shadow-sm',
+        : '',
+
+      size === 'md' ? 'text-sm px-4.5 py-2.5 shadow-md md:text-base md:px-6 md:py-2.5' : '',
+
+      size === 'sm' ? 'text-sm px-4 py-2 shadow-sm' : '',
 
       variant === 'primary'
         ? 'bg-primary hover:bg-primary text-neutral hover:shadow-[0_4px_20px_#FF9644]'
@@ -40,7 +44,11 @@ withDefaults(
     <component
       :is="iconLeft"
       v-if="iconLeft"
-      :class="size === 'lg' ? 'w-5 h-5 shrink-0 md:w-6 md:h-6' : 'w-4 h-4 shrink-0'"
+      :class="[
+        size === 'lg' ? 'w-5 h-5 shrink-0 md:w-6 md:h-6' : '',
+        size === 'md' ? 'w-5 h-5 shrink-0' : '',
+        size === 'sm' ? 'w-4 h-4 shrink-0' : '',
+      ]"
     />
 
     <span>{{ label }}</span>
@@ -48,7 +56,11 @@ withDefaults(
     <component
       :is="iconRight"
       v-if="iconRight"
-      :class="size === 'lg' ? 'w-5 h-5 shrink-0 md:w-6 md:h-6' : 'w-4 h-4 shrink-0'"
+      :class="[
+        size === 'lg' ? 'w-5 h-5 shrink-0 md:w-6 md:h-6' : '',
+        size === 'md' ? 'w-5 h-5 shrink-0' : '',
+        size === 'sm' ? 'w-4 h-4 shrink-0' : '',
+      ]"
     />
   </button>
 </template>

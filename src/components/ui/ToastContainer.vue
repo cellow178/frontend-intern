@@ -27,19 +27,19 @@ const topPositionClass = computed(() => {
 const borderClass = {
   success: 'border-success',
   error: 'border-error',
-  info: 'border-primary',
+  info: 'border-info',
 }
 
 const iconClass = {
   success: 'text-success',
   error: 'text-error',
-  info: 'text-primary',
+  info: 'text-info',
 }
 
 const barClass = {
   success: 'bg-success',
   error: 'bg-error',
-  info: 'bg-primary',
+  info: 'bg-info',
 }
 </script>
 

@@ -13,7 +13,13 @@ interface Major {
 interface Banner {
   id: number
   title: string
-  img_cover: string
+  img_cover: {
+    ext: string
+    url: string
+    tumbnail_url: string
+    filename: string
+    field_value: string
+  } | null
   url: string
 }
 
@@ -128,8 +134,10 @@ export const useSiteDataStore = defineStore('siteData', {
 
     async fetchBanners() {
       if (this.loaded.banners) return
+
       try {
         const response = await api.get('/no-auth/banners')
+
         this.banners = response.data.data
         this.loaded.banners = true
       } catch (err) {

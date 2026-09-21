@@ -2,7 +2,6 @@
 
 <template>
   <div class="animate-pulse">
-    
     <!-- Hero Skeleton -->
     <div class="relative h-screen w-full overflow-hidden bg-text-alt/5">
       <div
@@ -141,7 +140,7 @@
         class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14 lg:max-w-14xl"
       >
         <div
-          v-for="n in 9"
+          v-for="n in 8"
           :key="`major-skel-${n}`"
           class="w-full lg:w-90 bg-text-alt/5 rounded-xl p-4 sm:p-5 lg:p-6 flex flex-col gap-2 sm:gap-4"
         >
@@ -389,77 +388,5 @@
         </div>
       </div>
     </div>
-
-    <!-- Footer Skeleton -->
-    <footer
-      class="bg-text-alt/5 border-t border-text-alt/10 flex flex-col px-6 py-10 gap-8 sm:px-8 sm:gap-10 lg:px-12 lg:py-12 lg:gap-12"
-    >
-      <div
-        class="grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-10 sm:gap-y-10 lg:flex lg:items-start lg:justify-between lg:gap-6"
-      >
-        <div class="flex flex-col gap-3 col-span-2 sm:gap-4 lg:col-span-1 lg:w-fit lg:max-w-md">
-          <div class="flex items-center gap-3 sm:gap-4">
-            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-text-alt/15 rounded-full shrink-0"></div>
-            <div class="space-y-1.5">
-              <div class="h-5 w-40 sm:h-7 sm:w-52 bg-text-alt/15 rounded"></div>
-              <div class="h-4 w-28 sm:h-5 sm:w-36 bg-text-alt/15 rounded"></div>
-            </div>
-          </div>
-          <div class="space-y-2 pt-1">
-            <div class="h-3.5 w-full sm:h-4 bg-text-alt/15 rounded"></div>
-            <div class="h-3.5 w-full sm:h-4 bg-text-alt/15 rounded"></div>
-            <div class="h-3.5 w-3/4 sm:h-4 bg-text-alt/15 rounded"></div>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3 sm:gap-4 lg:w-fit">
-          <div class="h-5 w-20 sm:h-7 sm:w-28 bg-text-alt/15 rounded"></div>
-          <div class="flex flex-col gap-2.5">
-            <div
-              v-for="n in 6"
-              :key="`footer-menu-${n}`"
-              class="h-3.5 w-24 sm:h-4 sm:w-32 bg-text-alt/15 rounded"
-            ></div>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3 sm:gap-4 lg:w-fit">
-          <div class="h-5 w-36 sm:h-7 sm:w-52 bg-text-alt/15 rounded"></div>
-          <div class="flex gap-x-6 sm:gap-x-10 lg:gap-x-20">
-            <div class="flex flex-col gap-2.5">
-              <div
-                v-for="n in 3"
-                :key="`footer-major-1-${n}`"
-                class="h-3.5 w-16 sm:h-4 sm:w-20 bg-text-alt/15 rounded"
-              ></div>
-            </div>
-            <div class="flex flex-col gap-2.5">
-              <div
-                v-for="n in 3"
-                :key="`footer-major-2-${n}`"
-                class="h-3.5 w-16 sm:h-4 sm:w-20 bg-text-alt/15 rounded"
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3 sm:gap-4 lg:w-fit">
-          <div class="h-5 w-28 sm:h-7 sm:w-36 bg-text-alt/15 rounded"></div>
-          <div class="h-4 w-36 sm:h-4.5 sm:w-44 bg-text-alt/15 rounded"></div>
-          <div class="h-4 w-28 sm:h-4.5 sm:w-32 bg-text-alt/15 rounded"></div>
-          <div class="flex items-center gap-3 pt-1">
-            <div
-              v-for="n in 4"
-              :key="`footer-social-${n}`"
-              class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-text-alt/15"
-            ></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="border-t border-text-alt/10"></div>
-
-      <div class="h-3.5 w-64 mx-auto sm:h-4 sm:w-80 bg-text-alt/15 rounded"></div>
-    </footer>
   </div>
 </template>

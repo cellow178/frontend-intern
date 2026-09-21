@@ -27,12 +27,14 @@ const menuItems = [
   { label: 'Kritik & Saran', href: '#kritik-saran' },
 ]
 
-const socialLinks = computed(() => [
-  { icon: RiYoutubeFill, href: footer.value.yt },
-  { icon: RiInstagramFill, href: footer.value.ig },
-  { icon: RiFacebookFill, href: footer.value.fb },
-  { icon: RiLinkedinFill, href: footer.value.linkedin },
-])
+const socialLinks = computed(() =>
+  [
+    { icon: RiYoutubeFill, href: footer.value.yt },
+    { icon: RiInstagramFill, href: footer.value.ig },
+    { icon: RiFacebookFill, href: footer.value.fb },
+    { icon: RiLinkedinFill, href: footer.value.linkedin },
+  ].filter((social) => !!social.href),
+)
 
 const scrollToSection = (href: string) => {
   const target = document.querySelector(href)
@@ -126,7 +128,7 @@ onMounted(() => {
           <span>{{ phone }}</span>
         </p>
 
-        <div class="flex items-center gap-3">
+        <div v-if="socialLinks.length > 0" class="flex items-center gap-3">
           <a
             v-for="(social, index) in socialLinks"
             :key="index"

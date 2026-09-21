@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToastStore } from '@/stores/toast'
-import { RiUserLine, RiLockLine, RiEyeLine, RiEyeOffLine } from '@remixicon/vue'
+import { RiUserLine, RiLockLine } from '@remixicon/vue'
 
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
@@ -26,7 +26,6 @@ const { loading } = storeToRefs(authStore)
 
 const username = ref('')
 const password = ref('')
-const showPassword = ref(false)
 
 const usernameError = ref(false)
 const passwordError = ref(false)
@@ -170,7 +169,7 @@ onMounted(() => {
                 :error="usernameError"
               />
 
-              <p v-if="loginError" class="mt-1 text-xs text-red-500">
+              <p v-if="loginError" class="mt-1 text-xs text-error">
                 {{ loginError }}
               </p>
             </div>
@@ -184,26 +183,15 @@ onMounted(() => {
                 Password
               </label>
 
-              <div class="relative">
-                <Input
-                  id="password-mobile"
-                  v-model="password"
-                  :type="showPassword ? 'text' : 'password'"
-                  placeholder="Masukan password"
-                  :error="passwordError"
-                />
+              <Input
+                id="password-mobile"
+                v-model="password"
+                type="password"
+                placeholder="Masukan password"
+                :error="passwordError"
+              />
 
-                <button
-                  type="button"
-                  @click="showPassword = !showPassword"
-                  class="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-alt hover:text-primary transition-colors"
-                >
-                  <RiEyeOffLine v-if="showPassword" class="w-4 h-4" />
-                  <RiEyeLine v-else class="w-4 h-4" />
-                </button>
-              </div>
-
-              <p v-if="loginError" class="mt-1 text-xs text-red-500">
+              <p v-if="loginError" class="mt-1 text-xs text-error">
                 {{ loginError }}
               </p>
             </div>
@@ -260,7 +248,7 @@ onMounted(() => {
               :error="usernameError"
             />
 
-            <p v-if="loginError" class="mt-1 text-xs text-red-500">
+            <p v-if="loginError" class="mt-1 text-xs text-error">
               {{ loginError }}
             </p>
           </div>
@@ -274,26 +262,15 @@ onMounted(() => {
               Password
             </label>
 
-            <div class="relative">
-              <Input
-                id="password"
-                v-model="password"
-                :type="showPassword ? 'text' : 'password'"
-                placeholder="Masukan password"
-                :error="passwordError"
-              />
+            <Input
+              id="password"
+              v-model="password"
+              type="password"
+              placeholder="Masukan password"
+              :error="passwordError"
+            />
 
-              <button
-                type="button"
-                @click="showPassword = !showPassword"
-                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-alt hover:text-primary transition-colors"
-              >
-                <RiEyeOffLine v-if="showPassword" class="w-4 h-4 sm:w-5 sm:h-5" />
-                <RiEyeLine v-else class="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-            </div>
-
-            <p v-if="loginError" class="mt-1 text-xs text-red-500">
+            <p v-if="loginError" class="mt-1 text-xs text-error">
               {{ loginError }}
             </p>
           </div>

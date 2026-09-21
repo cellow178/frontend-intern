@@ -3,7 +3,6 @@ import api from '@/services/api.ts'
 import { ref, onMounted } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { RiPencilLine, RiSendPlane2Fill } from '@remixicon/vue'
-import Switch from '@/components/ui/Switch.vue'
 import Radio from '../ui/Radio.vue'
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
@@ -20,7 +19,6 @@ const senderName = ref('')
 const type = ref(false) // false = Kritik, true = Saran
 const categoryId = ref<number | null>(null)
 const message = ref('')
-const isAnonymous = ref(false)
 const isSubmitting = ref(false)
 
 const errors = ref<Record<string, string[]>>({})
@@ -36,19 +34,14 @@ const fetchCategories = async () => {
   }
 }
 
-const SENDER_NAME_MAX_LENGTH = 100
-
 const validate = () => {
   errors.value = {}
 
-  if (!isAnonymous.value && senderName.value.length > SENDER_NAME_MAX_LENGTH) {
-    errors.value.sender_name = [`Nama pengirim maksimal ${SENDER_NAME_MAX_LENGTH} karakter.`]
-  }
   if (!categoryId.value) {
     errors.value.category_id = ['Kategori feedback wajib diisi.']
   }
   if (!message.value.trim()) {
-    errors.value.message = ['Pesan feedback wajib diisi.']
+    errors.value.message = ['Pesan wajib diisi.']
   }
 
   return Object.keys(errors.value).length === 0
@@ -60,19 +53,17 @@ const submitFeedback = async () => {
   isSubmitting.value = true
   try {
     const response = await api.post('/no-auth/feedback/create', {
-      sender_name: isAnonymous.value ? null : senderName.value,
+      sender_name: senderName.value || null,
       type: type.value,
       category_id: categoryId.value,
       message: message.value,
-      is_anonymous: isAnonymous.value,
     })
 
-    // reset form
+    // Reset form
     senderName.value = ''
     type.value = false
     categoryId.value = null
     message.value = ''
-    isAnonymous.value = false
     errors.value = {}
 
     toastStore.show(
@@ -101,7 +92,7 @@ onMounted(() => {
 <template>
   <section
     id="kritik-saran"
-    class="bg-secondary px-6 py-10 scroll-mt-16 relative sm:px-8 lg:px-12 lg:py-16"
+    class="bg-secondary px-6 py-10 scroll-mt-14 relative sm:px-8 lg:px-12 lg:py-16"
   >
     <div
       class="max-w-7xl mx-auto flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-start"
@@ -130,33 +121,17 @@ onMounted(() => {
 
       <!-- Kolom kanan: form -->
       <form @submit.prevent="submitFeedback" class="flex flex-col gap-5 sm:gap-6" novalidate>
-        <!-- Anonim -->
-        <div class="flex items-center justify-between">
-          <span
-            class="font-bold text-sm transition-colors sm:text-base"
-            :class="isAnonymous ? 'text-primary' : 'text-text-neutral'"
-          >
-            Kirim sebagai anonim
-          </span>
-          <Switch v-model="isAnonymous" />
-        </div>
-
         <!-- Nama pengirim -->
         <div>
           <label
             class="font-bold text-text-neutral text-sm flex items-center justify-between mb-2 sm:text-base"
           >
             <span> Nama Pengirim <span class="font-normal text-text-alt">(Opsional)</span> </span>
-            <span
-              class="text-xs font-normal"
-              :class="senderName.length > 100 ? 'text-red-500' : 'text-text-alt'"
-            >
-              {{ senderName.length }}/100
-            </span>
+            <span class="text-xs font-normal text-text-alt"> {{ senderName.length }}/100 </span>
           </label>
           <Input
             v-model="senderName"
-            :disabled="isAnonymous"
+            maxlength="100"
             placeholder="Ketik di sini..."
             :error="!!errors.sender_name"
           />
@@ -177,7 +152,7 @@ onMounted(() => {
         <!-- Kategori -->
         <Select
           v-model="categoryId"
-          variant="square"
+          variant="semi-rounded"
           :options="categories.map((c) => ({ value: c.id, label: c.category_name }))"
           placeholder="Pilih kategori sesuai pesan anda"
           :error="!!errors.category_id"

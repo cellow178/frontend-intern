@@ -10,11 +10,9 @@ import NewsHighlightCard from '@/components/cards/NewsHighlightCard.vue'
 import Button from '@/components/ui/Button.vue'
 
 const store = useSiteDataStore()
+// 'news' di-destruktur langsung dari Pinia Store
 const { news, highlightNews } = storeToRefs(store)
 const router = useRouter()
-
-// Dummy picture
-const dummyPic = 'https://picsum.photos/1600/1200'
 
 // Grid 3 kolom (tablet): hitung berapa placeholder dibutuhkan biar baris terakhir rata
 const tabletPlaceholderCount = computed(() => {
@@ -23,7 +21,9 @@ const tabletPlaceholderCount = computed(() => {
 })
 
 // Desktop (flex-wrap): tampilkan placeholder kalau jumlah berita minimal 2 & tidak habis dibagi 3
-const showDesktopPlaceholder = computed(() => news.value.length === 1 || news.value.length >= 2 && news.value.length % 3 !== 0)
+const showDesktopPlaceholder = computed(
+  () => news.value.length === 1 || (news.value.length >= 2 && news.value.length % 3 !== 0),
+)
 
 // Belum ada berita sama sekali
 const isNewsEmpty = computed(() => news.value.length === 0)
@@ -48,13 +48,13 @@ onMounted(() => {
 
     <NewsHighlightCard
       v-if="highlightNews"
+      :slug="highlightNews.slug"
       :title="highlightNews.title"
+      :category-name="highlightNews.category_name"
       :content="highlightNews.content"
-      :img-cover="dummyPic"
+      :img-cover="highlightNews.img_cover"
       :author="highlightNews.author"
       :created-at="highlightNews.created_at"
-      :category-name="highlightNews.category_name"
-      :slug="highlightNews.slug"
     />
 
     <!-- State kosong: belum ada berita sama sekali -->
@@ -76,6 +76,7 @@ onMounted(() => {
       v-else
       class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16"
     >
+      <!-- PERBAIKAN: Mengubah 'item in newsList' menjadi 'item in news' -->
       <NewsCard
         v-for="item in news"
         :key="item.id"
@@ -83,7 +84,7 @@ onMounted(() => {
         :title="item.title"
         :category-name="item.category_name"
         :content="item.content"
-        :img-cover="dummyPic"
+        :img-cover="item.img_cover"
         :author="item.author"
         :created-at="item.created_at"
       />
@@ -119,7 +120,7 @@ onMounted(() => {
       </div>
 
       <!-- Placeholder dekoratif: desktop (flex-wrap) -->
-      <div v-if="showDesktopPlaceholder" class="relative h-full min-h-94 hidden lg:block lg:w-72">
+      <div v-if="showDesktopPlaceholder" class="relative h-full min-h-118 hidden lg:block lg:w-79">
         <div
           class="absolute inset-0 bg-neutral border-2 border-secondary rounded-xl -rotate-6 shadow-sm"
         ></div>
