@@ -2,9 +2,7 @@
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useSiteDataStore } from '@/stores/siteData'
-import { useAuthStore } from '@/stores/auth'
-import { useToastStore } from '@/stores/toast'
+import { useSiteDataStore, type Banner } from '@/stores/siteData'
 import { getFullFileUrl } from '@/utils/file'
 import { RiArrowRightUpLine, RiSchoolFill } from '@remixicon/vue'
 import Button from '@/components/ui/Button.vue'
@@ -13,40 +11,63 @@ const router = useRouter()
 const store = useSiteDataStore()
 const { banners, schoolName, motto, heroDescription } = storeToRefs(store)
 
-const authStore = useAuthStore()
-const isAuthenticated = computed(() => !!authStore.token)
-
-const toastStore = useToastStore()
-const handleVotingCenter = () => {
-  if (!isAuthenticated.value) {
-    toastStore.show('Silakan login terlebih dahulu untuk mengakses Voting', 'info')
-    router.push('/login')
-    return
-  }
-  router.push('/voting')
+const goToNewsWithQuery = (keyword: string = 'Prestasi Siswa') => {
+  router.push({
+    path: '/berita',
+    query: {
+      category: keyword,
+    },
+  })
 }
 
-const getBannerImage = (banner: (typeof banners.value)[number]) => {
-  if (!banner?.img_cover?.url) return ''
-  return getFullFileUrl(banner.img_cover.url) || ''
+// Mengambil URL penuh dari properti img_cover banner
+const getBannerImage = (banner: Banner | null | undefined): string => {
+  return getFullFileUrl(banner?.img_cover) ?? ''
 }
 
 const currentIndex = ref(0)
-const isFirstImageReady = ref(false) // baru render section setelah gambar pertama siap
+const isFirstImageReady = ref(false)
+const loadedImages = ref<Set<string>>(new Set())
+const isTransitioning = ref(false)
 let intervalId: ReturnType<typeof setInterval> | undefined
 
 const currentBanner = computed(() => banners.value[currentIndex.value] ?? null)
 
-const nextImage = () => {
-  if (banners.value.length === 0) return
-  currentIndex.value = (currentIndex.value + 1) % banners.value.length
+// Preload Image Promise dengan Caching Set
+const preloadImage = (url: string): Promise<boolean> => {
+  if (!url) return Promise.resolve(false)
+  if (loadedImages.value.has(url)) return Promise.resolve(true)
+
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      loadedImages.value.add(url)
+      resolve(true)
+    }
+    img.onerror = () => {
+      // Jika gagal muat, tandai tetap false
+      resolve(false)
+    }
+    img.src = url
+  })
 }
 
-const startAutoRotate = () => {
-  stopAutoRotate()
-  if (banners.value.length > 1) {
-    intervalId = setInterval(nextImage, 5000)
+// Berpindah ke Slide Berikutnya (Aman dengan Pre-validation)
+const nextImage = async () => {
+  if (banners.value.length <= 1 || isTransitioning.value) return
+
+  const nextIndex = (currentIndex.value + 1) % banners.value.length
+  const nextBannerUrl = getBannerImage(banners.value[nextIndex])
+
+  isTransitioning.value = true
+
+  // Pastikan gambar slide selanjutnya SUDAH terunduh sebelum mengganti index
+  if (nextBannerUrl) {
+    await preloadImage(nextBannerUrl)
   }
+
+  currentIndex.value = nextIndex
+  isTransitioning.value = false
 }
 
 const stopAutoRotate = () => {
@@ -56,38 +77,57 @@ const stopAutoRotate = () => {
   }
 }
 
-const goToBanner = (index: number) => {
+const startAutoRotate = () => {
+  stopAutoRotate()
+  if (banners.value.length > 1) {
+    intervalId = setInterval(nextImage, 5000)
+  }
+}
+
+const goToBanner = async (index: number) => {
+  if (index === currentIndex.value || isTransitioning.value) return
+
+  stopAutoRotate()
+  isTransitioning.value = true
+
+  const targetBannerUrl = getBannerImage(banners.value[index])
+  if (targetBannerUrl) {
+    await preloadImage(targetBannerUrl)
+  }
+
   currentIndex.value = index
+  isTransitioning.value = false
   startAutoRotate()
 }
 
-// Preload gambar via elemen Image() browser, baru tandai siap setelah benar-benar ter-load
-const preloadImage = (url: string) => {
-  return new Promise<void>((resolve) => {
-    const img = new Image()
-    img.onload = () => resolve()
-    img.onerror = () => resolve() // tetap lanjut walau gagal, jangan macet selamanya
-    img.src = url
+// Inisialisasi awal slider
+const initBannerSlider = async () => {
+  if (!banners.value || banners.value.length === 0) return
+
+  const firstBannerUrl = getBannerImage(banners.value[0])
+  if (firstBannerUrl) {
+    await preloadImage(firstBannerUrl)
+  }
+
+  isFirstImageReady.value = true
+  startAutoRotate()
+
+  // Background preload untuk seluruh gambar sisanya secara asinkron
+  banners.value.forEach((banner) => {
+    const url = getBannerImage(banner)
+    if (url) preloadImage(url)
   })
 }
 
 watch(
-  () => banners.value.length,
-  async (newLen) => {
-    if (newLen > 0) {
+  banners,
+  async (newBanners) => {
+    if (newBanners && newBanners.length > 0) {
       currentIndex.value = 0
-      const firstBanner = banners.value[0]
-      const firstImageUrl = firstBanner ? getBannerImage(firstBanner) : ''
-
-      if (firstImageUrl) {
-        await preloadImage(firstImageUrl)
-      }
-
-      isFirstImageReady.value = true
-      startAutoRotate()
+      await initBannerSlider()
     }
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 )
 
 const handleBannerClick = () => {
@@ -101,9 +141,11 @@ const scrollToSection = (href: string) => {
   target?.scrollIntoView({ behavior: 'smooth' })
 }
 
-onMounted(() => {
-  store.fetchBanners()
-  store.fetchGlobalConfig()
+onMounted(async () => {
+  await Promise.all([store.fetchBanners(), store.fetchGlobalConfig()])
+  if (banners.value.length > 0 && !isFirstImageReady.value) {
+    initBannerSlider()
+  }
 })
 
 onUnmounted(() => {
@@ -114,8 +156,7 @@ onUnmounted(() => {
 <template>
   <section
     id="beranda"
-    class="relative h-screen w-full overflow-hidden transition-colors duration-300"
-    :class="isFirstImageReady ? '' : 'bg-secondary'"
+    class="relative h-screen w-full overflow-hidden bg-secondary transition-colors duration-300"
   >
     <transition name="banner-fade">
       <div
@@ -128,7 +169,7 @@ onUnmounted(() => {
       ></div>
     </transition>
 
-    <div class="absolute inset-0 bg-black/60 z-1"></div>
+    <div class="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
 
     <button
       v-if="currentBanner?.url"
@@ -162,7 +203,7 @@ onUnmounted(() => {
         <span>{{ motto }}</span>
       </div>
 
-      <h1 class="text-neutral font-extrabold text-3xl mb-3 sm:text-5xl sm:mb-4 lg:text-6xl">
+      <h1 class="text-neutral font-extrabold text-3xl mb-3 sm:text-5xl sm:mb-4 lg:text-6xl uppercase">
         {{ schoolName }}
       </h1>
 
@@ -179,11 +220,11 @@ onUnmounted(() => {
           @click="scrollToSection('#video-profil')"
         />
         <Button
-          label="Pusat Voting"
+          label="Prestasi Siswa"
           variant="neutral"
           :icon-right="RiArrowRightUpLine"
           class="w-full justify-center sm:flex-1 lg:w-auto lg:flex-none"
-          @click="handleVotingCenter"
+          @click="goToNewsWithQuery('Prestasi Siswa')"
         />
       </div>
     </div>
@@ -191,9 +232,15 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.banner-fade-enter-active,
+.banner-fade-enter-active {
+  transition: opacity 1.2s ease-in-out;
+}
+
 .banner-fade-leave-active {
-  transition: opacity 1s ease-in-out;
+  transition: opacity 1.2s ease-in-out;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .banner-fade-enter-from,

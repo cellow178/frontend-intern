@@ -76,7 +76,7 @@ const totalData = computed(() => props.totalItems ?? props.items.length)
         <div class="flex-1 max-w-md min-w-40 sm:min-w-48">
           <Input
             v-model="searchQuery"
-            size="normal"
+            size="mobile"
             type="text"
             :placeholder="searchPlaceholder"
             :icon="RiSearchLine"

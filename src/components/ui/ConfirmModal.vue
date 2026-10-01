@@ -45,7 +45,7 @@ const emit = defineEmits<{
           <button
             type="button"
             :disabled="isLoading"
-            class="px-4 py-2 rounded-xl text-sm font-medium text-text-neutral bg-secondary hover:bg-secondary/80 transition-colors disabled:opacity-50"
+            class="px-4 py-2 rounded-xl text-sm font-medium border border-text-alt/20 text-text-neutral bg-primary/20 hover:bg-primary/10 transition-colors disabled:opacity-50"
             @click="emit('cancel')"
           >
             {{ cancelText || 'Batal' }}

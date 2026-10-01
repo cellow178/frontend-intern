@@ -4,6 +4,7 @@ import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
+import { useSiteDataStore } from '@/stores/siteData'
 import { dashboardMenu } from '@/config/dashboardMenu'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import {
@@ -12,7 +13,6 @@ import {
   RiArrowRightSLine,
   RiArrowDownSLine,
   RiLogoutBoxRLine,
-  RiUser3Line,
   RiHomeLine,
 } from '@remixicon/vue'
 import logoImg from '@/assets/logo.png'
@@ -21,7 +21,10 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
+const siteDataStore = useSiteDataStore()
+
 const { user } = storeToRefs(authStore)
+const { schoolName } = storeToRefs(siteDataStore)
 
 const isSidebarOpen = ref(false)
 const isAccountDropdownOpen = ref(false)
@@ -71,6 +74,7 @@ const handleLogout = async () => {
 }
 
 onMounted(() => {
+  siteDataStore.fetchGlobalConfig()
   window.addEventListener('click', handleClickOutside)
 })
 
@@ -99,15 +103,23 @@ onUnmounted(() => {
       class="fixed inset-y-0 left-0 z-50 w-72 bg-neutral border-r border-secondary flex flex-col transition-transform duration-250 lg:static lg:z-auto lg:w-64 lg:shrink-0 lg:translate-x-0 h-full"
       :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
-      <!-- Sidebar Header / Logo -->
-      <div class="flex items-center gap-3 px-6 h-16 border-b border-secondary shrink-0">
+      <!-- Container Header Sidebar -->
+      <div
+        class="flex items-center gap-3 px-6 min-h-16 h-auto py-3 border-b border-secondary shrink-0"
+      >
         <img :src="logoImg" alt="Logo" class="w-8 h-8 shrink-0" />
-        <div class="leading-tight">
-          <p class="font-bold text-sm text-text-neutral">SMKN 7 SEMARANG</p>
-          <p class="text-[11px] text-text-alt">Admin Panel</p>
+
+        <div class="leading-tight min-w-0 flex-1">
+          <p
+            class="font-bold text-sm text-text-neutral wrap-break-word line-clamp-2 uppercase"
+            :title="schoolName"
+          >
+            {{ schoolName }}
+          </p>
+          <p class="text-[11px] text-text-alt mt-0.5">Pusat Kelola</p>
         </div>
         <button
-          class="ml-auto lg:hidden text-text-alt hover:text-text-neutral"
+          class="ml-auto lg:hidden text-text-alt hover:text-text-neutral shrink-0"
           @click="closeSidebar"
           aria-label="Tutup menu"
         >
@@ -210,15 +222,6 @@ onUnmounted(() => {
                 {{ user?.role_name || 'Administrator' }}
               </p>
             </div>
-
-            <RouterLink
-              to="/profil"
-              @click="isAccountDropdownOpen = false"
-              class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-secondary transition-colors text-sm font-medium text-text-neutral"
-            >
-              <RiUser3Line class="w-4 h-4 shrink-0 text-text-alt" />
-              <span>Profil</span>
-            </RouterLink>
 
             <RouterLink
               to="/"

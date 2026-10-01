@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, nextTick } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
-import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
@@ -14,10 +13,12 @@ const isLoading = ref(true)
 const isSaving = ref(false)
 
 const videoUrl = ref('')
+const mapEmbed = ref('')
 const rawConfigData = ref<Record<string, any>>({})
 
 const errors = reactive({
   videoUrl: false,
+  mapEmbed: false,
 })
 
 const submitButtonLabel = computed(() => (isSaving.value ? 'Menyimpan...' : 'Simpan'))
@@ -40,6 +41,22 @@ const youtubeEmbedUrl = computed(() => {
   return null
 })
 
+const parsedMapSrc = computed(() => {
+  const val = mapEmbed.value.trim()
+  if (!val) return null
+
+  if (val.includes('<iframe')) {
+    const srcMatch = val.match(/src=["']([^"']+)["']/)
+    return srcMatch ? srcMatch[1] : null
+  }
+
+  if (val.startsWith('http://') || val.startsWith('https://')) {
+    return val
+  }
+
+  return null
+})
+
 const fetchVideoProfile = async () => {
   isLoading.value = true
   try {
@@ -48,35 +65,16 @@ const fetchVideoProfile = async () => {
 
     rawConfigData.value = data
     videoUrl.value = data.video_profile ?? ''
+    mapEmbed.value = data.map_embed ?? ''
   } catch (err) {
-    console.error('Gagal ambil data video profile:', err)
-    toastStore.show('Gagal memuat data video profile.', 'error')
+    console.error('Gagal ambil data video profil:', err)
+    toastStore.show('Gagal memuat data video profil.', 'error')
   } finally {
     isLoading.value = false
   }
 }
 
-const validate = () => {
-  errors.videoUrl = !videoUrl.value.trim()
-
-  if (errors.videoUrl) {
-    toastStore.show('Link video wajib diisi.', 'error')
-
-    nextTick(() => {
-      document.querySelector('.border-error')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      })
-    })
-
-    return false
-  }
-  return true
-}
-
 const handleSave = async () => {
-  if (!validate()) return
-
   isSaving.value = true
   try {
     await api.put('/global-config/update', {
@@ -96,13 +94,14 @@ const handleSave = async () => {
       footer_fb: rawConfigData.value.footer_fb,
       footer_linkedin: rawConfigData.value.footer_linkedin,
 
-      video_profile: videoUrl.value,
+      video_profile: videoUrl.value.trim() || null,
+      map_embed: mapEmbed.value.trim() || null,
     })
-    toastStore.show('Video profile berhasil disimpan.', 'success')
+    toastStore.show('Video profil & lokasi berhasil disimpan.', 'success')
     fetchVideoProfile()
   } catch (err: any) {
-    console.error('Gagal simpan video profile:', err)
-    toastStore.show(err.response?.data?.message || 'Gagal menyimpan video profile.', 'error')
+    console.error('Gagal simpan video profil:', err)
+    toastStore.show(err.response?.data?.message || 'Gagal menyimpan video profil.', 'error')
   } finally {
     isSaving.value = false
   }
@@ -115,30 +114,30 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <h1 class="text-xl font-bold text-text-neutral">Video Profile</h1>
+    <h1 class="text-xl font-bold text-text-neutral">Video Profil & Lokasi</h1>
 
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <div v-if="isLoading" class="text-text-alt py-16 text-center">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat video profil..." />
       </div>
 
-      <div v-else class="flex flex-col gap-6">
+      <div v-else class="flex flex-col gap-6 max-w-4xl">
+        <!-- Input Video Profil -->
         <div>
           <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
             <span>Link Youtube Video Profil</span>
-            <RequiredBadge />
           </label>
           <Input
             v-model="videoUrl"
             type="url"
-            size="mobile"
+            size="large"
             placeholder="https://www.youtube.com/watch?v=..."
             :error="errors.videoUrl"
             @input="errors.videoUrl = false"
           />
-          <p v-if="errors.videoUrl" class="text-sm text-error mt-1">Link video wajib diisi.</p>
         </div>
 
+        <!-- Preview Video Profil -->
         <div v-if="youtubeEmbedUrl">
           <label class="block text-sm font-medium text-text-neutral mb-2">Preview Video</label>
           <div class="w-full max-w-2xl aspect-video rounded-xl overflow-hidden bg-black">
@@ -166,6 +165,42 @@ onMounted(() => {
           </p>
         </div>
 
+        <!-- Input Google Map Embed -->
+        <div>
+          <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
+            <span>Embed Google Maps</span>
+          </label>
+          <Input
+            v-model="mapEmbed"
+            type="text"
+            size="large"
+            placeholder='<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'
+            :error="errors.mapEmbed"
+            @input="errors.mapEmbed = false"
+          />
+        </div>
+
+        <!-- Preview Google Map -->
+        <div v-if="parsedMapSrc">
+          <label class="block text-sm font-medium text-text-neutral mb-2">Preview Peta</label>
+          <div class="w-full max-w-2xl h-72 rounded-xl overflow-hidden bg-black">
+            <iframe
+              :src="parsedMapSrc"
+              class="w-full h-full"
+              frameborder="0"
+              allowfullscreen
+              loading="lazy"
+            />
+          </div>
+        </div>
+
+        <div v-else-if="mapEmbed">
+          <p class="text-sm text-text-alt">
+            Format embed Google Maps tidak valid — preview tidak dapat ditampilkan.
+          </p>
+        </div>
+
+        <!-- Button Simpan -->
         <div>
           <Button
             type="button"

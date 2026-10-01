@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
-import { getFullFileUrl } from '@/utils/file'
+import { getFullFileUrl, type FileSource } from '@/utils/file'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
@@ -105,8 +105,10 @@ const fetchDetail = async () => {
     initialImgCover.value = data.img_cover?.field_value || null
     formData.status = data.status || 'draft'
 
-    imagePreviewUrl.value = getFullFileUrl(data.img_cover?.url)
+    imagePreviewUrl.value = getFullFileUrl(data.img_cover as FileSource)
 
+    // Tunggu perbaruan reactivity selesai sebelum membuat snapshot data awal
+    await nextTick()
     takeSnapshot()
   } catch {
     toastStore.show('Gagal memuat detail berita.', 'error')
@@ -153,17 +155,13 @@ const handleSubmit = async () => {
   const payload: Record<string, any> = {
     title: formData.title,
     slug: null,
-    category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
+    category_id:
+      formData.category_id && formData.category_id !== 'null'
+        ? parseInt(formData.category_id, 10)
+        : null,
     content: formData.content,
     status: formData.status,
-  }
-
-  if (isEditMode.value) {
-    if (formData.img_cover !== initialImgCover.value) {
-      payload.img_cover = formData.img_cover || null
-    }
-  } else {
-    payload.img_cover = formData.img_cover || null
+    img_cover: formData.img_cover ? formData.img_cover : null,
   }
 
   let isSuccess = false
@@ -185,7 +183,7 @@ const handleSubmit = async () => {
   }
 
   if (isSuccess) {
-    isFormDirty.value = false // Matikan penanda dirty agar tidak memicu modal keluar
+    isFormDirty.value = false
     router.push({ name: 'dashboard-berita' }).catch((err) => {
       console.error('Navigasi router gagal:', err)
     })
@@ -193,15 +191,25 @@ const handleSubmit = async () => {
 }
 
 const handleCancel = () => {
-  router.push({ name: 'dashboard-berita' })
+  if (isFormDirty.value) {
+    pendingNavigationTarget.value = 'dashboard-berita'
+    isLeaveModalOpen.value = true
+  } else {
+    router.push({ name: 'dashboard-berita' })
+  }
 }
 
 // Konfirmasi keluar halaman dari modal
 const confirmLeave = () => {
   isFormDirty.value = false
   isLeaveModalOpen.value = false
+
   if (pendingNavigationTarget.value) {
-    router.push(pendingNavigationTarget.value)
+    if (pendingNavigationTarget.value.startsWith('/')) {
+      router.push(pendingNavigationTarget.value)
+    } else {
+      router.push({ name: pendingNavigationTarget.value })
+    }
   } else {
     router.push({ name: 'dashboard-berita' })
   }
@@ -240,6 +248,10 @@ onMounted(() => {
 
   window.addEventListener('beforeunload', handleBeforeUnload)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+})
 </script>
 
 <template>
@@ -250,7 +262,7 @@ onMounted(() => {
 
     <div
       v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20"
+      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
     >
       <LoadingSpinner size="lg" label="Memuat data..." />
     </div>
@@ -258,7 +270,7 @@ onMounted(() => {
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5"
+      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-8 max-w-4xl"
     >
       <!-- Judul Berita -->
       <div class="flex flex-col gap-1.5">

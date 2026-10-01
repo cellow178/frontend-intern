@@ -10,6 +10,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import { RiSaveLine } from '@remixicon/vue'
 
 const router = useRouter()
@@ -209,10 +210,11 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <h1 class="text-xl font-bold text-text-neutral mb-6">Visi Sekolah</h1>
-
+      <h1 class="text-xl font-bold text-text-neutral mb-6">
+        Visi Sekolah <span><RequiredBadge /></span>
+      </h1>
       <div v-if="isVisionLoading" class="text-text-alt py-8 text-center">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat visi..." />
       </div>
 
       <div v-else class="flex flex-col gap-4">
@@ -242,11 +244,12 @@ onUnmounted(() => {
         :is-loading="isLoading"
         :show-add-button="true"
         add-button-label="Tambah Baru"
-        search-placeholder="Cari Misi..."
+        search-placeholder="Cari misi..."
         :current-page="currentPage"
         :total-page="totalPage"
         :items-per-page="pageSize"
         :total-items="totalData"
+        empty-message="Tidak ada misi ditemukan."
         @add="handleAdd"
         @update:current-page="handlePageChange"
         @update:items-per-page="handlePerPageChange"
@@ -309,7 +312,10 @@ onUnmounted(() => {
           </div>
           <p class="text-sm text-text-neutral">{{ item.content }}</p>
           <div class="flex items-center justify-between pt-2 border-t border-secondary/10">
-            <span class="text-xs text-text-alt">Urutan: {{ item.order ?? '-' }}</span>
+            <span class="text-xs text-text-alt"
+              >Urutan:
+              <span class="text-text-neutral font-bold">{{ item.order ?? '-' }}</span></span
+            >
             <DashboardStatusBadge :active="item.active" />
           </div>
         </template>

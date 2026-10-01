@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import type { AxiosError } from 'axios'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
-import { getFullFileUrl } from '@/utils/file'
+import { getFullFileUrl, type FileSource } from '@/utils/file'
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
@@ -12,7 +13,13 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
-import { RiInformationLine, RiEditBoxLine, RiDeleteBinLine, RiSaveLine } from '@remixicon/vue'
+import {
+  RiInformationLine,
+  RiEditBoxLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+  RiExternalLinkLine,
+} from '@remixicon/vue'
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -21,7 +28,7 @@ const toastStore = useToastStore()
 const isHeadlineLoading = ref(true)
 const isSavingHeadline = ref(false)
 const headlineTitle = ref('')
-const rawConfigData = ref<Record<string, any>>({})
+const rawConfigData = ref<Record<string, unknown>>({})
 
 const fetchHeroTagline = async () => {
   isHeadlineLoading.value = true
@@ -29,7 +36,7 @@ const fetchHeroTagline = async () => {
     const response = await api.get('/global-config/show')
     const data = response.data?.data ?? {}
     rawConfigData.value = data
-    headlineTitle.value = data.hero_description ?? ''
+    headlineTitle.value = (data.hero_description as string) ?? ''
   } catch {
     toastStore.show('Gagal memuat headline title.', 'error')
   } finally {
@@ -65,8 +72,9 @@ const handleSaveHeadline = async () => {
     })
     toastStore.show('Headline title berhasil diperbarui.', 'success')
     fetchHeroTagline()
-  } catch (err: any) {
-    toastStore.show(err.response?.data?.message || 'Gagal memperbarui headline title.', 'error')
+  } catch (err) {
+    const error = err as AxiosError<{ message?: string }>
+    toastStore.show(error.response?.data?.message || 'Gagal memperbarui headline title.', 'error')
   } finally {
     isSavingHeadline.value = false
   }
@@ -77,13 +85,7 @@ interface Banner {
   id: number
   title: string
   url: string | null
-  img_cover: {
-    url: string
-    tumbnail_url: string
-    filename: string
-    field_value: string
-    ext: string
-  } | null
+  img_cover: FileSource | null
   active: boolean
 }
 
@@ -134,8 +136,9 @@ const fetchBanners = async () => {
     banners.value = response.data?.data ?? []
     totalData.value = response.data?.total ?? 0
     totalPage.value = response.data?.totalPage ?? 1
-  } catch (error: any) {
-    if (error.name === 'CanceledError' || error.message === 'canceled') return
+  } catch (error) {
+    const err = error as Error
+    if (err.name === 'CanceledError' || err.message === 'canceled') return
     console.error('Error fetching banners:', error)
   } finally {
     isLoading.value = false
@@ -199,12 +202,12 @@ const confirmDelete = async () => {
       return
     }
 
-    // Gunakan pesan custom bahasa Indonesia, bukan pesan raw dari backend
     toastStore.show('Banner berhasil dihapus.', 'success')
     closeDeleteModal()
     fetchBanners()
-  } catch (err: any) {
-    toastStore.show(err.response?.data?.message || 'Gagal menghapus banner.', 'error')
+  } catch (err) {
+    const error = err as AxiosError<{ message?: string }>
+    toastStore.show(error.response?.data?.message || 'Gagal menghapus banner.', 'error')
   } finally {
     isDeleting.value = false
   }
@@ -231,7 +234,7 @@ onUnmounted(() => {
       </h1>
 
       <div v-if="isHeadlineLoading" class="flex flex-col items-center justify-center py-8">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat hero tagline..." />
       </div>
 
       <div v-else class="flex flex-col gap-4">
@@ -261,12 +264,13 @@ onUnmounted(() => {
         :items="banners"
         :is-loading="isLoading"
         :show-add-button="true"
-        search-placeholder="Cari Banner..."
+        search-placeholder="Cari banner..."
         add-button-label="Tambah Banner"
         :current-page="currentPage"
         :total-page="totalPage"
         :items-per-page="pageSize"
         :total-items="totalData"
+        empty-message="Tidak ada banner ditemukan."
         @add="handleAdd"
         @update:current-page="handlePageChange"
         @update:items-per-page="handlePerPageChange"
@@ -300,14 +304,37 @@ onUnmounted(() => {
           </div>
         </template>
 
+        <!-- Column: Image Cover -->
         <template #col-img_cover="{ item }">
-          <img
-            v-if="item.img_cover?.url"
-            :src="getFullFileUrl(item.img_cover.url)!"
-            alt=""
-            class="w-24 h-16 object-cover rounded-lg"
-          />
-          <span v-else class="text-text-alt text-xs">Tidak ada gambar</span>
+          <div class="flex items-center justify-center my-1">
+            <div
+              class="w-24 h-16 rounded-md border border-neutral/20 bg-gray-100 overflow-hidden shadow-sm shrink-0 flex items-center justify-center"
+            >
+              <a
+                v-if="getFullFileUrl(item.img_cover)"
+                :href="getFullFileUrl(item.img_cover)!"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full h-full block relative cursor-pointer group"
+                title="Klik untuk membuka gambar di tab baru"
+              >
+                <img
+                  :src="getFullFileUrl(item.img_cover)!"
+                  :alt="item.title || ''"
+                  class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                />
+                <div
+                  class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+                >
+                  <RiExternalLinkLine class="w-5 h-5" />
+                </div>
+              </a>
+              <div v-else class="flex flex-col items-center justify-center text-text-alt">
+                <RiImageLine />
+                <span class="text-[10px] font-medium mt-0.5">No Image</span>
+              </div>
+            </div>
+          </div>
         </template>
 
         <template #col-title="{ item }">
@@ -336,6 +363,7 @@ onUnmounted(() => {
           </div>
         </template>
 
+        <!-- Mobile View Card -->
         <template #mobile-card="{ item, index }">
           <div class="flex items-center justify-between">
             <span class="text-xs text-text-alt font-medium">
@@ -363,12 +391,33 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <img
-            v-if="item.img_cover?.url"
-            :src="getFullFileUrl(item.img_cover.url)!"
-            alt=""
-            class="w-full h-32 object-cover rounded-lg"
-          />
+          <div
+            class="w-full h-32 rounded-lg border border-neutral/20 bg-gray-100 overflow-hidden shadow-sm shrink-0 flex items-center justify-center"
+          >
+            <a
+              v-if="getFullFileUrl(item.img_cover)"
+              :href="getFullFileUrl(item.img_cover)!"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full h-full block relative cursor-pointer group"
+              title="Klik untuk membuka gambar di tab baru"
+            >
+              <img
+                :src="getFullFileUrl(item.img_cover)!"
+                :alt="item.title || ''"
+                class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+              />
+              <div
+                class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+              >
+                <RiExternalLinkLine class="w-6 h-6" />
+              </div>
+            </a>
+            <div v-else class="flex flex-col items-center justify-center text-text-alt">
+              <RiImageLine class="w-6 h-6" />
+              <span class="text-xs font-medium mt-1">No Image</span>
+            </div>
+          </div>
 
           <p v-if="item.title" class="text-sm font-semibold text-text-neutral">{{ item.title }}</p>
 

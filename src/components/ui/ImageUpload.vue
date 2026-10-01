@@ -8,7 +8,8 @@ const props = withDefaults(
   defineProps<{
     modelValue: string | File | null
     previewUrl?: string | null
-    aspectRatio?: 'rectangle' | 'square'
+    // Tambahkan 'portrait' di sini
+    aspectRatio?: 'rectangle' | 'square' | 'portrait'
     maxSizeMB?: number
   }>(),
   {
@@ -79,11 +80,9 @@ const handleFileChange = async (event: Event) => {
 }
 
 const handleRemove = () => {
-  // Reset input file fisik jika ada
   if (fileInputRef.value) {
     fileInputRef.value.value = ''
   }
-  // Paksa emit null ke parent
   emit('update:modelValue', null)
   emit('update:previewUrl', null)
 }
@@ -107,11 +106,16 @@ const closeZoomModal = () => {
       @change="handleFileChange"
     />
 
-    <!-- Menggunakan hasImage bukan hanya previewUrl -->
     <div
       v-if="hasImage"
       class="group relative overflow-hidden rounded-xl border border-text-alt/20 bg-secondary/10"
-      :class="[aspectRatio === 'square' ? 'aspect-square w-48' : 'aspect-video w-full']"
+      :class="[
+        aspectRatio === 'square'
+          ? 'aspect-square w-48'
+          : aspectRatio === 'portrait'
+            ? 'aspect-3/4 w-48'
+            : 'aspect-video w-full',
+      ]"
     >
       <img
         :src="previewUrl || (typeof modelValue === 'string' ? modelValue : '')"
@@ -145,7 +149,13 @@ const closeZoomModal = () => {
       type="button"
       :disabled="isUploading"
       class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-text-alt/30 rounded-xl text-text-alt hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-secondary/5 cursor-pointer"
-      :class="[aspectRatio === 'square' ? 'aspect-square w-48' : 'aspect-video w-full']"
+      :class="[
+        aspectRatio === 'square'
+          ? 'aspect-square w-48'
+          : aspectRatio === 'portrait'
+            ? 'aspect-3/4 w-48'
+            : 'aspect-video w-full',
+      ]"
       @click="triggerFileInput"
     >
       <RiLoader4Line v-if="isUploading" class="w-8 h-8 animate-spin" />

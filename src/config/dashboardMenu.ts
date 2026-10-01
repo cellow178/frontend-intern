@@ -7,10 +7,9 @@ import {
   RiGraduationCapLine,
   RiCalendarEventLine,
   RiNewspaperLine,
-  RiBarChartLine,
   RiChat3Line,
   RiLayoutBottomLine,
-  RiDatabase2Line,
+  RiListUnordered,
 } from '@remixicon/vue'
 import type { Component } from 'vue'
 
@@ -36,17 +35,18 @@ export const dashboardMenu: MenuGroup[] = [
       { label: 'Banner', routeName: 'dashboard-banner', icon: RiImageLine },
       { label: 'Profil Sekolah', routeName: 'dashboard-profil', icon: RiUser3Line },
       { label: 'Visi Misi', routeName: 'dashboard-visi-misi', icon: RiCompass3Line },
-      { label: 'Video Profile', routeName: 'dashboard-video-profile', icon: RiPlayCircleLine },
+      { label: 'Video Profil', routeName: 'dashboard-video-profil', icon: RiPlayCircleLine },
       { label: 'Jurusan', routeName: 'dashboard-jurusan', icon: RiGraduationCapLine },
       { label: 'Event', routeName: 'dashboard-event', icon: RiCalendarEventLine },
       { label: 'Berita', routeName: 'dashboard-berita', icon: RiNewspaperLine },
-      { label: 'Voting', routeName: 'dashboard-voting', icon: RiBarChartLine },
       { label: 'Kritik & Saran', routeName: 'dashboard-kritik-saran', icon: RiChat3Line },
       { label: 'Footer', routeName: 'dashboard-footer', icon: RiLayoutBottomLine },
     ],
   },
   {
     title: 'Lainnya',
-    items: [{ label: 'Master Data', routeName: 'dashboard-master-data', icon: RiDatabase2Line }],
+    items: [
+      { label: 'Daftar Kategori', routeName: 'dashboard-daftar-kategori', icon: RiListUnordered },
+    ],
   },
 ]

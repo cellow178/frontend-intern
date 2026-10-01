@@ -149,7 +149,7 @@ onMounted(() => {
 
     <div
       v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20"
+      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
     >
       <LoadingSpinner size="lg" label="Memuat data..." />
     </div>
@@ -157,7 +157,7 @@ onMounted(() => {
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5"
+      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5 max-w-4xl"
     >
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
@@ -168,6 +168,7 @@ onMounted(() => {
           v-model="formData.content"
           type="textarea"
           variant="semi-rounded"
+          placeholder="Masukkan misi..."
           :rows="3"
           :error="errors.content"
           @input="errors.content = false"
@@ -184,7 +185,7 @@ onMounted(() => {
           v-model="formData.order"
           type="number"
           variant="semi-rounded"
-          size="mobile"
+          size="large"
           :error="errors.order"
           @input="errors.order = false"
         />

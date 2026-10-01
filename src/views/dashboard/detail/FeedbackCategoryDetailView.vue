@@ -62,7 +62,7 @@ onMounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <BackButton to="/dashboard/master-data?tab=feedback-categories" :sticky="false" />
+      <BackButton to="/dashboard/daftar-kategori?tab=feedback-categories" :sticky="false" />
 
       <div class="border-t border-text-alt/50 mt-2 mb-6"></div>
 

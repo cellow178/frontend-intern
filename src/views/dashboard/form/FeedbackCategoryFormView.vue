@@ -45,7 +45,7 @@ const fetchDetail = async () => {
     formData.active = data.active ? 'true' : 'false'
   } catch {
     toastStore.show('Gagal memuat detail kategori.', 'error')
-    router.push({ name: 'dashboard-master-data' })
+    router.push({ name: 'dashboard-daftar-kategori' })
   } finally {
     isLoading.value = false
   }
@@ -89,7 +89,7 @@ const handleSubmit = async () => {
       toastStore.show('Kategori kritik & saran berhasil ditambahkan!', 'success')
     }
 
-    router.push({ name: 'dashboard-master-data', query: { tab: route.query.tab } })
+    router.push({ name: 'dashboard-daftar-kategori', query: { tab: route.query.tab } })
   } catch (err: any) {
     const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.'
     toastStore.show(msg, 'error')
@@ -99,7 +99,7 @@ const handleSubmit = async () => {
 }
 
 const handleCancel = () => {
-  router.push({ name: 'dashboard-master-data', query: { tab: route.query.tab } })
+  router.push({ name: 'dashboard-daftar-kategori', query: { tab: route.query.tab } })
 }
 
 onMounted(() => {
@@ -110,7 +110,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5 max-w-4xl">
     <h1 class="text-xl font-bold text-text-neutral">
       {{ isEditMode ? 'Edit Kategori Kritik & Saran' : 'Tambah Kategori Kritik & Saran' }}
     </h1>
@@ -135,7 +135,7 @@ onMounted(() => {
         <Input
           v-model="formData.category_name"
           variant="semi-rounded"
-          size="mobile"
+          size="large"
           :error="errors.category_name"
           @input="errors.category_name = false"
         />

@@ -1,66 +1,75 @@
 import { defineStore } from 'pinia'
-import api from '@/services/api.ts'
+import api from '@/services/api'
+import type { FileObjectInput } from '@/utils/file'
 
-interface Major {
+export type FileProperty = FileObjectInput | string | null
+
+export interface Major {
   id: number
   slug: string
-  img_logo: string
+  img_logo: FileProperty
   code: string
   major_name: string
   summary: string
 }
 
-interface Banner {
+export interface Banner {
   id: number
   title: string
-  img_cover: {
-    ext: string
-    url: string
-    tumbnail_url: string
-    filename: string
-    field_value: string
-  } | null
+  img_cover: FileProperty
   url: string
 }
 
-interface Mission {
+export interface Mission {
   id: number
   order: number
   content: string
 }
 
-interface Event {
+export interface Event {
   id: number
   slug: string
   title: string
   location: string
   start_date: string
   end_date: string
-  img_cover: string | null
+  content?: string
+  img_cover: FileProperty
   is_highlight: boolean
 }
 
-interface News {
+export interface News {
   id: number
   slug: string
   title: string
   category_name: string
   content: string
-  img_cover: string | null
+  img_cover: FileProperty
   author: string
   created_at: string
   is_highlight: boolean
 }
 
+export interface ProfileConfig {
+  title: string
+  description: string
+  img_1: FileProperty
+  img_2: FileProperty
+}
+
 export const useSiteDataStore = defineStore('siteData', {
   state: () => ({
-    // global-config
+    // Global Config
     schoolName: '',
     motto: '',
     heroDescription: '',
-    profile: { title: '', description: '', img_1: '', img_2: null as string | null },
+    profile: {
+      title: '',
+      description: '',
+      img_1: null,
+      img_2: null,
+    } as ProfileConfig,
     videoProfile: '',
-    highlightVoting: null as any,
     footer: {
       description: '',
       school_email: '',
@@ -71,7 +80,7 @@ export const useSiteDataStore = defineStore('siteData', {
       linkedin: '',
     },
 
-    // data lain
+    // Dynamic Lists
     majors: [] as Major[],
     banners: [] as Banner[],
     vision: '',
@@ -81,7 +90,7 @@ export const useSiteDataStore = defineStore('siteData', {
     news: [] as News[],
     highlightNews: null as News | null,
 
-    // flag biar fetch cuma sekali per endpoint
+    // Cache Flags
     loaded: {
       globalConfig: false,
       majors: false,
@@ -93,28 +102,20 @@ export const useSiteDataStore = defineStore('siteData', {
   }),
 
   getters: {
-    isFullyLoaded: (state) =>
-      state.loaded.globalConfig &&
-      state.loaded.majors &&
-      state.loaded.banners &&
-      state.loaded.visionMission &&
-      state.loaded.events &&
-      state.loaded.news,
+    isFullyLoaded: (state) => Object.values(state.loaded).every(Boolean),
   },
 
   actions: {
     async fetchGlobalConfig() {
       if (this.loaded.globalConfig) return
       try {
-        const response = await api.get('/no-auth/global-config')
-        const data = response.data.data
-        this.schoolName = data.school_name
-        this.motto = data.motto
-        this.heroDescription = data.hero_description
-        this.profile = data.profile
-        this.videoProfile = data.video_profile
-        this.highlightVoting = data.highlight_voting
-        this.footer = data.footer
+        const { data } = await api.get('/no-auth/global-config')
+        this.schoolName = data.data.school_name
+        this.motto = data.data.motto
+        this.heroDescription = data.data.hero_description
+        this.profile = data.data.profile
+        this.videoProfile = data.data.video_profile
+        this.footer = data.data.footer
         this.loaded.globalConfig = true
       } catch (err) {
         console.error('Gagal ambil global-config:', err)
@@ -124,8 +125,8 @@ export const useSiteDataStore = defineStore('siteData', {
     async fetchMajors() {
       if (this.loaded.majors) return
       try {
-        const response = await api.get('/no-auth/majors')
-        this.majors = response.data.data
+        const { data } = await api.get('/no-auth/majors')
+        this.majors = data.data
         this.loaded.majors = true
       } catch (err) {
         console.error('Gagal ambil majors:', err)
@@ -134,11 +135,9 @@ export const useSiteDataStore = defineStore('siteData', {
 
     async fetchBanners() {
       if (this.loaded.banners) return
-
       try {
-        const response = await api.get('/no-auth/banners')
-
-        this.banners = response.data.data
+        const { data } = await api.get('/no-auth/banners')
+        this.banners = data.data
         this.loaded.banners = true
       } catch (err) {
         console.error('Gagal ambil banners:', err)
@@ -148,9 +147,9 @@ export const useSiteDataStore = defineStore('siteData', {
     async fetchVisionMission() {
       if (this.loaded.visionMission) return
       try {
-        const response = await api.get('/no-auth/vision-mission')
-        this.vision = response.data.data.vision
-        this.missions = response.data.data.missions
+        const { data } = await api.get('/no-auth/vision-mission')
+        this.vision = data.data.vision
+        this.missions = data.data.missions
         this.loaded.visionMission = true
       } catch (err) {
         console.error('Gagal ambil vision-mission:', err)
@@ -160,14 +159,13 @@ export const useSiteDataStore = defineStore('siteData', {
     async fetchEvents() {
       if (this.loaded.events) return
       try {
-        const response = await api.get('/no-auth/events', {
+        const { data } = await api.get('/no-auth/events', {
           params: { sort_by: 'start_date', sort: 'asc' },
         })
-        const allEvents: Event[] = response.data.data
+        const allEvents: Event[] = data.data
 
         this.highlightEvent = allEvents.find((e) => e.is_highlight) ?? null
         this.events = allEvents.filter((e) => !e.is_highlight).slice(0, 3)
-
         this.loaded.events = true
       } catch (err) {
         console.error('Gagal ambil events:', err)
@@ -177,8 +175,8 @@ export const useSiteDataStore = defineStore('siteData', {
     async fetchNews() {
       if (this.loaded.news) return
       try {
-        const response = await api.get('/no-auth/news')
-        const allNews: News[] = response.data.data
+        const { data } = await api.get('/no-auth/news')
+        const allNews: News[] = data.data
 
         this.highlightNews = allNews.find((n) => n.is_highlight) ?? null
         this.news = allNews

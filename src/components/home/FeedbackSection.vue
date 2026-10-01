@@ -132,10 +132,10 @@ onMounted(() => {
           <Input
             v-model="senderName"
             maxlength="100"
-            placeholder="Ketik di sini..."
+            placeholder="Nama anda..."
             :error="!!errors.sender_name"
           />
-          <p v-if="errors.sender_name" class="text-sm text-red-500 mt-1">
+          <p v-if="errors.sender_name" class="text-sm text-error mt-1">
             {{ errors.sender_name[0] }}
           </p>
         </div>
@@ -150,13 +150,16 @@ onMounted(() => {
         </div>
 
         <!-- Kategori -->
-        <Select
-          v-model="categoryId"
-          variant="semi-rounded"
-          :options="categories.map((c) => ({ value: c.id, label: c.category_name }))"
-          placeholder="Pilih kategori sesuai pesan anda"
-          :error="!!errors.category_id"
-        />
+        <div>
+          <Select
+            v-model="categoryId"
+            variant="semi-rounded"
+            :options="categories.map((c) => ({ value: c.id, label: c.category_name }))"
+            placeholder="Pilih kategori sesuai pesan anda"
+            :error="!!errors.category_id"
+          />
+          <p v-if="errors.category_id" class="text-sm text-error mt-1">{{ errors.category_id[0] }}</p>
+        </div>
 
         <!-- Pesan -->
         <div>
@@ -168,14 +171,15 @@ onMounted(() => {
             :rows="3"
             :error="!!errors.message"
           />
-          <p v-if="errors.message" class="text-sm text-red-500 mt-1">{{ errors.message[0] }}</p>
+          <p v-if="errors.message" class="text-sm text-error mt-1">{{ errors.message[0] }}</p>
         </div>
 
         <Button
           type="submit"
           :label="isSubmitting ? 'Mengirim...' : 'Kirim'"
           :icon-right="RiSendPlane2Fill"
-          class="w-full justify-center"
+          :disabled="isSubmitting"
+          class="w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         />
       </form>
     </div>

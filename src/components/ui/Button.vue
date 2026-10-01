@@ -26,7 +26,7 @@ withDefaults(
   <button
     :type="type"
     :disabled="disabled"
-    class="btn-press-anim flex items-center justify-center gap-2 font-medium rounded-xl cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200"
+    class="active:scale-95 flex items-center justify-center gap-2 font-medium rounded-xl cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200"
     :class="[
       size === 'lg'
         ? 'text-base px-5 py-2.5 shadow-md md:text-lg md:px-8 md:py-3 md:shadow-xl'

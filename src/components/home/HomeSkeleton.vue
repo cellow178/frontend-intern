@@ -1,4 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import EventCardSkeleton from '../skeletons/EventCardSkeleton.vue'
+import NewsCardSkeleton from '../skeletons/NewsCardSkeleton.vue'
+</script>
 
 <template>
   <div class="animate-pulse">
@@ -180,31 +183,7 @@
       <div
         class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-12"
       >
-        <div
-          v-for="n in 3"
-          :key="`event-skel-${n}`"
-          class="w-full flex flex-col bg-text-alt/5 rounded-xl overflow-hidden lg:w-72 lg:rounded-2xl"
-        >
-          <div class="h-48 w-full bg-text-alt/15 sm:h-64 lg:h-72"></div>
-
-          <div class="flex flex-col gap-2 p-3 lg:gap-3 lg:p-6">
-            <div>
-              <div class="h-4 w-3/4 bg-text-alt/15 rounded lg:h-6"></div>
-              <div class="w-8 h-0.5 bg-text-alt/15 mt-1.5 lg:w-12 lg:mt-2"></div>
-            </div>
-
-            <div class="flex flex-col gap-1.5 lg:gap-2 pt-1">
-              <div class="flex items-center gap-1.5 lg:gap-2">
-                <div class="w-3.5 h-3.5 rounded-full bg-text-alt/15 shrink-0 lg:w-4 lg:h-4"></div>
-                <div class="h-3 w-1/2 bg-text-alt/15 rounded lg:h-4"></div>
-              </div>
-              <div class="flex items-center gap-1.5 lg:gap-2">
-                <div class="w-3.5 h-3.5 rounded-full bg-text-alt/15 shrink-0 lg:w-4 lg:h-4"></div>
-                <div class="h-3 w-2/3 bg-text-alt/15 rounded lg:h-4"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <EventCardSkeleton v-for="n in 3" :key="`event-skel-${n}`" />
       </div>
 
       <div class="h-11 w-36 bg-text-alt/15 rounded-xl mt-2"></div>
@@ -222,106 +201,11 @@
       <div
         class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-12"
       >
-        <div
-          v-for="n in 3"
-          :key="`news-${n}`"
-          class="w-full flex flex-col bg-text-alt/5 rounded-xl overflow-hidden border border-text-alt/10 lg:w-80 lg:rounded-2xl"
-        >
-          <div class="flex items-center justify-between px-3 py-2.5 lg:px-5 lg:py-4">
-            <div class="h-3 w-1/3 bg-text-alt/15 rounded lg:h-4"></div>
-            <div class="h-3 w-1/4 bg-text-alt/15 rounded lg:h-4"></div>
-          </div>
-          <div class="h-32 w-full bg-text-alt/15 sm:h-40 lg:h-48"></div>
-          <div class="flex flex-col gap-2 p-3 lg:p-5">
-            <div class="h-4 w-16 bg-text-alt/15 rounded-md lg:h-6 lg:w-20"></div>
-            <div class="space-y-1 pt-1">
-              <div class="h-4 w-full bg-text-alt/15 rounded lg:h-5"></div>
-              <div class="h-4 w-3/4 bg-text-alt/15 rounded lg:h-5"></div>
-            </div>
-            <div class="space-y-1.5 pt-1">
-              <div class="h-3 w-full bg-text-alt/15 rounded lg:h-3.5"></div>
-              <div class="h-3 w-4/5 bg-text-alt/15 rounded lg:h-3.5"></div>
-            </div>
-          </div>
-        </div>
+        <NewsCardSkeleton v-for="n in 3" :key="`news-${n}`" />
       </div>
 
       <div class="h-11 w-36 bg-text-alt/15 rounded-xl mt-2"></div>
     </div>
-
-    <!-- Voting Section -->
-    <!-- <div
-      class="bg-text-alt/5 border-y border-text-alt/10 px-6 py-10 flex flex-col items-center gap-8 sm:px-12 sm:py-16 sm:gap-12"
-    >
-      <div class="flex flex-col items-center gap-3 text-center sm:gap-4">
-        <div class="flex flex-row items-center gap-2 sm:gap-4">
-          <div class="h-8 w-32 bg-text-alt/15 rounded-xl sm:h-9 sm:w-40 sm:rounded-2xl"></div>
-          <div class="h-5 w-36 bg-text-alt/15 rounded sm:h-6 sm:w-44"></div>
-        </div>
-
-        <div class="h-7 w-64 bg-text-alt/15 rounded-lg sm:h-10 sm:w-96"></div>
-
-        <div class="w-full max-w-2xl space-y-2 flex flex-col items-center px-4 sm:px-0">
-          <div class="h-4 w-full bg-text-alt/15 rounded sm:h-5"></div>
-          <div class="h-4 w-4/5 bg-text-alt/15 rounded sm:h-5"></div>
-        </div>
-      </div>
-
-      <div
-        class="flex flex-col items-start gap-4 w-full max-w-90 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6 lg:w-auto lg:gap-8"
-      >
-        <div
-          v-for="n in 3"
-          :key="`vote-skel-${n}`"
-          class="w-full flex flex-col gap-2 text-left bg-text-alt/5 rounded-2xl p-4 border border-text-alt/10 lg:items-center lg:text-center lg:gap-4 lg:p-8 lg:w-90"
-        >
-          <div class="h-4 w-20 bg-text-alt/15 rounded sm:h-5 lg:h-6 lg:w-24"></div>
-
-          <div class="flex flex-row items-start gap-4 w-full lg:flex-col lg:items-center">
-            <div
-              class="w-24 h-24 bg-text-alt/15 rounded-xl shrink-0 sm:w-36 sm:h-36 lg:w-56 lg:h-56"
-            ></div>
-
-            <div class="flex flex-col gap-2 flex-1 min-w-0 w-full lg:items-center">
-              <div class="h-5 w-3/4 bg-text-alt/15 rounded sm:h-7 lg:w-2/3"></div>
-
-              <div class="space-y-1.5 w-full pt-1 lg:flex lg:flex-col lg:items-center">
-                <div class="h-3 w-full bg-text-alt/15 rounded lg:h-3.5 lg:w-5/6"></div>
-                <div class="h-3 w-4/5 bg-text-alt/15 rounded lg:h-3.5 lg:w-2/3"></div>
-              </div>
-
-              <div class="h-3.5 w-20 bg-text-alt/15 rounded mt-1 sm:hidden lg:block lg:mt-2"></div>
-            </div>
-          </div>
-
-          <div
-            class="grid grid-cols-2 gap-2 w-full pt-2 lg:gap-4 lg:pt-3 lg:mt-auto border-t border-text-alt/10"
-          >
-            <div class="flex items-center gap-2 lg:gap-3">
-              <div
-                class="w-8 h-8 rounded-lg bg-text-alt/15 shrink-0 lg:w-11 lg:h-11 lg:rounded-xl"
-              ></div>
-              <div class="space-y-1">
-                <div class="h-4 w-8 bg-text-alt/15 rounded lg:h-5"></div>
-                <div class="h-3 w-10 bg-text-alt/15 rounded lg:h-3.5"></div>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 lg:gap-3">
-              <div
-                class="w-8 h-8 rounded-lg bg-text-alt/15 shrink-0 lg:w-11 lg:h-11 lg:rounded-xl"
-              ></div>
-              <div class="space-y-1">
-                <div class="h-4 w-10 bg-text-alt/15 rounded lg:h-5"></div>
-                <div class="h-3 w-12 bg-text-alt/15 rounded lg:h-3.5"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="h-11 w-40 bg-text-alt/15 rounded-xl mt-2"></div>
-    </div> -->
 
     <!-- Feedback Skeleton -->
     <div

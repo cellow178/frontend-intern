@@ -114,7 +114,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+  <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
     <h1 class="text-xl font-bold text-text-neutral mb-6">Konfigurasi Footer Website</h1>
 
     <div v-if="isLoading" class="text-text-alt py-16 text-center">
@@ -129,7 +129,7 @@ onMounted(() => {
             {{ description.length }}/255
           </span>
         </div>
-        <Input v-model="description" type="textarea" />
+        <Input v-model="description" type="textarea" placeholder="Masukkan deskripsi footer..." />
       </div>
 
       <div>
@@ -140,7 +140,7 @@ onMounted(() => {
         <Input
           v-model="schoolTelephone"
           type="text"
-          size="mobile"
+          size="large"
           :error="errors.schoolTelephone"
           @input="errors.schoolTelephone = false"
         />
@@ -157,7 +157,7 @@ onMounted(() => {
         <Input
           v-model="schoolEmail"
           type="email"
-          size="mobile"
+          size="large"
           :error="errors.schoolEmail"
           @input="errors.schoolEmail = false"
         />
@@ -166,22 +166,22 @@ onMounted(() => {
 
       <div>
         <label class="block text-sm font-medium text-text-neutral mb-1.5">Link Youtube</label>
-        <Input v-model="yt" type="url" size="mobile" />
+        <Input v-model="yt" type="url" size="large" placeholder="Masukkan link youtube..." />
       </div>
 
       <div>
         <label class="block text-sm font-medium text-text-neutral mb-1.5">Link Instagram</label>
-        <Input v-model="ig" type="url" size="mobile" />
+        <Input v-model="ig" type="url" size="large" placeholder="Masukkan link instagram..." />
       </div>
 
       <div>
         <label class="block text-sm font-medium text-text-neutral mb-1.5">Link Facebook</label>
-        <Input v-model="fb" type="url" size="mobile" />
+        <Input v-model="fb" type="url" size="large" placeholder="Masukkan link facebook..." />
       </div>
 
       <div>
         <label class="block text-sm font-medium text-text-neutral mb-1.5">Link LinkedIn</label>
-        <Input v-model="linkedin" type="url" size="mobile" />
+        <Input v-model="linkedin" type="url" size="large" placeholder="Masukkan link linkedin..." />
       </div>
 
       <div class="pt-4">

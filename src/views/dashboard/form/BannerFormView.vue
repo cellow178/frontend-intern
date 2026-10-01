@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { getFullFileUrl } from '@/utils/file'
@@ -11,6 +12,17 @@ import Button from '@/components/ui/Button.vue'
 import ImageUpload from '@/components/ui/ImageUpload.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSaveLine } from '@remixicon/vue'
+
+interface BannerDetail {
+  id: number
+  title: string
+  url: string | null
+  active: boolean
+  img_cover?: {
+    field_value?: string
+    url?: string
+  } | null
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -44,14 +56,16 @@ const fetchDetail = async () => {
   isLoading.value = true
   try {
     const response = await api.get(`/banners/${bannerId.value}`)
-    const data = response.data.data
+    const data: BannerDetail = response.data.data
+
     formData.title = data.title || ''
     formData.url = data.url || ''
     formData.img_cover = data.img_cover?.field_value || null
     formData.active = data.active ? 'true' : 'false'
 
-    imagePreviewUrl.value = getFullFileUrl(data.img_cover?.url)
-  } catch {
+    imagePreviewUrl.value = data.img_cover?.url ? getFullFileUrl(data.img_cover.url) : null
+  } catch (err) {
+    console.error('Gagal memuat detail banner:', err)
     toastStore.show('Gagal memuat detail banner.', 'error')
     router.push({ name: 'dashboard-banner' })
   } finally {
@@ -101,8 +115,12 @@ const handleSubmit = async () => {
     }
 
     router.push({ name: 'dashboard-banner' })
-  } catch (err: any) {
-    const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.'
+  } catch (err) {
+    console.error('Error saat menyimpan banner:', err)
+    let msg = 'Terjadi kesalahan saat menyimpan data.'
+    if (axios.isAxiosError(err) && err.response?.data?.message) {
+      msg = err.response.data.message
+    }
     toastStore.show(msg, 'error')
   } finally {
     isSubmitting.value = false
@@ -128,7 +146,7 @@ onMounted(() => {
 
     <div
       v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20"
+      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
     >
       <LoadingSpinner size="lg" label="Memuat data..." />
     </div>
@@ -136,7 +154,7 @@ onMounted(() => {
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5"
+      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-8 max-w-4xl"
     >
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
@@ -159,7 +177,8 @@ onMounted(() => {
         <Input
           v-model="formData.title"
           variant="semi-rounded"
-          size="mobile"
+          placeholder="Masukkan judul banner..."
+          size="large"
           :error="errors.title"
           @input="errors.title = false"
         />
@@ -170,7 +189,7 @@ onMounted(() => {
         <label class="text-sm font-medium text-text-neutral sm:text-base">
           Tautan (URL Target)
         </label>
-        <Input v-model="formData.url" type="url" variant="semi-rounded" size="mobile" />
+        <Input v-model="formData.url" type="url" variant="semi-rounded" placeholder="Masukkan tautan tujuan..." size="large" />
       </div>
 
       <div class="flex flex-col gap-2">

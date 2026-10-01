@@ -8,15 +8,30 @@ import VisiMisiSection from '@/components/home/VisiMisiSection.vue'
 import VideoSection from '@/components/home/VideoSection.vue'
 import MajorSection from '@/components/home/MajorSection.vue'
 import EventSection from '@/components/home/EventSection.vue'
-import VotingSection from '@/components/home/VotingSection.vue'
 import NewsSection from '@/components/home/NewsSection.vue'
 import FeedbackSection from '@/components/home/FeedbackSection.vue'
 import HomeSkeleton from '@/components/home/HomeSkeleton.vue'
 
 const store = useSiteDataStore()
-const { isFullyLoaded } = storeToRefs(store)
+
+// Gunakan nama properti yang sesuai dengan yang ada di store (videoProfile dan majors)
+const { isFullyLoaded, videoProfile, majors } = storeToRefs(store)
 
 const isLoading = computed(() => !isFullyLoaded.value)
+
+// Pengecekan apakah videoProfile ada (tidak null, undefined, atau string kosong)
+const hasVideo = computed(() => {
+  if (!videoProfile.value) return false
+  if (typeof videoProfile.value === 'string') return !!videoProfile.value.trim()
+  return !!videoProfile.value
+})
+
+// Pengecekan apakah data jurusan/majors ada (tidak null & array tidak kosong)
+const hasMajors = computed(() => {
+  if (!majors.value) return false
+  if (Array.isArray(majors.value)) return majors.value.length > 0
+  return true
+})
 
 onMounted(() => {
   store.fetchGlobalConfig()
@@ -35,11 +50,15 @@ onMounted(() => {
     <HeroSection />
     <ProfileSection />
     <VisiMisiSection />
-    <VideoSection />
-    <MajorSection />
+
+    <!-- Hanya tampil jika data video profile tersedia -->
+    <VideoSection v-if="hasVideo" />
+
+    <!-- Hanya tampil jika data jurusan/majors tersedia -->
+    <MajorSection v-if="hasMajors" />
+
     <EventSection />
     <NewsSection />
-    <VotingSection />
     <FeedbackSection />
   </template>
 </template>

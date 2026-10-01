@@ -47,7 +47,7 @@ const fetchDetail = async () => {
     formData.active = data.active ? 'true' : 'false'
   } catch {
     toastStore.show('Gagal memuat detail kategori.', 'error')
-    router.push({ name: 'dashboard-master-data' })
+    router.push({ name: 'dashboard-daftar-kategori' })
   } finally {
     isLoading.value = false
   }
@@ -92,7 +92,7 @@ const handleSubmit = async () => {
       toastStore.show('Kategori berita berhasil ditambahkan!', 'success')
     }
 
-    router.push({ name: 'dashboard-master-data', query: { tab: route.query.tab } })
+    router.push({ name: 'dashboard-daftar-kategori', query: { tab: route.query.tab } })
   } catch (err: any) {
     const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.'
     toastStore.show(msg, 'error')
@@ -102,7 +102,7 @@ const handleSubmit = async () => {
 }
 
 const handleCancel = () => {
-  router.push({ name: 'dashboard-master-data', query: { tab: route.query.tab } })
+  router.push({ name: 'dashboard-daftar-kategori', query: { tab: route.query.tab } })
 }
 
 onMounted(() => {
@@ -120,7 +120,7 @@ onMounted(() => {
 
     <div
       v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20"
+      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
     >
       <LoadingSpinner size="lg" label="Memuat data..." />
     </div>
@@ -128,7 +128,7 @@ onMounted(() => {
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5"
+      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5 max-w-4xl"
     >
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
@@ -138,7 +138,7 @@ onMounted(() => {
         <Input
           v-model="formData.name"
           variant="semi-rounded"
-          size="mobile"
+          size="large"
           :error="errors.name"
           @input="errors.name = false"
         />

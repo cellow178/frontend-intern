@@ -74,7 +74,7 @@ onMounted(() => {
       </h1>
 
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
       <div v-else-if="!feedback" class="text-center text-text-alt py-8">Data tidak ditemukan.</div>

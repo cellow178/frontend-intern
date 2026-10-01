@@ -51,7 +51,7 @@ onMounted(() => {
   >
     <div class="flex flex-col items-center gap-3 md:gap-4">
       <SectionTitle title="Event" />
-      <p class="text-sm text-text-neutral text-center max-w-2xl md:text-lg">
+      <p class="text-sm text-text-neutral text-center max-w-xl md:text-lg">
         Ikuti berbagai kegiatan, acara, lomba, dan informasi terbaru yang diselenggarakan oleh SMKN
         7 Semarang
       </p>
@@ -61,7 +61,8 @@ onMounted(() => {
       v-if="highlightEvent"
       :title="highlightEvent.title"
       :location="highlightEvent.location"
-      :date-label="formatDateRange(highlightEvent.start_date, highlightEvent.end_date)"
+      :start-date="highlightEvent.start_date"
+      :end-date="highlightEvent.end_date"
       :img-cover="highlightEvent.img_cover"
       :slug="highlightEvent.slug"
     />
@@ -75,12 +76,13 @@ onMounted(() => {
         class="absolute inset-0 bg-neutral border-2 border-dashed border-text-alt/20 rounded-xl flex flex-col items-center justify-center gap-2 shadow-sm md:rounded-2xl md:gap-3"
       >
         <RiCalendarEventLine class="w-8 h-8 text-text-alt/50 md:w-10 md:h-10" />
-        <span class="text-text-alt/60 text-sm text-center px-6 md:text-base"
-          >Nantikan event berikutnya...</span
-        >
+        <span class="text-text-alt/60 text-sm text-center px-6 md:text-base">
+          Nantikan event berikutnya...
+        </span>
       </div>
     </div>
 
+    <!-- Grid Event List -->
     <div
       v-else
       class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16"
@@ -90,7 +92,8 @@ onMounted(() => {
         :key="event.id"
         :title="event.title"
         :location="event.location"
-        :date-label="formatDateRange(event.start_date, event.end_date)"
+        :start-date="event.start_date"
+        :end-date="event.end_date"
         :img-cover="event.img_cover"
         :slug="event.slug"
       />
@@ -104,9 +107,9 @@ onMounted(() => {
           class="absolute inset-0 bg-neutral border-2 border-dashed border-text-alt/20 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm"
         >
           <RiCalendarEventLine class="w-5 h-5 text-text-alt/50" />
-          <span class="text-text-alt/60 text-xs text-center px-4"
-            >Nantikan event berikutnya...</span
-          >
+          <span class="text-text-alt/60 text-xs text-center px-4">
+            Nantikan event berikutnya...
+          </span>
         </div>
       </div>
 
@@ -123,9 +126,9 @@ onMounted(() => {
           class="absolute inset-0 bg-neutral border-2 border-dashed border-text-alt/20 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm"
         >
           <RiCalendarEventLine class="w-5 h-5 text-text-alt/50" />
-          <span class="text-text-alt/60 text-xs text-center px-4"
-            >Nantikan event berikutnya...</span
-          >
+          <span class="text-text-alt/60 text-xs text-center px-4">
+            Nantikan event berikutnya...
+          </span>
         </div>
       </div>
 
@@ -138,9 +141,9 @@ onMounted(() => {
           class="absolute inset-0 bg-neutral border-2 border-dashed border-text-alt/20 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm"
         >
           <RiCalendarEventLine class="w-5 h-5 text-text-alt/50" />
-          <span class="text-text-alt/60 text-xs text-center px-4"
-            >Nantikan event berikutnya...</span
-          >
+          <span class="text-text-alt/60 text-xs text-center px-4">
+            Nantikan event berikutnya...
+          </span>
         </div>
       </div>
     </div>

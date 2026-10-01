@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
 import {
@@ -9,7 +9,16 @@ import {
   RiLinkedinFill,
   RiMailFill,
   RiPhoneFill,
+  RiFileCopyLine,
+  RiCheckLine,
 } from '@remixicon/vue'
+
+// Interface untuk memberikan tipe eksplisit pada menuItems
+interface MenuItem {
+  label: string
+  href?: string
+  route?: string
+}
 
 const store = useSiteDataStore()
 const { schoolName, motto, footer, majors } = storeToRefs(store)
@@ -18,14 +27,49 @@ const description = computed(() => footer.value.description)
 const email = computed(() => footer.value.school_email)
 const phone = computed(() => footer.value.school_telephone)
 
-const menuItems = [
-  { label: 'Beranda', href: '#beranda' },
-  { label: 'Profil Sekolah', href: '#profil' },
-  { label: 'Event', href: '#event' },
-  { label: 'Berita', href: '#berita' },
-  { label: 'Kompetensi Keahlian', href: '#kompetensi' },
-  { label: 'Kritik & Saran', href: '#kritik-saran' },
-]
+// Pengecekan apakah data majors/jurusan tersedia
+const hasMajors = computed(() => {
+  return Array.isArray(majors.value) && majors.value.length > 0
+})
+
+const majorsCol1 = computed(() => majors.value.slice(0, Math.ceil(majors.value.length / 2)))
+const majorsCol2 = computed(() => majors.value.slice(Math.ceil(majors.value.length / 2)))
+
+// State untuk status copy email
+const isCopied = ref(false)
+
+const copyEmail = async () => {
+  if (!email.value) return
+  try {
+    await navigator.clipboard.writeText(email.value)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Gagal menyalin email:', err)
+  }
+}
+
+// Menu Navigasi dengan tipe eksplisit MenuItem[]
+const menuItems = computed<MenuItem[]>(() => {
+  const items: MenuItem[] = [
+    { label: 'Beranda', href: '#beranda' },
+    { label: 'Profil Sekolah', href: '#profil-sekolah' },
+  ]
+
+  if (hasMajors.value) {
+    items.push({ label: 'Kompetensi Keahlian', href: '#kompetensi' })
+  }
+
+  items.push(
+    { label: 'Event', route: '/event' },
+    { label: 'Berita', route: '/berita' },
+    { label: 'Kritik & Saran', href: '#kritik-saran' },
+  )
+
+  return items
+})
 
 const socialLinks = computed(() =>
   [
@@ -59,7 +103,7 @@ onMounted(() => {
         <div class="flex items-center gap-3 sm:gap-4">
           <img src="/src/assets/logo.png" class="w-11 h-11 sm:w-14 sm:h-14" />
           <div>
-            <span class="font-bold text-lg">{{ schoolName }}</span>
+            <span class="font-bold text-lg uppercase">{{ schoolName }}</span>
             <p class="font-semibold text-base">{{ motto }}</p>
           </div>
         </div>
@@ -72,8 +116,17 @@ onMounted(() => {
       <div class="flex flex-col gap-3 sm:gap-4 lg:w-fit">
         <span class="font-semibold text-lg sm:text-xl">Menu</span>
         <ul class="flex flex-col gap-2">
-          <li v-for="item in menuItems" :key="item.href">
+          <li v-for="item in menuItems" :key="item.label">
+            <RouterLink
+              v-if="item.route"
+              :to="item.route"
+              class="text-sm hover:underline cursor-pointer sm:text-base"
+            >
+              {{ item.label }}
+            </RouterLink>
+
             <a
+              v-else-if="item.href"
               :href="item.href"
               @click.prevent="scrollToSection(item.href)"
               class="text-sm hover:underline cursor-pointer sm:text-base"
@@ -85,28 +138,33 @@ onMounted(() => {
       </div>
 
       <!-- Kolom Kompetensi Keahlian -->
-      <div class="flex flex-col gap-3 sm:gap-4 lg:w-fit">
-        <span class="font-semibold text-lg sm:text-xl">Kompetensi Keahlian</span>
-        <div class="flex gap-x-6 sm:gap-x-10 lg:gap-x-20">
-          <div class="flex flex-col gap-3">
-            <a
-              v-for="major in majors.slice(0, Math.ceil(majors.length / 2))"
-              :key="major.id"
-              :href="`/${major.slug}`"
-              class="text-sm hover:underline cursor-pointer sm:text-base"
-            >
-              {{ major.code }}
-            </a>
-          </div>
-          <div class="flex flex-col gap-3">
-            <a
-              v-for="major in majors.slice(Math.ceil(majors.length / 2))"
-              :key="major.id"
-              :href="`/${major.slug}`"
-              class="text-sm hover:underline cursor-pointer sm:text-base"
-            >
-              {{ major.code }}
-            </a>
+      <div v-if="hasMajors">
+        <div class="flex flex-col gap-3 sm:gap-4 lg:w-fit">
+          <span class="font-semibold text-lg sm:text-xl">Kompetensi Keahlian</span>
+          <div class="flex gap-x-6 sm:gap-x-10 lg:gap-x-20">
+            <!-- Kolom 1 -->
+            <div class="flex flex-col gap-3">
+              <RouterLink
+                v-for="major in majorsCol1"
+                :key="major.id"
+                :to="`/jurusan/${major.slug}`"
+                class="text-sm hover:underline cursor-pointer sm:text-base"
+              >
+                {{ major.code }}
+              </RouterLink>
+            </div>
+
+            <!-- Kolom 2 -->
+            <div class="flex flex-col gap-3">
+              <RouterLink
+                v-for="major in majorsCol2"
+                :key="major.id"
+                :to="`/jurusan/${major.slug}`"
+                class="text-sm hover:underline cursor-pointer sm:text-base"
+              >
+                {{ major.code }}
+              </RouterLink>
+            </div>
           </div>
         </div>
       </div>
@@ -115,13 +173,32 @@ onMounted(() => {
       <div class="flex flex-col gap-4 lg:w-fit">
         <span class="font-semibold text-lg sm:text-xl">Kontak Kami</span>
 
-        <a
-          :href="`mailto:${email}`"
-          class="flex items-center gap-2 underline text-sm sm:text-base break-all"
-        >
-          <RiMailFill class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
-          <span>{{ email }}</span>
-        </a>
+        <!-- HYBRID EMAIL -->
+        <div class="flex items-center gap-2 group">
+          <a
+            :href="`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-2 underline text-sm sm:text-base break-all hover:opacity-80 transition-opacity"
+          >
+            <RiMailFill class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
+            <span>{{ email }}</span>
+          </a>
+
+          <!-- Tombol Copy Email -->
+          <button
+            @click="copyEmail"
+            type="button"
+            class="p-1 rounded-md hover:bg-neutral-100/20 text-neutral transition-all flex items-center justify-center shrink-0"
+            :title="isCopied ? 'Email tersalin!' : 'Salin alamat email'"
+          >
+            <RiCheckLine v-if="isCopied" class="w-4 h-4 text-neutral" />
+            <RiFileCopyLine
+              v-else
+              class="w-4 h-4 opacity-75 hover:opacity-100 transition-opacity"
+            />
+          </button>
+        </div>
 
         <p class="flex items-center gap-2 text-sm sm:text-base">
           <RiPhoneFill class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />

@@ -14,7 +14,6 @@ import {
   RiCloseLine,
   RiUserLine,
   RiLoader4Line,
-  RiUser3Line,
   RiDashboardLine,
   RiLogoutBoxRLine,
 } from '@remixicon/vue'
@@ -47,6 +46,14 @@ const accountDropdownRef = ref<HTMLElement | null>(null)
 const toastStore = useToastStore()
 const isLoggingOut = ref(false)
 
+// Pengecekan apakah data majors/jurusan tersedia
+const hasMajors = computed(() => {
+  return Array.isArray(majors.value) && majors.value.length > 0
+})
+
+const majorsCol1 = computed(() => majors.value.slice(0, Math.ceil(majors.value.length / 2)))
+const majorsCol2 = computed(() => majors.value.slice(Math.ceil(majors.value.length / 2)))
+
 // Filter role dropdown menu
 const hasAccountDropdown = computed(
   () =>
@@ -72,7 +79,7 @@ const isWhiteMode = computed(() =>
 
 const accountHref = computed(() => (isAuthenticated.value ? '/dashboard' : '/login'))
 const accountLabel = computed(() =>
-  isAuthenticated.value ? (user.value?.fullname ?? 'Akun Saya') : 'Login Siswa & Guru',
+  isAuthenticated.value ? (user.value?.fullname ?? 'Akun Saya') : 'Login Guru & Admin',
 )
 
 const scrollToSection = async (href: string) => {
@@ -99,15 +106,15 @@ const handleScroll = () => {
 watch(
   () => props.transparent,
   (isTransparent) => {
-    window.removeEventListener('scroll', handleScroll) // hindari listener dobel
+    window.removeEventListener('scroll', handleScroll)
     if (isTransparent) {
       window.addEventListener('scroll', handleScroll)
-      handleScroll() // langsung cek posisi scroll saat ini, jangan tunggu event scroll berikutnya
+      handleScroll()
     } else {
-      isScrolled.value = false // reset, supaya halaman non-transparent tidak kebawa state lama
+      isScrolled.value = false
     }
   },
-  { immediate: true }, // jalankan langsung saat komponen pertama kali mount
+  { immediate: true },
 )
 
 const handleClickOutside = (event: MouseEvent) => {
@@ -152,7 +159,7 @@ onUnmounted(() => {
     >
       <img :src="logoImg" class="w-5 h-5" />
       <span
-        class="font-bold text-base lg:text-lg"
+        class="font-bold text-base lg:text-lg uppercase"
         :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'"
       >
         {{ schoolName }}
@@ -174,8 +181,13 @@ onUnmounted(() => {
         </a>
       </li>
 
-      <!-- Dropdown Kompetensi Keahlian -->
-      <li class="relative" @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false">
+      <!-- Dropdown Kompetensi Keahlian (Hanya tampil jika ada data major) -->
+      <li
+        v-if="hasMajors"
+        class="relative"
+        @mouseenter="isDropdownOpen = true"
+        @mouseleave="isDropdownOpen = false"
+      >
         <button
           @click="scrollToSection('#kompetensi')"
           class="flex items-center gap-1 transition-colors cursor-pointer"
@@ -189,24 +201,46 @@ onUnmounted(() => {
         </button>
         <div
           v-if="isDropdownOpen"
-          class="absolute top-full left-1/2 -translate-x-1/2 pt-2 bg-transparent w-96"
+          class="absolute top-full left-1/2 -translate-x-1/2 pt-2 bg-transparent w-auto min-w-104"
         >
           <div
-            class="bg-neutral text-text-neutral rounded-2xl shadow-lg p-6 grid grid-cols-2 gap-x-8 gap-y-6"
+            class="bg-neutral text-text-neutral rounded-2xl shadow-xl p-4 grid grid-cols-2 gap-x-4 border border-secondary/40"
           >
-            <RouterLink
-              v-for="major in majors"
-              :key="major.id"
-              :to="`/jurusan/${major.slug}`"
-              @click="isDropdownOpen = false"
-              class="flex items-center justify-between hover:bg-secondary hover:text-primary transition-colors rounded-lg px-3 py-2 -mx-3"
-            >
-              {{ major.code }}
-              <RiArrowRightSLine class="w-5 h-5" />
-            </RouterLink>
+            <!-- Kolom 1 -->
+            <div class="flex flex-col gap-2">
+              <RouterLink
+                v-for="major in majorsCol1"
+                :key="major.id"
+                :to="`/jurusan/${major.slug}`"
+                @click="isDropdownOpen = false"
+                class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-secondary hover:text-primary transition-all duration-200 group"
+              >
+                <span class="text-base font-medium tracking-wide">{{ major.code }}</span>
+                <RiArrowRightSLine
+                  class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+                />
+              </RouterLink>
+            </div>
+
+            <!-- Kolom 2 -->
+            <div class="flex flex-col gap-2">
+              <RouterLink
+                v-for="major in majorsCol2"
+                :key="major.id"
+                :to="`/jurusan/${major.slug}`"
+                @click="isDropdownOpen = false"
+                class="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-secondary hover:text-primary transition-all duration-200 group"
+              >
+                <span class="text-base font-medium tracking-wide">{{ major.code }}</span>
+                <RiArrowRightSLine
+                  class="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+                />
+              </RouterLink>
+            </div>
           </div>
         </div>
       </li>
+
       <li v-for="item in menuItemsAfter" :key="item.to">
         <RouterLink :to="item.to" class="hover:text-primary transition-colors cursor-pointer">
           {{ item.label }}
@@ -246,15 +280,6 @@ onUnmounted(() => {
         >
           <div class="bg-neutral text-text-neutral rounded-2xl shadow-lg p-2 flex flex-col">
             <RouterLink
-              to="/profil"
-              @click="isAccountDropdownOpen = false"
-              class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
-            >
-              <RiUser3Line class="w-4 h-4 shrink-0" />
-              <span>Profil</span>
-            </RouterLink>
-
-            <RouterLink
               to="/dashboard"
               @click="isAccountDropdownOpen = false"
               class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
@@ -266,10 +291,10 @@ onUnmounted(() => {
             <button
               @click="handleLogout"
               :disabled="isLoggingOut"
-              class="text-left px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2.5 text-sm font-medium"
+              class="text-left px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-error transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2.5 text-sm font-medium"
             >
               <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin shrink-0" />
-              <RiLogoutBoxRLine v-else class="w-4 h-4 shrink-0 text-red-500" />
+              <RiLogoutBoxRLine v-else class="w-4 h-4 shrink-0 text-error" />
               <span>{{ isLoggingOut ? 'Logging out...' : 'Logout' }}</span>
             </button>
           </div>
@@ -329,8 +354,8 @@ onUnmounted(() => {
           {{ item.label }}
         </a>
 
-        <!-- Kompetensi Keahlian (accordion) -->
-        <div class="border-b border-secondary">
+        <!-- Kompetensi Keahlian (accordion mobile - hanya tampil jika ada data major) -->
+        <div v-if="hasMajors" class="border-b border-secondary">
           <button
             @click="isMobileKompetensiOpen = !isMobileKompetensiOpen"
             class="w-full flex items-center justify-between py-3 cursor-pointer"
@@ -342,17 +367,34 @@ onUnmounted(() => {
               :class="isMobileKompetensiOpen ? '-rotate-180' : ''"
             />
           </button>
-          <div v-if="isMobileKompetensiOpen" class="flex flex-col gap-1 pb-3">
-            <RouterLink
-              v-for="major in majors"
-              :key="major.id"
-              :to="`/jurusan/${major.slug}`"
-              @click="isMobileMenuOpen = false"
-              class="flex items-center justify-between hover:bg-secondary hover:text-primary transition-colors rounded-lg px-3 py-2"
-            >
-              {{ major.code }}
-              <RiArrowRightSLine class="w-5 h-5" />
-            </RouterLink>
+          <div v-if="isMobileKompetensiOpen" class="grid grid-cols-2 gap-x-4 pb-3">
+            <!-- Kolom Kiri -->
+            <div class="flex flex-col gap-1">
+              <RouterLink
+                v-for="major in majorsCol1"
+                :key="major.id"
+                :to="`/jurusan/${major.slug}`"
+                @click="isMobileMenuOpen = false"
+                class="flex items-center justify-between hover:bg-secondary hover:text-primary transition-colors rounded-lg px-3 py-2 text-sm"
+              >
+                <span>{{ major.code }}</span>
+                <RiArrowRightSLine class="w-4 h-4 shrink-0" />
+              </RouterLink>
+            </div>
+
+            <!-- Kolom Kanan -->
+            <div class="flex flex-col gap-1">
+              <RouterLink
+                v-for="major in majorsCol2"
+                :key="major.id"
+                :to="`/jurusan/${major.slug}`"
+                @click="isMobileMenuOpen = false"
+                class="flex items-center justify-between hover:bg-secondary hover:text-primary transition-colors rounded-lg px-3 py-2 text-sm"
+              >
+                <span>{{ major.code }}</span>
+                <RiArrowRightSLine class="w-4 h-4 shrink-0" />
+              </RouterLink>
+            </div>
           </div>
         </div>
 
@@ -386,15 +428,6 @@ onUnmounted(() => {
           </div>
           <div class="bg-secondary rounded-xl overflow-hidden flex flex-col">
             <RouterLink
-              to="/profil"
-              @click="isMobileMenuOpen = false"
-              class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
-            >
-              <RiUser3Line class="w-4 h-4 shrink-0" />
-              <span>Profil</span>
-            </RouterLink>
-
-            <RouterLink
               to="/dashboard"
               @click="isMobileMenuOpen = false"
               class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
@@ -406,7 +439,7 @@ onUnmounted(() => {
             <button
               @click="handleLogout"
               :disabled="isLoggingOut"
-              class="text-left px-4 py-3 text-red-500 hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2.5 text-sm font-medium"
+              class="text-left px-4 py-3 text-error hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2.5 text-sm font-medium"
             >
               <RiLoader4Line v-if="isLoggingOut" class="w-4 h-4 animate-spin shrink-0" />
               <RiLogoutBoxRLine v-else class="w-4 h-4 shrink-0" />

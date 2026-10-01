@@ -120,7 +120,7 @@ onMounted(() => {
       </div>
 
       <!-- Placeholder dekoratif: desktop (flex-wrap) -->
-      <div v-if="showDesktopPlaceholder" class="relative h-full min-h-118 hidden lg:block lg:w-79">
+      <div v-if="showDesktopPlaceholder" class="relative h-full min-h-120 hidden lg:block lg:w-79">
         <div
           class="absolute inset-0 bg-neutral border-2 border-secondary rounded-xl -rotate-6 shadow-sm"
         ></div>

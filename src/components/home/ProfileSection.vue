@@ -23,11 +23,17 @@ const imageContainerClass = computed(() => {
   return 'w-full max-w-104 sm:max-w-none lg:w-130 lg:max-w-none'
 })
 
-const DESC_LENGTH_THRESHOLD = 400
+const DESC_LENGTH_THRESHOLD = 650
+
+const profileContainer = computed(() =>
+  (profileDesc.value?.length || 0) > DESC_LENGTH_THRESHOLD
+    ? 'items-start'
+    : 'items-start lg:items-center',
+)
 const descTextSize = computed(() =>
   (profileDesc.value?.length || 0) > DESC_LENGTH_THRESHOLD
     ? 'text-sm lg:text-base md:text-base'
-    : 'text-sm lg:text-lg md:text-lg',
+    : 'text-sm md:text-base lg:text-lg md:text-base',
 )
 
 onMounted(() => {
@@ -41,7 +47,8 @@ onMounted(() => {
     class="px-6 py-16 scroll-mt-5 sm:px-8 lg:scroll-m-4 md:px-12 lg:py-32"
   >
     <div
-      class="flex flex-col justify-center items-start gap-10 sm:gap-12 lg:flex-row lg:items-center lg:gap-16"
+      class="flex flex-col justify-center gap-10 sm:gap-12 lg:flex-row lg:gap-16"
+      :class="profileContainer"
     >
       <div class="w-full flex flex-col max-w-160 lg:w-fit lg:flex-1">
         <div

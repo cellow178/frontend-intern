@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/ui/BackButton.vue'
-import NewsStatusBadge from '@/components/ui/NewsStatusBadge.vue'
+import EnumStatusBadge from '@/components/ui/EnumStatusBadge.vue'
 import CategoryBadge from '@/components/ui/NewsCategoryBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import RichTextContent from '@/components/ui/RichTextContent.vue'
@@ -103,7 +103,7 @@ onMounted(() => {
 
       <!-- State Loading -->
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
       <!-- State Data Tidak Ditemukan -->
@@ -154,8 +154,26 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
           <dt class="text-text-neutral font-semibold">Status</dt>
           <dd class="sm:col-span-2 flex items-center gap-2">
-            <NewsStatusBadge :status="news.status" />
+            <EnumStatusBadge :status="news.status" />
           </dd>
+        </div>
+
+        <div class="border-t border-text-alt/10"></div>
+
+        <!-- Diubah Terakhir Oleh -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
+          <dt class="text-text-neutral font-semibold">Diubah Terakhir Oleh</dt>
+          <dd class="sm:col-span-2 text-text-neutral font-medium">
+            {{ news.rel_updated_by || '-' }}
+          </dd>
+        </div>
+
+        <div class="border-t border-text-alt/10"></div>
+
+        <!-- Tanggal Diubah -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
+          <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
+          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(news.updated_at) }}</dd>
         </div>
 
         <div class="border-t border-text-alt/10"></div>
@@ -178,30 +196,13 @@ onMounted(() => {
 
         <div class="border-t border-text-alt/10"></div>
 
-        <!-- Diubah Terakhir Oleh -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Diubah Terakhir Oleh</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
-            {{ news.rel_updated_by || '-' }}
-          </dd>
-        </div>
-
-        <div class="border-t border-text-alt/10"></div>
-
-        <!-- Tanggal Diubah -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(news.updated_at) }}</dd>
+        <div class="py-8">
+          <h2 class="text-text-neutral font-semibold pb-3 mb-4 border-b border-text-alt/50">
+            Deskripsi Berita
+          </h2>
+          <RichTextContent :content="news.content" class="max-w-4xl" />
         </div>
       </dl>
-    </div>
-
-    <!-- Kartu Konten Berita -->
-    <div v-if="!isLoading && news" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <h2 class="text-text-neutral font-semibold pb-3 mb-4 border-b border-text-alt/50">
-        Konten Berita
-      </h2>
-      <RichTextContent :content="news.content" class="max-w-4xl"/>
     </div>
   </div>
 </template>

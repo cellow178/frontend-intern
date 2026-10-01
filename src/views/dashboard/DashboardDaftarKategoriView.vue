@@ -76,11 +76,11 @@ const addButtonLabel = computed(() =>
 
 const searchPlaceholder = computed(() =>
   activeTab.value === 'news-categories'
-    ? 'Cari Kategori Berita...'
-    : 'Cari Kategori Kritik & Saran...',
+    ? 'Cari kategori berita...'
+    : 'Cari kategori kritik & saran...',
 )
 
-const fetchMasterData = async () => {
+const fetchCategories = async () => {
   isLoading.value = true
   const endpoint =
     activeTab.value === 'news-categories' ? '/news-categories' : '/feedbacks-categories'
@@ -114,17 +114,17 @@ const onTabChange = (newTab: string) => {
   currentPage.value = 1
   searchQuery.value = ''
   router.replace({ query: { ...route.query, tab: newTab } })
-  fetchMasterData()
+  fetchCategories()
 }
 
 const onFilterChange = () => {
   currentPage.value = 1
-  fetchMasterData()
+  fetchCategories()
 }
 
 const handlePageChange = (newPage: number) => {
   currentPage.value = newPage
-  fetchMasterData()
+  fetchCategories()
 }
 
 const handlePerPageChange = (newLimit: number) => {
@@ -193,16 +193,16 @@ const confirmDelete = async () => {
     const response = await api.delete(endpoint, { data: { id: selectedDeleteId.value } })
 
     if (response.data.success === false) {
-      toastStore.show(response.data.message || 'Gagal menghapus data.', 'error')
+      toastStore.show('Gagal menghapus kategori.', 'error')
       return
     }
 
-    toastStore.show(response.data.message || 'Data berhasil dihapus.', 'success')
+    // Tampilkan teks biasa sebagai ganti key dari backend
+    toastStore.show('Kategori berhasil dihapus.', 'success')
     closeDeleteModal()
-    fetchMasterData()
+    fetchCategories()
   } catch (err: any) {
-    const message = err.response?.data?.message || 'Gagal menghapus data.'
-    toastStore.show(message, 'error')
+    toastStore.show('Gagal menghapus kategori.', 'error')
   } finally {
     isDeleting.value = false
   }
@@ -214,7 +214,7 @@ watch(searchQuery, () => {
 })
 
 onMounted(() => {
-  fetchMasterData()
+  fetchCategories()
 })
 
 onUnmounted(() => {
@@ -225,7 +225,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-3">
     <div>
-      <h1 class="text-xl font-bold text-text-neutral">Master Data</h1>
+      <h1 class="text-xl font-bold text-text-neutral">Daftar Kategori</h1>
     </div>
 
     <TableTabs :tabs="tabs" v-model="activeTab" @update:model-value="onTabChange">
@@ -241,6 +241,7 @@ onUnmounted(() => {
           :total-page="totalPage"
           :items-per-page="pageSize"
           :total-items="totalData"
+          empty-message="Tidak ada kategori berita ditemukan."
           @add="handleAdd"
           @update:current-page="handlePageChange"
           @update:items-per-page="handlePerPageChange"
@@ -331,6 +332,7 @@ onUnmounted(() => {
           :total-page="totalPage"
           :items-per-page="pageSize"
           :total-items="totalData"
+          empty-message="Tidak ada kategori kritik & saran ditemukan."
           @add="handleAdd"
           @update:current-page="handlePageChange"
           @update:items-per-page="handlePerPageChange"

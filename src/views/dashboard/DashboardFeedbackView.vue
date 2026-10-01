@@ -58,7 +58,9 @@ const columns: Column[] = [
 
 const fetchCategories = async () => {
   try {
-    const response = await api.get('/feedbacks-categories/dataset')
+    const response = await api.get('/feedbacks-categories/dataset', {
+      params: { active: true },
+    })
     categories.value = response.data.data
   } catch {
     toastStore.show('Gagal memuat kategori feedback.', 'error')
@@ -165,14 +167,15 @@ onMounted(async () => {
       :current-page="currentPage"
       :total-page="totalPage"
       :items-per-page="pageSize"
-      search-placeholder="Cari Kritik & Saran..."
+      search-placeholder="Cari kritik & saran..."
+      empty-message="Tidak ada kritik & saran ditemukan."
       @reset-filters="handleResetFilters"
       @update:current-page="handlePageChange"
       @update:items-per-page="handlePerPageChange"
     >
       <!-- Filters -->
       <template #filters>
-        <div class="w-44">
+        <div class="w-fit">
           <Select
             v-model="selectedCategoryId"
             size="normal"
@@ -184,7 +187,7 @@ onMounted(async () => {
             @update:model-value="onFilterChange"
           />
         </div>
-        <div class="w-36">
+        <div class="w-fit">
           <Select
             v-model="selectedType"
             size="normal"

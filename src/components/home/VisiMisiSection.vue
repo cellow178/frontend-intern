@@ -72,7 +72,7 @@ onMounted(() => {
       </div>
     </div>
     <!-- Statistik -->
-    <div
+    <!-- <div
       class="flex flex-col items-start gap-6 sm:flex-row sm:flex-nowrap sm:items-stretch sm:justify-center sm:gap-4 md:gap-6 lg:flex-wrap lg:gap-16 xl:gap-30"
     >
       <StatHighlightCard
@@ -92,6 +92,6 @@ onMounted(() => {
         label="100+&#10;Prestasi Siswa"
         description="Meraih berbagai penghargaan akademik dan non-akademik setiap tahunnya"
       />
-    </div>
+    </div> -->
   </section>
 </template>

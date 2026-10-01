@@ -94,7 +94,7 @@ onMounted(() => {
       <h1 class="text-xl font-bold text-text-neutral mb-4">Detail Banner</h1>
 
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
       <div v-else-if="!banner" class="text-center text-text-alt py-8">Data tidak ditemukan.</div>
@@ -152,16 +152,16 @@ onMounted(() => {
 
         <div class="border-t border-text-alt/10"></div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(banner.created_at) }}</dd>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
+          <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
+          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(banner.updated_at) }}</dd>
         </div>
 
         <div class="border-t border-text-alt/10"></div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(banner.updated_at) }}</dd>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
+          <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
+          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(banner.created_at) }}</dd>
         </div>
       </dl>
     </div>

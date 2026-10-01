@@ -2,22 +2,14 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import NewsCategoryBadge from '@/components/ui/NewsCategoryBadge.vue'
-import { getFullFileUrl } from '@/utils/file'
-
-interface ImgCoverObj {
-  ext?: string
-  url?: string
-  tumbnail_url?: string
-  filename?: string
-  field_value?: string
-}
+import { getFullFileUrl, type FileSource } from '@/utils/file'
 
 const props = defineProps<{
   slug: string
   title: string
   categoryName?: string
   content?: string
-  imgCover: string | ImgCoverObj | null
+  imgCover?: FileSource | null
   author?: string
   createdAt?: string
 }>()
@@ -33,14 +25,14 @@ const imageUrl = computed(() => {
   return getFullFileUrl(props.imgCover)
 })
 
-// Format Tanggal: DD/MMM/YYYY (misal: 18/Sep/2026)
+// Format Tanggal: DD/MMM/YYYY (misal: 18 Sep 2026)
 const formattedDate = computed(() => {
   if (!props.createdAt) return '-'
   const date = new Date(props.createdAt)
   if (isNaN(date.getTime())) return props.createdAt
 
   const day = date.toLocaleDateString('id-ID', { day: '2-digit' })
-  const month = date.toLocaleDateString('id-ID', { month: 'short' }).replace('.', '')
+  const month = date.toLocaleDateString('id-ID', { month: 'short' })
   const year = date.getFullYear()
 
   return `${day} ${month} ${year}`
@@ -50,7 +42,7 @@ const formattedDate = computed(() => {
 <template>
   <RouterLink
     :to="`/berita/${slug}`"
-    class="w-full flex flex-col bg-neutral rounded-xl overflow-hidden border-2 border-transparent shadow-sm transition-all duration-300 hover:border-primary hover:shadow-[0_0_100px_#FF964440] lg:w-80 lg:rounded-2xl"
+    class="group w-full flex flex-col bg-neutral rounded-xl overflow-hidden border-2 border-transparent transition-all duration-300 hover:border-primary lg:w-80 lg:rounded-2xl pb-2"
   >
     <!-- Header: Author & Tanggal -->
     <div
@@ -62,9 +54,14 @@ const formattedDate = computed(() => {
 
     <!-- Gambar Cover -->
     <div
-      class="h-32 w-full sm:h-40 lg:h-48 overflow-hidden flex items-center justify-center bg-linear-to-b from-primary to-accent"
+      class="h-32 w-full sm:h-40 lg:h-48 overflow-hidden flex items-center justify-center bg-text-alt/20"
     >
-      <img v-if="imageUrl" :src="imageUrl" :alt="title" class="w-full h-full object-cover" />
+      <img
+        v-if="imageUrl"
+        :src="imageUrl"
+        :alt="title"
+        class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+      />
     </div>
 
     <!-- Informasi Berita -->

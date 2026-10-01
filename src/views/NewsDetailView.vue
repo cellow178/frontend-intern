@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import api from '@/services/api.ts'
+import api from '@/services/api'
 import BackButton from '@/components/ui/BackButton.vue'
 import RichTextContent from '@/components/ui/RichTextContent.vue'
 import NewsCategoryBadge from '@/components/ui/NewsCategoryBadge.vue'
 import NewsDetailSkeleton from '@/components/skeletons/NewsDetailSkeleton.vue'
-import { getFullFileUrl } from '@/utils/file'
-
-interface ImgCoverObj {
-  ext?: string
-  url?: string
-  tumbnail_url?: string
-  filename?: string
-  field_value?: string
-}
+import { getFullFileUrl, type FileSource } from '@/utils/file'
 
 interface NewsDetail {
   id: number
@@ -22,7 +14,7 @@ interface NewsDetail {
   title: string
   category_name?: string
   content: string
-  img_cover: string | ImgCoverObj | null
+  img_cover?: FileSource | null
   is_highlight?: boolean
   author: string
   created_at: string
@@ -37,6 +29,10 @@ const imageLoadError = ref(false)
 const handleImageError = () => {
   imageLoadError.value = true
 }
+
+const imageUrl = computed(() => {
+  return getFullFileUrl(news.value?.img_cover)
+})
 
 // Helper untuk format Tanggal + Jam
 const formatPublishedDate = (dateStr: string) => {
@@ -123,7 +119,7 @@ watch(
 
         <!-- Badge Kategori -->
         <div v-if="news.category_name" class="flex justify-center mb-3">
-          <NewsCategoryBadge :categoryName="news.category_name" size="md" />
+          <NewsCategoryBadge :category-name="news.category_name" size="md" />
         </div>
 
         <!-- Penulis & Tanggal + Jam -->
@@ -137,8 +133,8 @@ watch(
           class="w-full aspect-video overflow-hidden mb-6 sm:mb-10 bg-linear-to-b from-primary to-accent flex items-center justify-center"
         >
           <img
-            v-if="getFullFileUrl(news.img_cover) && !imageLoadError"
-            :src="getFullFileUrl(news.img_cover)!"
+            v-if="imageUrl && !imageLoadError"
+            :src="imageUrl"
             class="w-full h-full object-cover"
             alt="Cover Berita"
             @error="handleImageError"

@@ -3,22 +3,14 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { RiArrowRightLine } from '@remixicon/vue'
 import NewsCategoryBadge from '@/components/ui/NewsCategoryBadge.vue'
-import { getFullFileUrl } from '@/utils/file'
-
-interface ImgCoverObj {
-  ext?: string
-  url?: string
-  tumbnail_url?: string
-  filename?: string
-  field_value?: string
-}
+import { getFullFileUrl, type FileSource } from '@/utils/file'
 
 const props = defineProps<{
   slug: string
   title: string
   categoryName?: string
   content?: string
-  imgCover: string | ImgCoverObj | null
+  imgCover?: FileSource | null
   author?: string
   createdAt?: string
 }>()
@@ -34,14 +26,14 @@ const imageUrl = computed(() => {
   return getFullFileUrl(props.imgCover)
 })
 
-// Format Tanggal: DD/MMM/YYYY (misal: 18/Sep/2026)
+// Format Tanggal: DD MMM YYYY (misal: 18 Sep 2026)
 const formattedDate = computed(() => {
   if (!props.createdAt) return '-'
   const date = new Date(props.createdAt)
   if (isNaN(date.getTime())) return props.createdAt
 
   const day = date.toLocaleDateString('id-ID', { day: '2-digit' })
-  const month = date.toLocaleDateString('id-ID', { month: 'short' }).replace('.', '')
+  const month = date.toLocaleDateString('id-ID', { month: 'short' })
   const year = date.getFullYear()
 
   return `${day} ${month} ${year}`
@@ -51,48 +43,83 @@ const formattedDate = computed(() => {
 <template>
   <RouterLink
     :to="`/berita/${slug}`"
-    class="news-glow w-full max-w-3xl mb-10 flex flex-col bg-linear-to-br from-primary to-accent rounded-2xl overflow-hidden shadow-lg outline-2 outline-transparent transition-all duration-300 hover:outline-primary hover:-translate-y-2 md:mb-16"
-    :class="{ 'md:flex-row': imageUrl }"
+    class="news-glow group relative w-full max-w-3xl mb-10 flex flex-col bg-linear-to-br from-primary to-accent rounded-2xl overflow-hidden shadow-lg outline-2 outline-transparent transition-all duration-300 hover:outline-primary md:mb-16 md:flex-row md:items-stretch"
   >
-    <!-- Gambar Cover (Hanya tampil jika imageUrl ada) -->
+    <!-- Gambar Cover untuk Desktop & Mobile -->
     <div
       v-if="imageUrl"
-      class="w-full h-48 sm:h-64 md:h-auto md:w-[40%] md:aspect-auto md:shrink-0 overflow-hidden flex items-center justify-center bg-black/10"
+      class="w-full h-52 sm:h-60 md:h-auto md:w-80 lg:w-88 md:shrink-0 overflow-hidden flex items-center justify-center bg-black/10 relative"
     >
-      <img :src="imageUrl" :alt="title" class="w-full h-full object-cover" />
+      <img
+        :src="imageUrl"
+        :alt="title"
+        class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+      />
+    </div>
+
+    <!-- Dekorasi Latar Belakang (Jika Tanpa Gambar) -->
+    <div v-else class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div
+        class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-xl group-hover:scale-110 transition-transform duration-500"
+      ></div>
     </div>
 
     <!-- Konten Berita Highlight -->
-    <div class="flex-1 flex flex-col justify-center gap-2 p-5 md:gap-3 md:p-6">
-      <div v-if="categoryName" class="flex items-center gap-2">
-        <NewsCategoryBadge :category-name="categoryName" variant="highlight" size="md" />
+    <div
+      class="relative z-10 flex-1 flex flex-col justify-between transition-all"
+      :class="imageUrl ? 'p-5 md:p-7 lg:p-8' : 'p-6 md:p-10'"
+    >
+      <div class="flex flex-col" :class="imageUrl ? 'gap-2.5 md:gap-3' : 'gap-3 md:gap-4'">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span
+            class="inline-flex items-center justify-center rounded-md font-semibold bg-white/20 text-neutral border border-white/20 px-3 py-1.5 text-xs leading-none shrink-0"
+          >
+            Highlight Berita
+          </span>
+
+          <div v-if="categoryName" class="flex items-center">
+            <NewsCategoryBadge :category-name="categoryName" variant="highlight" size="md" />
+          </div>
+        </div>
+
+        <!-- Wrapper Teks Utama -->
+        <div class="flex flex-col" :class="imageUrl ? 'gap-2' : 'gap-2.5'">
+          <!-- Judul -->
+          <h3
+            class="font-bold text-neutral leading-snug line-clamp-2"
+            :class="imageUrl ? 'text-lg md:text-xl lg:text-2xl' : 'text-xl md:text-2xl lg:text-3xl'"
+          >
+            {{ title }}
+          </h3>
+
+          <!-- Deskripsi/Konten -->
+          <p
+            v-if="plainContent"
+            class="text-secondary/90 leading-relaxed line-clamp-3 text-xs"
+            :class="imageUrl ? 'lg:text-sm' : 'md:text-sm'"
+          >
+            {{ plainContent }}
+          </p>
+        </div>
       </div>
 
-      <h3 class="font-bold text-xl text-neutral leading-snug line-clamp-2 md:text-3xl">
-        {{ title }}
-      </h3>
-
-      <p
-        v-if="plainContent"
-        class="text-xs text-secondary/80 leading-relaxed line-clamp-2 md:text-sm"
+      <!-- Bagian Bawah: Penulis, Tanggal, & Action Link -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-3.5 mt-3.5 border-t border-white/10"
       >
-        {{ plainContent }}
-      </p>
+        <div class="flex items-center gap-2.5 text-secondary text-xs">
+          <span>{{ author || '-' }}</span>
+          <span>•</span>
+          <span>{{ formattedDate }}</span>
+        </div>
 
-      <div class="flex items-center gap-3 text-xs text-secondary md:gap-4 md:text-sm">
-        <span>{{ author || '-' }}</span>
-        <span>•</span>
-        <span>{{ formattedDate }}</span>
+        <span
+          class="flex items-center gap-1.5 font-semibold text-neutral text-xs group-hover:translate-x-1 transition-transform w-fit"
+        >
+          Lihat detail
+          <RiArrowRightLine class="w-3.5 h-3.5" />
+        </span>
       </div>
-
-      <span
-        class="flex items-center gap-1 text-xs text-neutral font-semibold w-fit group mt-1 md:text-sm md:mt-2"
-      >
-        Lihat detail
-        <RiArrowRightLine
-          class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 md:w-4 md:h-4"
-        />
-      </span>
     </div>
   </RouterLink>
 </template>

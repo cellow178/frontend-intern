@@ -219,7 +219,7 @@ onMounted(() => {
 
       <!-- Deskripsi Akses -->
       <p class="relative z-10 text-neutral/60 text-sm text-center mt-4 md:mt-0">
-        Akses khusus civitas sekolah — Siswa, Guru & Staff
+        Akses khusus civitas sekolah — Guru & Staff
       </p>
     </div>
 
