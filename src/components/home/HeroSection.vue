@@ -9,7 +9,9 @@ import Button from '@/components/ui/Button.vue'
 
 const router = useRouter()
 const store = useSiteDataStore()
-const { banners, schoolName, motto, heroDescription } = storeToRefs(store)
+
+// 1. Ambil videoProfile dan mapEmbed dari store
+const { banners, schoolName, motto, heroDescription, videoProfile, mapEmbed } = storeToRefs(store)
 
 const goToNewsWithQuery = (keyword: string = 'Prestasi Siswa') => {
   router.push({
@@ -45,14 +47,13 @@ const preloadImage = (url: string): Promise<boolean> => {
       resolve(true)
     }
     img.onerror = () => {
-      // Jika gagal muat, tandai tetap false
       resolve(false)
     }
     img.src = url
   })
 }
 
-// Berpindah ke Slide Berikutnya (Aman dengan Pre-validation)
+// Berpindah ke Slide Berikutnya
 const nextImage = async () => {
   if (banners.value.length <= 1 || isTransitioning.value) return
 
@@ -61,7 +62,6 @@ const nextImage = async () => {
 
   isTransitioning.value = true
 
-  // Pastikan gambar slide selanjutnya SUDAH terunduh sebelum mengganti index
   if (nextBannerUrl) {
     await preloadImage(nextBannerUrl)
   }
@@ -112,7 +112,6 @@ const initBannerSlider = async () => {
   isFirstImageReady.value = true
   startAutoRotate()
 
-  // Background preload untuk seluruh gambar sisanya secara asinkron
   banners.value.forEach((banner) => {
     const url = getBannerImage(banner)
     if (url) preloadImage(url)
@@ -141,6 +140,28 @@ const scrollToSection = (href: string) => {
   target?.scrollIntoView({ behavior: 'smooth' })
 }
 
+const hasVideo = computed(() => {
+  if (!videoProfile.value) return false
+  return typeof videoProfile.value === 'string' ? !!videoProfile.value.trim() : !!videoProfile.value
+})
+
+const hasMap = computed(() => {
+  if (!mapEmbed.value) return false
+  return typeof mapEmbed.value === 'string' ? !!mapEmbed.value.trim() : !!mapEmbed.value
+})
+
+const exploreButtonLabel = computed(() => {
+  if (hasVideo.value && hasMap.value) return 'Lihat Video & Peta'
+  if (hasVideo.value) return 'Lihat Video'
+  if (hasMap.value) return 'Lihat Lokasi Peta'
+  return 'Kirim Kritik & Saran'
+})
+
+const handleExploreClick = () => {
+  const targetId = hasVideo.value || hasMap.value ? '#video-lokasi' : '#kritik-saran'
+  scrollToSection(targetId)
+}
+
 onMounted(async () => {
   await Promise.all([store.fetchBanners(), store.fetchGlobalConfig()])
   if (banners.value.length > 0 && !isFirstImageReady.value) {
@@ -158,6 +179,7 @@ onUnmounted(() => {
     id="beranda"
     class="relative h-screen w-full overflow-hidden bg-secondary transition-colors duration-300"
   >
+    <!-- Background Utama dengan Banner (jika ada) -->
     <transition name="banner-fade">
       <div
         v-if="isFirstImageReady && currentBanner && getBannerImage(currentBanner)"
@@ -168,6 +190,18 @@ onUnmounted(() => {
         }"
       ></div>
     </transition>
+
+    <div
+      v-if="!currentBanner || !getBannerImage(currentBanner)"
+      class="absolute inset-0 bg-linear-to-tr from-primary via-accent to-primary z-0 overflow-hidden"
+    >
+      <div
+        class="absolute -top-40 -left-40 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none"
+      ></div>
+      <div
+        class="absolute -bottom-40 -right-40 w-96 h-96 bg-secondary/20 rounded-full blur-3xl pointer-events-none"
+      ></div>
+    </div>
 
     <div class="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
 
@@ -203,7 +237,9 @@ onUnmounted(() => {
         <span>{{ motto }}</span>
       </div>
 
-      <h1 class="text-neutral font-extrabold text-3xl mb-3 sm:text-5xl sm:mb-4 lg:text-6xl uppercase">
+      <h1
+        class="text-neutral font-extrabold text-3xl mb-3 sm:text-5xl sm:mb-4 lg:text-6xl uppercase"
+      >
         {{ schoolName }}
       </h1>
 
@@ -215,9 +251,9 @@ onUnmounted(() => {
         class="flex flex-col items-stretch gap-3 w-full sm:flex-row sm:items-center sm:gap-4 lg:w-auto lg:justify-start"
       >
         <Button
-          label="Video Profil"
+          :label="exploreButtonLabel"
           class="w-full justify-center sm:flex-1 lg:w-auto lg:flex-none"
-          @click="scrollToSection('#video-profil')"
+          @click="handleExploreClick"
         />
         <Button
           label="Prestasi Siswa"

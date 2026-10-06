@@ -55,7 +55,7 @@ const copyEmail = async () => {
 const menuItems = computed<MenuItem[]>(() => {
   const items: MenuItem[] = [
     { label: 'Beranda', href: '#beranda' },
-    { label: 'Profil Sekolah', href: '#profil-sekolah' },
+    { label: 'Profil', href: '#profil-sekolah' },
   ]
 
   if (hasMajors.value) {

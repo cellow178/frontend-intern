@@ -103,7 +103,7 @@ const validate = () => {
     errors.profileDescription ||
     errors.imgProfile1
   ) {
-    toastStore.show('Harap lengkapi semua field yang wajib diisi.', 'error')
+    toastStore.show('Beberapa field wajib masih kosong, silakan periksa kembali.', 'error')
 
     nextTick(() => {
       document.querySelector('.border-error, .text-error')?.scrollIntoView({

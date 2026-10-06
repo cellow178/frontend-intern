@@ -11,7 +11,7 @@ import Button from '@/components/ui/Button.vue'
 
 const store = useSiteDataStore()
 // 'news' di-destruktur langsung dari Pinia Store
-const { news, highlightNews } = storeToRefs(store)
+const { news, highlightNews, schoolName } = storeToRefs(store)
 const router = useRouter()
 
 // Grid 3 kolom (tablet): hitung berapa placeholder dibutuhkan biar baris terakhir rata
@@ -41,8 +41,8 @@ onMounted(() => {
     <div class="flex flex-col items-center gap-3 md:gap-4">
       <SectionTitle title="Berita" />
       <p class="text-sm text-text-neutral text-center max-w-2xl md:text-lg">
-        Dapatkan informasi dan kabar terbaru seputar kegiatan, prestasi, dan perkembangan di SMKN 7
-        Semarang
+        Ikuti perkembangan terkini, pengumuman penting, serta cerita inspiratif seputar aktivitas di
+        {{ schoolName }}
       </p>
     </div>
 
@@ -67,7 +67,7 @@ onMounted(() => {
       >
         <RiNewspaperLine class="w-8 h-8 text-text-alt/50 md:w-10 md:h-10" />
         <span class="text-text-alt/60 text-sm text-center px-6 md:text-base"
-          >Nantikan kabar terbaru...</span
+          >Nantikan berita terbaru...</span
         >
       </div>
     </div>

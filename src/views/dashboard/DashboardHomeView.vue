@@ -7,12 +7,13 @@ import {
   RiNewspaperLine,
   RiCalendarEventLine,
   RiMapPinLine,
-  RiChat1Line,
+  RiChat3Line,
   RiGraduationCapLine,
   RiImageLine,
   RiVideoLine,
-  RiEditLine,
+  RiUser3Line,
   RiArrowRightLine,
+  RiCompass3Line,
   RiEyeLine,
 } from '@remixicon/vue'
 
@@ -73,7 +74,7 @@ const stats = ref<QuickStat[]>([
   {
     title: 'Kritik & Saran Masuk',
     value: 0,
-    icon: RiChat1Line,
+    icon: RiChat3Line,
     bgColor: 'bg-success/10 hover:bg-success/20',
     textColor: 'text-success',
     route: '/dashboard/kritik-saran',
@@ -91,6 +92,8 @@ const stats = ref<QuickStat[]>([
 const recentFeedbacks = ref<ApiFeedback[]>([])
 const upcomingEvents = ref<ApiEvent[]>([])
 const bannerActiveCount = ref(0)
+const hasVideo = ref(false)
+const hasMap = ref(false)
 
 const navigateTo = (path: string) => {
   router.push(path)
@@ -150,6 +153,8 @@ const fetchStats = async () => {
       if (stats.value[3]) stats.value[3].value = data.total_majors || 0
 
       bannerActiveCount.value = data.active_banners || 0
+      hasVideo.value = Boolean(data.has_video)
+      hasMap.value = Boolean(data.has_map)
     }
   } catch (error) {
     console.error('Gagal mengambil data statistik dashboard:', error)
@@ -270,7 +275,9 @@ onMounted(() => {
     <!-- 2. Section Akses Cepat (Quick Actions) -->
     <div class="bg-neutral p-4 sm:p-5 rounded-2xl border border-secondary shadow-sm">
       <h2 class="text-sm sm:text-base font-bold text-text-neutral mb-3">Akses Cepat Edit Konten</h2>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
+        <!-- 1. Banner -->
         <button
           type="button"
           class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
@@ -280,24 +287,37 @@ onMounted(() => {
           <span class="truncate">Atur Banner</span>
         </button>
 
+        <!-- 2. Profil Sekolah -->
         <button
           type="button"
           class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/profil-sekolah')"
         >
-          <RiEditLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiUser3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
           <span class="truncate">Profil Sekolah</span>
         </button>
 
+        <!-- 3. Visi & Misi -->
+        <button
+          type="button"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          @click="navigateTo('/dashboard/visi-misi')"
+        >
+          <RiCompass3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <span class="truncate">Visi & Misi</span>
+        </button>
+
+        <!-- 4. Video & Lokasi -->
         <button
           type="button"
           class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/video-profil')"
         >
           <RiVideoLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
-          <span class="truncate">Video Profil</span>
+          <span class="truncate">Video & Lokasi</span>
         </button>
 
+        <!-- 5. Tambah Event -->
         <button
           type="button"
           class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
@@ -307,9 +327,10 @@ onMounted(() => {
           <span class="truncate">Tambah Event</span>
         </button>
 
+        <!-- 6. Tambah Berita -->
         <button
           type="button"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer col-span-2 md:col-span-1"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/berita/create')"
         >
           <RiNewspaperLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
@@ -326,16 +347,18 @@ onMounted(() => {
       >
         <div class="flex items-center justify-between pb-1 sm:pb-2">
           <div class="flex items-center gap-2">
-            <RiChat1Line class="w-5 h-5 sm:w-6 sm:h-6 text-primary shrink-0" />
+            <RiChat3Line class="w-5 h-5 sm:w-6 sm:h-6 text-primary shrink-0" />
             <h2 class="text-base sm:text-xl font-bold text-text-neutral">Kritik & Saran Terbaru</h2>
           </div>
           <button
             type="button"
-            class="text-xs sm:text-sm font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+            class="text-xs sm:text-sm font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer shrink-0 group"
             @click="navigateTo('/dashboard/kritik-saran')"
           >
             <span>Lihat Semua</span>
-            <RiArrowRightLine class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <RiArrowRightLine
+              class="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1"
+            />
           </button>
         </div>
 
@@ -405,10 +428,13 @@ onMounted(() => {
             </div>
             <button
               type="button"
-              class="text-xs sm:text-sm font-semibold text-primary hover:underline cursor-pointer shrink-0"
+              class="text-xs sm:text-sm font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer shrink-0 group"
               @click="navigateTo('/dashboard/event')"
             >
-              Kelola
+              <span>Kelola</span>
+              <RiArrowRightLine
+                class="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1"
+              />
             </button>
           </div>
 
@@ -465,17 +491,77 @@ onMounted(() => {
         </div>
 
         <!-- Status Konten Utama -->
-        <div class="bg-neutral p-4 sm:p-9 rounded-2xl border border-secondary shadow-sm space-y-3">
-          <h2 class="font-bold text-text-neutral border-b border-text-alt/30 pb-2">
+        <div class="bg-neutral p-5 sm:p-6 rounded-2xl border border-secondary shadow-sm space-y-4">
+          <h2 class="font-bold text-text-neutral border-b border-text-alt/20 pb-3 text-base">
             Status Media Landing Page
           </h2>
 
-          <div class="flex items-center justify-between text-sm">
-            <span class="font-medium">Banner <span class="text-success">Aktif:</span></span>
-            <span class="font-bold text-text-neutral">
-              <template v-if="isLoadingStats">...</template>
-              <template v-else>{{ bannerActiveCount }} Slide</template>
-            </span>
+          <div class="space-y-3">
+            <!-- Status Banner -->
+            <div class="flex items-center justify-between text-sm py-1">
+              <span class="font-medium text-text-neutral/80">Banner</span>
+              <span>
+                <template v-if="isLoadingStats">...</template>
+                <template v-else>
+                  <span
+                    v-if="bannerActiveCount > 0"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success/10 text-success"
+                  >
+                    {{ bannerActiveCount }} Slide Tersedia
+                  </span>
+                  <span
+                    v-else
+                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-error/10 text-error"
+                  >
+                    Belum Ada
+                  </span>
+                </template>
+              </span>
+            </div>
+
+            <!-- Status Video Profil -->
+            <div class="flex items-center justify-between text-sm py-1">
+              <span class="font-medium text-text-neutral/80">Video</span>
+              <span>
+                <template v-if="isLoadingStats">...</template>
+                <template v-else>
+                  <span
+                    v-if="hasVideo"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success/10 text-success"
+                  >
+                    Tersedia
+                  </span>
+                  <span
+                    v-else
+                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-error/10 text-error"
+                  >
+                    Belum Ada
+                  </span>
+                </template>
+              </span>
+            </div>
+
+            <!-- Status Peta Lokasi -->
+            <div class="flex items-center justify-between text-sm py-1">
+              <span class="font-medium text-text-neutral/80">Peta Lokasi</span>
+              <span>
+                <template v-if="isLoadingStats">...</template>
+                <template v-else>
+                  <span
+                    v-if="hasMap"
+                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success/10 text-success"
+                  >
+                    Tersedia
+                  </span>
+                  <span
+                    v-else
+                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-error/10 text-error"
+                  >
+                    Belum Ada
+                  </span>
+                </template>
+              </span>
+            </div>
           </div>
         </div>
       </div>

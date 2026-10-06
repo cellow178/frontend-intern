@@ -18,6 +18,7 @@ interface Mission {
 
 // susun ulang jadi berpasangan per baris: [1,4,2,5,3,6]
 const orderedMissions = computed(() => {
+  if (!missions.value?.length) return []
   const half = Math.ceil(missions.value.length / 2)
   const left = missions.value.slice(0, half)
   const right = missions.value.slice(half)
@@ -44,8 +45,8 @@ onMounted(() => {
       <p class="text-lg text-text-neutral sm:text-xl lg:text-2xl">{{ vision }}</p>
     </div>
 
-    <!-- Misi -->
-    <div class="flex flex-col items-center gap-8 lg:gap-12">
+    <!-- Misi (Hanya muncul jika terdapat data dalam missions) -->
+    <div v-if="missions && missions.length > 0" class="flex flex-col items-center gap-8 lg:gap-12">
       <SectionTitle title="Misi" />
 
       <!-- Mobile & tablet: 1 kolom, urutan asli -->

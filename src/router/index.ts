@@ -108,10 +108,10 @@ const router = createRouter({
           meta: { breadcrumb: ['Visi Misi', 'Edit Misi'] },
         },
         {
-          path: 'video-profil',
-          name: 'dashboard-video-profil',
-          component: () => import('@/views/dashboard/DashboardVideoProfileView.vue'),
-          meta: { breadcrumb: ['Video Profil'] },
+          path: 'video-lokasi',
+          name: 'dashboard-video-lokasi',
+          component: () => import('@/views/dashboard/DashboardVideoLocationView.vue'),
+          meta: { breadcrumb: ['Video & Lokasi'] },
         },
 
         // --- Jurusan ---

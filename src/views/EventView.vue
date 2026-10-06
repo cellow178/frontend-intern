@@ -25,7 +25,7 @@ interface EventItem {
 }
 
 const store = useSiteDataStore()
-const { highlightEvent } = storeToRefs(store)
+const { highlightEvent, schoolName } = storeToRefs(store)
 
 const eventListSection = ref<HTMLElement | null>(null)
 const eventList = ref<EventItem[]>([])
@@ -160,8 +160,8 @@ onMounted(async () => {
     <div class="flex flex-col items-center gap-4 text-center mb-10">
       <SectionTitle title="Event" />
       <p class="text-sm text-text-neutral max-w-xl md:text-lg">
-        Ikuti berbagai kegiatan, acara, lomba, dan informasi terbaru yang diselenggarakan oleh SMKN
-        7 Semarang.
+        Jelajahi berbagai agenda, kegiatan menarik, dan informasi acara terbaru yang diselenggarakan
+        oleh {{ schoolName }}
       </p>
     </div>
 

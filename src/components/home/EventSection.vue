@@ -11,7 +11,7 @@ import Button from '@/components/ui/Button.vue'
 
 const store = useSiteDataStore()
 const router = useRouter()
-const { events, highlightEvent } = storeToRefs(store)
+const { events, highlightEvent, schoolName } = storeToRefs(store)
 
 const formatDateRange = (start: string, end: string) => {
   if (!end || start === end) return start
@@ -52,8 +52,8 @@ onMounted(() => {
     <div class="flex flex-col items-center gap-3 md:gap-4">
       <SectionTitle title="Event" />
       <p class="text-sm text-text-neutral text-center max-w-xl md:text-lg">
-        Ikuti berbagai kegiatan, acara, lomba, dan informasi terbaru yang diselenggarakan oleh SMKN
-        7 Semarang
+        Jelajahi berbagai agenda, kegiatan menarik, dan informasi acara terbaru yang diselenggarakan
+        oleh {{ schoolName }}
       </p>
     </div>
 

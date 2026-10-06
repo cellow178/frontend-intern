@@ -70,6 +70,7 @@ export const useSiteDataStore = defineStore('siteData', {
       img_2: null,
     } as ProfileConfig,
     videoProfile: '',
+    mapEmbed: '',
     footer: {
       description: '',
       school_email: '',
@@ -115,6 +116,7 @@ export const useSiteDataStore = defineStore('siteData', {
         this.heroDescription = data.data.hero_description
         this.profile = data.data.profile
         this.videoProfile = data.data.video_profile
+        this.mapEmbed = data.data.map_embed
         this.footer = data.data.footer
         this.loaded.globalConfig = true
       } catch (err) {

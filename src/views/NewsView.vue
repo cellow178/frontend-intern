@@ -16,7 +16,7 @@ import { RiSearchLine, RiTimeLine } from '@remixicon/vue'
 
 const route = useRoute()
 const siteDataStore = useSiteDataStore()
-const { highlightNews } = storeToRefs(siteDataStore)
+const { highlightNews, schoolName } = storeToRefs(siteDataStore)
 
 interface NewsItem {
   id: number
@@ -169,8 +169,8 @@ onMounted(async () => {
     <div class="flex flex-col items-center gap-4 text-center mb-10">
       <SectionTitle title="Berita" />
       <p class="text-sm text-text-neutral max-w-xl md:text-lg">
-        Dapatkan informasi dan kabar terbaru seputar kegiatan, prestasi, dan perkembangan di SMKN 7
-        Semarang
+        Ikuti perkembangan terkini, pengumuman penting, serta cerita inspiratif seputar aktivitas di
+        {{ schoolName }}.
       </p>
     </div>
 

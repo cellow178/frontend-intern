@@ -97,11 +97,11 @@ const handleSave = async () => {
       video_profile: videoUrl.value.trim() || null,
       map_embed: mapEmbed.value.trim() || null,
     })
-    toastStore.show('Video profil & lokasi berhasil disimpan.', 'success')
+    toastStore.show('Video & lokasi berhasil disimpan.', 'success')
     fetchVideoProfile()
   } catch (err: any) {
-    console.error('Gagal simpan video profil:', err)
-    toastStore.show(err.response?.data?.message || 'Gagal menyimpan video profil.', 'error')
+    console.error('Gagal simpan video & lokasi:', err)
+    toastStore.show(err.response?.data?.message || 'Gagal menyimpan video & lokasi.', 'error')
   } finally {
     isSaving.value = false
   }
@@ -114,11 +114,11 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <h1 class="text-xl font-bold text-text-neutral">Video Profil & Lokasi</h1>
+    <h1 class="text-xl font-bold text-text-neutral">Video & Lokasi</h1>
 
     <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <div v-if="isLoading" class="text-text-alt py-16 text-center">
-        <LoadingSpinner size="lg" label="Memuat video profil..." />
+        <LoadingSpinner size="lg" label="Memuat video & lokasi..." />
       </div>
 
       <div v-else class="flex flex-col gap-6 max-w-4xl">

@@ -38,7 +38,7 @@ const validate = () => {
   errors.value = {}
 
   if (!categoryId.value) {
-    errors.value.category_id = ['Kategori feedback wajib diisi.']
+    errors.value.category_id = ['Kategori wajib diisi.']
   }
   if (!message.value.trim()) {
     errors.value.message = ['Pesan wajib diisi.']
@@ -66,10 +66,7 @@ const submitFeedback = async () => {
     message.value = ''
     errors.value = {}
 
-    toastStore.show(
-      response.data.message || 'Terima kasih, masukan kamu sudah terkirim!',
-      'success',
-    )
+    toastStore.show('Terima kasih, masukan anda berhasil terkirim!', 'success')
   } catch (err: any) {
     console.error('Gagal kirim feedback:', err)
 
@@ -158,7 +155,9 @@ onMounted(() => {
             placeholder="Pilih kategori sesuai pesan anda"
             :error="!!errors.category_id"
           />
-          <p v-if="errors.category_id" class="text-sm text-error mt-1">{{ errors.category_id[0] }}</p>
+          <p v-if="errors.category_id" class="text-sm text-error mt-1">
+            {{ errors.category_id[0] }}
+          </p>
         </div>
 
         <!-- Pesan -->

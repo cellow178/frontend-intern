@@ -187,8 +187,8 @@ const radiusClass = computed(() =>
       :class="currentSize.iconPos.right"
       tabindex="-1"
     >
-      <RiEyeOffLine v-if="isPasswordVisible" :class="currentSize.icon" />
-      <RiEyeLine v-else :class="currentSize.icon" />
+      <RiEyeLine v-if="isPasswordVisible" :class="currentSize.icon" />
+      <RiEyeOffLine v-else :class="currentSize.icon" />
     </button>
   </div>
 </template>
