@@ -118,7 +118,7 @@ onMounted(() => {
     <h1 class="text-xl font-bold text-text-neutral mb-6">Konfigurasi Footer Website</h1>
 
     <div v-if="isLoading" class="text-text-alt py-16 text-center">
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <LoadingSpinner size="lg" label="Memuat footer..." />
     </div>
 
     <form v-else @submit.prevent="handleSave" class="flex flex-col gap-6">
