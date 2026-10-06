@@ -29,8 +29,10 @@ interface EventDetail {
   img_cover: EventImageCover | null
   status: string
   is_highlight: boolean
-  created_at: string
+  rel_updated_by: string
   updated_at: string
+  rel_created_by: string
+  created_at: string
 }
 
 const route = useRoute()
@@ -183,10 +185,11 @@ onMounted(() => {
 
         <div class="border-t border-text-alt/10"></div>
 
-        <!-- Tanggal Dibuat -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDateTime(event.created_at) }}</dd>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
+          <dt class="text-text-neutral font-semibold">Diubah Terakhir Oleh</dt>
+          <dd class="sm:col-span-2 text-text-neutral font-medium">
+            {{ event.rel_updated_by || '-' }}
+          </dd>
         </div>
 
         <div class="border-t border-text-alt/10"></div>
@@ -195,6 +198,23 @@ onMounted(() => {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
           <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
           <dd class="sm:col-span-2 text-text-neutral">{{ formatDateTime(event.updated_at) }}</dd>
+        </div>
+
+        <div class="border-t border-text-alt/10"></div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
+          <dt class="text-text-neutral font-semibold">Dibuat Oleh</dt>
+          <dd class="sm:col-span-2 text-text-neutral font-medium">
+            {{ event.rel_created_by || '-' }}
+          </dd>
+        </div>
+
+        <div class="border-t border-text-alt/10"></div>
+
+        <!-- Tanggal Dibuat -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
+          <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
+          <dd class="sm:col-span-2 text-text-neutral">{{ formatDateTime(event.created_at) }}</dd>
         </div>
 
         <div class="border-t border-text-alt/10"></div>

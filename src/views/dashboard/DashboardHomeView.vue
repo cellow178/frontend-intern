@@ -56,7 +56,7 @@ const isLoadingEvents = ref(true)
 
 const stats = ref<QuickStat[]>([
   {
-    title: 'Total Berita',
+    title: 'Berita Terbit',
     value: 0,
     icon: RiNewspaperLine,
     bgColor: 'bg-info/10 hover:bg-info/20',
@@ -64,7 +64,7 @@ const stats = ref<QuickStat[]>([
     route: '/dashboard/berita',
   },
   {
-    title: 'Event Aktif',
+    title: 'Event Terbit',
     value: 0,
     icon: RiCalendarEventLine,
     bgColor: 'bg-primary/10 hover:bg-primary/20',
@@ -80,7 +80,7 @@ const stats = ref<QuickStat[]>([
     route: '/dashboard/kritik-saran',
   },
   {
-    title: 'Jurusan',
+    title: 'Jurusan Aktif',
     value: 0,
     icon: RiGraduationCapLine,
     bgColor: 'bg-primary/10 hover:bg-primary/20',
@@ -499,7 +499,7 @@ onMounted(() => {
           <div class="space-y-3">
             <!-- Status Banner -->
             <div class="flex items-center justify-between text-sm py-1">
-              <span class="font-medium text-text-neutral/80">Banner</span>
+              <span class="font-medium text-text-neutral/80">Banner Aktif</span>
               <span>
                 <template v-if="isLoadingStats">...</template>
                 <template v-else>
