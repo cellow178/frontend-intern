@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import api from '@/services/api'
 import MajorCompetencyCard from '@/components/cards/MajorCompetencyCard.vue'
 import MajorGalleryCard from '@/components/cards/MajorGalleryCard.vue'
 import RichTextContent from '@/components/ui/RichTextContent.vue'
@@ -51,7 +52,6 @@ const isUsingLogo = computed(() => {
   const hasGalleryImg = galleries && galleries.length > 0 && galleries[0]?.img_cover
   const hasCoverImg = majorData.value?.img_cover
 
-  // Jika tidak ada gambar galeri maupun gambar cover, maka yang dipakai adalah logo
   return !hasGalleryImg && !hasCoverImg
 })
 
@@ -76,17 +76,10 @@ const fetchMajorDetail = async () => {
   resetImageErrors()
 
   try {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://cello.berinovasi.top/api'
+    const response = await api.get(`no-auth/majors/${slug}`)
 
-    const response = await fetch(`${apiBaseUrl}/no-auth/majors/${slug}`)
-
-    if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`)
-    }
-
-    const result = await response.json()
-    if (result.success) {
-      majorData.value = result.data
+    if (response.data?.success) {
+      majorData.value = response.data.data
     } else {
       majorData.value = null
     }
