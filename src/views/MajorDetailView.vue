@@ -67,13 +67,23 @@ const resetImageErrors = () => {
 
 // Fetch Data Detail Jurusan
 const fetchMajorDetail = async () => {
+  const slugParam = route.params.slug
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam
+
+  if (!slug) return
+
   loading.value = true
   resetImageErrors()
-  const slug = route.params.slug || 'sistem-informasi-jaringan-dan-aplikasi'
 
   try {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://cello.berinovasi.top/api'
+
     const response = await fetch(`${apiBaseUrl}/no-auth/majors/${slug}`)
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`)
+    }
+
     const result = await response.json()
     if (result.success) {
       majorData.value = result.data
