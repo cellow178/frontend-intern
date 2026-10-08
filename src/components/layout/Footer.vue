@@ -170,16 +170,17 @@ onMounted(() => {
       </div>
 
       <!-- Kolom Kontak -->
-      <div class="flex flex-col gap-4 lg:w-fit">
+      <div class="flex flex-col gap-4" :class="hasMajors ? 'lg:w-auto' : 'lg:w-fit'">
         <span class="font-semibold text-lg sm:text-xl">Kontak Kami</span>
 
         <!-- HYBRID EMAIL -->
-        <div class="flex items-center gap-2 group">
+        <div class="flex items-center gap-2 group max-w-full">
           <a
             :href="`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-2 underline text-sm sm:text-base break-all hover:opacity-80 transition-opacity"
+            class="flex items-center gap-2 underline text-sm sm:text-base hover:opacity-80 transition-opacity"
+            :class="hasMajors ? 'whitespace-nowrap' : 'break-all'"
           >
             <RiMailFill class="w-4 h-4 shrink-0 sm:w-5 sm:h-5" />
             <span>{{ email }}</span>

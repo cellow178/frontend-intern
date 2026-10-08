@@ -62,7 +62,7 @@ const handleLogin = async () => {
 
     if (redirectTo) {
       router.push(redirectTo)
-    } else if (['developer', 'super-admin'].includes(roleCode ?? '')) {
+    } else if (['developer', 'super-admin', 'guru'].includes(roleCode ?? '')) {
       router.push('/dashboard')
     } else {
       router.push('/')

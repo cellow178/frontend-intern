@@ -43,6 +43,19 @@ const isActive = (routeName: string) => {
   return route.path === targetPath || route.path.startsWith(`${targetPath}/`)
 }
 
+const filteredDashboardMenu = computed(() => {
+  return dashboardMenu
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        if (!item.permission) return true
+
+        return authStore.hasPermission(item.permission)
+      }),
+    }))
+    .filter((group) => group.items.length > 0)
+})
+
 const breadcrumbs = computed(() => {
   const trail = (route.meta.breadcrumb as string[] | undefined) ?? []
   return ['Dashboard', ...trail]
@@ -88,7 +101,7 @@ onUnmounted(() => {
   <LoadingSpinner v-if="isLoggingOut" :overlay="true" size="xl" label="Mengeluarkan akun..." />
 
   <!-- Main Viewport Shell -->
-  <div class="h-screen w-full flex bg-secondary/30 overflow-hidden">
+  <div class="h-screen w-full flex bg-secondary/50 overflow-hidden">
     <!-- Mobile Backdrop Overlay -->
     <transition name="backdrop-fade">
       <div
@@ -129,7 +142,7 @@ onUnmounted(() => {
 
       <!-- Navigation Links -->
       <nav class="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-        <div v-for="(group, idx) in dashboardMenu" :key="idx">
+        <div v-for="(group, idx) in filteredDashboardMenu" :key="idx">
           <p
             v-if="group.title"
             class="px-2 mb-2 text-[11px] font-semibold text-text-alt uppercase tracking-wider"

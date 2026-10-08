@@ -6,6 +6,7 @@ import { useSiteDataStore } from '@/stores/siteData'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import Button from '../ui/Button.vue'
+import LoadingSpinner from '../ui/LoadingSpinner.vue'
 import {
   RiLoginBoxLine,
   RiArrowDownSLine,
@@ -148,6 +149,8 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <LoadingSpinner v-if="isLoggingOut" :overlay="true" size="xl" label="Mengeluarkan akun..." />
+
   <nav
     class="fixed top-0 left-0 z-50 right-0 px-6 py-4 flex items-center justify-between transition-colors duration-300 lg:px-12"
     :class="isWhiteMode ? 'bg-neutral shadow-sm' : 'bg-transparent'"
@@ -424,7 +427,7 @@ onUnmounted(() => {
         <div v-if="hasAccountDropdown" class="mt-2 pt-3 border-t-2 border-primary/20">
           <div class="px-1 mb-2">
             <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.fullname }}</p>
-            <p class="text-xs text-primary uppercase tracking-wide">{{ user?.role_name }}</p>
+            <p class="text-xs text-primary tracking-wide">{{ user?.role_name }}</p>
           </div>
           <div class="bg-secondary rounded-xl overflow-hidden flex flex-col">
             <RouterLink
