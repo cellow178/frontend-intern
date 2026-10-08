@@ -371,7 +371,7 @@ onMounted(() => {
           @click="navigateTo('/dashboard/banner')"
         >
           <RiImageLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
-          <span class="truncate">Atur Banner</span>
+          <span>Atur Banner</span>
         </button>
 
         <!-- 2. Profil Sekolah -->
@@ -382,7 +382,7 @@ onMounted(() => {
           @click="navigateTo('/dashboard/profil-sekolah')"
         >
           <RiUser3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
-          <span class="truncate">Profil Sekolah</span>
+          <span>Profil Sekolah</span>
         </button>
 
         <!-- 3. Visi & Misi -->
@@ -391,8 +391,8 @@ onMounted(() => {
           class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/visi-misi')"
         >
-          <RiCompass3Line />
-          <span class="truncate">Visi & Misi</span>
+          <RiCompass3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <span>Visi & Misi</span>
         </button>
 
         <!-- 4. Video & Lokasi -->
@@ -403,7 +403,7 @@ onMounted(() => {
           @click="navigateTo('/dashboard/video-profil')"
         >
           <RiVideoLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
-          <span class="truncate">Video & Lokasi</span>
+          <span>Video & Lokasi</span>
         </button>
 
         <!-- 5. Tambah Event -->
@@ -414,7 +414,7 @@ onMounted(() => {
           @click="navigateTo('/dashboard/event/create')"
         >
           <RiCalendarEventLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
-          <span class="truncate">Tambah Event</span>
+          <span>Tambah Event</span>
         </button>
 
         <!-- 6. Tambah Berita -->
@@ -425,7 +425,7 @@ onMounted(() => {
           @click="navigateTo('/dashboard/berita/create')"
         >
           <RiNewspaperLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
-          <span class="truncate">Tambah Berita</span>
+          <span>Tambah Berita</span>
         </button>
       </div>
     </div>

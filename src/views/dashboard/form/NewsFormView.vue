@@ -349,8 +349,9 @@ onUnmounted(() => {
 
       <!-- Status Berita (Radio) -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-text-neutral sm:text-base">Status</label>
-        <div class="flex items-center gap-6">
+        <label class="text-sm font-medium text-text-neutral sm:text-base"> Status </label>
+
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
           <Radio
             v-for="opt in statusOptions"
             :key="opt.value"
