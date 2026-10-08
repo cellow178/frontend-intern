@@ -44,38 +44,54 @@ const handleFileChange = async (event: Event) => {
   if (!file) return
 
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png']
+
   if (!allowedTypes.includes(file.type)) {
     toastStore.show('Format file harus JPEG, JPG, atau PNG.', 'error')
-    if (fileInputRef.value) fileInputRef.value.value = ''
+
+    if (fileInputRef.value) {
+      fileInputRef.value.value = ''
+    }
+
     return
   }
 
   const maxSizeBytes = props.maxSizeMB * 1024 * 1024
+
   if (file.size > maxSizeBytes) {
     toastStore.show(`Ukuran file maksimal ${props.maxSizeMB} MB.`, 'error')
-    if (fileInputRef.value) fileInputRef.value.value = ''
+
+    if (fileInputRef.value) {
+      fileInputRef.value.value = ''
+    }
+
     return
   }
 
   isUploading.value = true
+
   try {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await api.post('/file/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    const response = await api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     })
 
     const result = response.data.data ?? response.data
 
-    // Emit path untuk modelValue dan url untuk previewUrl
     emit('update:modelValue', result.path || result.field_value || null)
+
     emit('update:previewUrl', result.url || null)
   } catch (err: any) {
     toastStore.show(err.response?.data?.message || 'Gagal mengunggah gambar.', 'error')
   } finally {
     isUploading.value = false
-    if (fileInputRef.value) fileInputRef.value.value = ''
+
+    if (fileInputRef.value) {
+      fileInputRef.value.value = ''
+    }
   }
 }
 
