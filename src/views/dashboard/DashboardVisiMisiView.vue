@@ -30,7 +30,7 @@ const fetchVision = async () => {
     rawConfigData.value = data
     vision.value = data.school_vision ?? ''
   } catch {
-    toastStore.show('Gagal memuat visi sekolah.', 'error')
+    toastStore.show('Gagal memuat Visi Sekolah.', 'error')
   } finally {
     isVisionLoading.value = false
   }
@@ -38,7 +38,7 @@ const fetchVision = async () => {
 
 const handleSaveVision = async () => {
   if (!vision.value.trim()) {
-    toastStore.show('Visi sekolah wajib diisi.', 'error')
+    toastStore.show('Visi Sekolah wajib diisi.', 'error')
     return
   }
 
@@ -62,10 +62,10 @@ const handleSaveVision = async () => {
       footer_linkedin: rawConfigData.value.footer_linkedin,
       school_vision: vision.value,
     })
-    toastStore.show('Visi sekolah berhasil diperbarui.', 'success')
+    toastStore.show('Visi Sekolah berhasil diperbarui!', 'success')
     fetchVision()
   } catch (err: any) {
-    toastStore.show(err.response?.data?.message || 'Gagal memperbarui visi sekolah.', 'error')
+    toastStore.show(err.response?.data?.message || 'Gagal memperbarui Visi Sekolah.', 'error')
   } finally {
     isSavingVision.value = false
   }
@@ -125,7 +125,7 @@ const fetchMissions = async () => {
     totalData.value = response.data?.total ?? 0
   } catch (error: any) {
     if (error.name === 'CanceledError' || error.message === 'canceled') return
-    toastStore.show('Gagal memuat data misi.', 'error')
+    toastStore.show('Gagal memuat Misi.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -182,15 +182,15 @@ const confirmDelete = async () => {
     const response = await api.delete('/missions/delete', { data: { id: selectedDeleteId.value } })
 
     if (response.data?.success === false) {
-      toastStore.show(response.data.message || 'Gagal menghapus data.', 'error')
+      toastStore.show(response.data.message || 'Gagal menghapus Misi.', 'error')
       return
     }
 
-    toastStore.show('Misi berhasil dihapus.', 'success')
+    toastStore.show('Misi berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchMissions()
   } catch (err: any) {
-    toastStore.show(err.response?.data?.message || 'Gagal menghapus misi.', 'error')
+    toastStore.show(err.response?.data?.message || 'Gagal menghapus Misi.', 'error')
   } finally {
     isDeleting.value = false
   }
@@ -218,7 +218,7 @@ onUnmounted(() => {
       </div>
 
       <div v-else class="flex flex-col gap-4">
-        <Input v-model="vision" type="textarea" :rows="2" />
+        <Input v-model="vision" type="textarea" :rows="3" />
         <div>
           <Button
             type="button"

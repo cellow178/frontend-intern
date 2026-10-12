@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, nextTick, watch, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -61,6 +61,23 @@ const breadcrumbs = computed(() => {
   return ['Dashboard', ...trail]
 })
 
+const breadcrumbRef = ref<HTMLElement | null>(null)
+
+watch(
+  breadcrumbs,
+  async () => {
+    await nextTick()
+
+    if (breadcrumbRef.value) {
+      breadcrumbRef.value.scrollTo({
+        left: breadcrumbRef.value.scrollWidth,
+        behavior: 'smooth',
+      })
+    }
+  },
+  { deep: true },
+)
+
 const closeSidebar = () => {
   isSidebarOpen.value = false
 }
@@ -77,7 +94,7 @@ const handleLogout = async () => {
 
   try {
     await authStore.logout()
-    toastStore.show('Logout berhasil.', 'info')
+    toastStore.show('Logout berhasil!', 'success')
     router.push('/')
   } catch (error) {
     toastStore.show('Gagal keluar dari akun.', 'error')
@@ -101,7 +118,7 @@ onUnmounted(() => {
   <LoadingSpinner v-if="isLoggingOut" :overlay="true" size="xl" label="Mengeluarkan akun..." />
 
   <!-- Main Viewport Shell -->
-  <div class="h-screen w-full flex bg-secondary/50 overflow-hidden">
+  <div class="h-screen w-full flex bg-secondary/20 overflow-hidden">
     <!-- Mobile Backdrop Overlay -->
     <transition name="backdrop-fade">
       <div
@@ -186,7 +203,10 @@ onUnmounted(() => {
           </button>
 
           <!-- Breadcrumbs -->
-          <nav class="flex items-center gap-1.5 text-sm min-w-0 overflow-x-auto">
+          <nav
+            ref="breadcrumbRef"
+            class="flex items-center gap-1.5 text-sm min-w-0 overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden"
+          >
             <template v-for="(crumb, idx) in breadcrumbs" :key="idx">
               <span
                 class="whitespace-nowrap"
@@ -198,6 +218,7 @@ onUnmounted(() => {
               >
                 {{ crumb }}
               </span>
+
               <RiArrowRightSLine
                 v-if="idx < breadcrumbs.length - 1"
                 class="w-4 h-4 text-text-alt shrink-0"

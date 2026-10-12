@@ -25,32 +25,32 @@ const router = useRouter()
 const toastStore = useToastStore()
 
 // --- Headline Title State ---
-const isHeadlineLoading = ref(true)
-const isSavingHeadline = ref(false)
-const headlineTitle = ref('')
+const isHeroTaglineLoading = ref(true)
+const isSavingHeroTagline = ref(false)
+const heroTaglineTitle = ref('')
 const rawConfigData = ref<Record<string, unknown>>({})
 
 const fetchHeroTagline = async () => {
-  isHeadlineLoading.value = true
+  isHeroTaglineLoading.value = true
   try {
     const response = await api.get('/global-config/show')
     const data = response.data?.data ?? {}
     rawConfigData.value = data
-    headlineTitle.value = (data.hero_description as string) ?? ''
+    heroTaglineTitle.value = (data.hero_description as string) ?? ''
   } catch {
-    toastStore.show('Gagal memuat headline title.', 'error')
+    toastStore.show('Gagal memuat data Hero Tagline.', 'error')
   } finally {
-    isHeadlineLoading.value = false
+    isHeroTaglineLoading.value = false
   }
 }
 
 const handleSaveHeadline = async () => {
-  if (!headlineTitle.value.trim()) {
-    toastStore.show('Headline title wajib diisi.', 'error')
+  if (!heroTaglineTitle.value.trim()) {
+    toastStore.show('Tagline wajib diisi.', 'error')
     return
   }
 
-  isSavingHeadline.value = true
+  isSavingHeroTagline.value = true
   try {
     await api.put('/global-config/update', {
       profile_title: rawConfigData.value.profile_title,
@@ -68,15 +68,15 @@ const handleSaveHeadline = async () => {
       footer_yt: rawConfigData.value.footer_yt,
       footer_fb: rawConfigData.value.footer_fb,
       footer_linkedin: rawConfigData.value.footer_linkedin,
-      hero_description: headlineTitle.value,
+      hero_description: heroTaglineTitle.value,
     })
-    toastStore.show('Headline title berhasil diperbarui.', 'success')
+    toastStore.show('Tagline berhasil diperbarui!', 'success')
     fetchHeroTagline()
   } catch (err) {
     const error = err as AxiosError<{ message?: string }>
-    toastStore.show(error.response?.data?.message || 'Gagal memperbarui headline title.', 'error')
+    toastStore.show(error.response?.data?.message || 'Gagal memperbarui Tagline.', 'error')
   } finally {
-    isSavingHeadline.value = false
+    isSavingHeroTagline.value = false
   }
 }
 
@@ -198,16 +198,16 @@ const confirmDelete = async () => {
     const response = await api.delete('/banners/delete', { data: { id: selectedDeleteId.value } })
 
     if (response.data?.success === false) {
-      toastStore.show('Gagal menghapus data banner.', 'error')
+      toastStore.show('Gagal menghapus Banner.', 'error')
       return
     }
 
-    toastStore.show('Banner berhasil dihapus.', 'success')
+    toastStore.show('Banner berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchBanners()
   } catch (err) {
     const error = err as AxiosError<{ message?: string }>
-    toastStore.show(error.response?.data?.message || 'Gagal menghapus banner.', 'error')
+    toastStore.show(error.response?.data?.message || 'Gagal menghapus Banner.', 'error')
   } finally {
     isDeleting.value = false
   }
@@ -233,19 +233,19 @@ onUnmounted(() => {
         Hero Tagline <span><RequiredBadge /></span>
       </h1>
 
-      <div v-if="isHeadlineLoading" class="flex flex-col items-center justify-center py-8">
-        <LoadingSpinner size="lg" label="Memuat hero tagline..." />
+      <div v-if="isHeroTaglineLoading" class="flex flex-col items-center justify-center py-8">
+        <LoadingSpinner size="lg" label="Memuat Hero Tagline..." />
       </div>
 
       <div v-else class="flex flex-col gap-4">
-        <Input v-model="headlineTitle" type="textarea" :rows="2" />
+        <Input v-model="heroTaglineTitle" type="textarea" :rows="3" />
         <div>
           <Button
             type="button"
             size="md"
             :icon-left="RiSaveLine"
-            :label="isSavingHeadline ? 'Menyimpan...' : 'Simpan'"
-            :disabled="isSavingHeadline"
+            :label="isSavingHeroTagline ? 'Menyimpan...' : 'Simpan'"
+            :disabled="isSavingHeroTagline"
             @click="handleSaveHeadline"
           />
         </div>

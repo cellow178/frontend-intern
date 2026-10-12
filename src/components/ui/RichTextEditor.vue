@@ -1,27 +1,29 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import Quill from 'quill'
-import { CustomImageResize } from '@/utils/quillImageResize'
 import 'quill/dist/quill.snow.css'
 
-// 1. Ambil format Image asli dari Quill
+// Format Image bawaan Quill
 const Image = Quill.import('formats/image') as any
 
-// 2. Custom Image Format yang mengizinkan atribut 'style'
 class CustomImage extends Image {
   static create(value: string | Record<string, string>) {
     const node = super.create(value)
+
     if (typeof value === 'object' && value.style) {
       node.setAttribute('style', value.style)
     }
+
     return node
   }
 
   static formats(domNode: HTMLElement) {
     const formats = super.formats(domNode)
+
     if (domNode.hasAttribute('style')) {
       formats.style = domNode.getAttribute('style')
     }
+
     return formats
   }
 
@@ -38,23 +40,28 @@ class CustomImage extends Image {
   }
 }
 
-// 3. Custom Video Format yang mengizinkan atribut 'style'
+// Format Video bawaan Quill
 const Video = Quill.import('formats/video') as any
 
 class CustomVideo extends Video {
   static create(value: string | Record<string, string>) {
-    const node = super.create(value)
+    // Quill mengharapkan URL sebagai nilai embed video.
+    const node = super.create(typeof value === 'object' ? (value as any).url : value)
+
     if (typeof value === 'object' && value.style) {
       node.setAttribute('style', value.style)
     }
+
     return node
   }
 
   static formats(domNode: HTMLElement) {
     const formats = super.formats(domNode)
+
     if (domNode.hasAttribute('style')) {
       formats.style = domNode.getAttribute('style')
     }
+
     return formats
   }
 
@@ -71,10 +78,8 @@ class CustomVideo extends Video {
   }
 }
 
-// Registrasikan ke Quill
 Quill.register(CustomImage, true)
 Quill.register(CustomVideo, true)
-Quill.register('modules/imageResize', CustomImageResize)
 
 const props = defineProps<{
   modelValue: string
@@ -95,7 +100,7 @@ onMounted(() => {
     placeholder: 'Tulis di sini...',
     modules: {
       toolbar: [
-        [{ header: [2, 3, 4, false] }],
+        [{ header: [1, 2, 3, 4, false] }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
         ['blockquote', 'code-block'],
@@ -105,7 +110,83 @@ onMounted(() => {
         ['link', 'image', 'video'],
         ['clean'],
       ],
-      imageResize: {},
+
+      keyboard: {
+        bindings: {
+          deleteVideoBackward: {
+            key: 'Backspace',
+            collapsed: true,
+            handler(range: any) {
+              if (!quill || range.index < 1) return true
+
+              const ops = quill.getContents().ops ?? []
+              let index = 0
+
+              // Cari posisi embed video di Delta.
+              const videoIndexes: number[] = []
+
+              for (const op of ops) {
+                const insert = op.insert
+                const length = typeof insert === 'string' ? insert.length : 1
+
+                if (typeof insert === 'object' && insert !== null && 'video' in insert) {
+                  videoIndexes.push(index)
+                }
+
+                index += length
+              }
+
+              // Cari video terdekat sebelum kursor.
+              const videoIndex = videoIndexes
+                .filter((i) => i < range.index)
+                .sort((a, b) => b - a)[0]
+
+              if (videoIndex === undefined) return true
+
+              // Jangan menghapus video jika masih ada konten di antara kursor dan video.
+              const between = quill.getText(videoIndex + 1, range.index - videoIndex - 1)
+
+              if (between.replace(/[\n\r]/g, '').length > 0) {
+                return true
+              }
+
+              quill.deleteText(videoIndex, 1, Quill.sources.USER)
+              return false
+            },
+          },
+
+          deleteVideoForward: {
+            key: 'Delete',
+            collapsed: true,
+            handler(range: any) {
+              if (!quill) return true
+
+              const targetIndex = range.index
+              const ops = quill.getContents().ops ?? []
+              let currentIndex = 0
+
+              for (const op of ops) {
+                const insert = op.insert
+                const length = typeof insert === 'string' ? insert.length : 1
+
+                if (
+                  currentIndex === targetIndex &&
+                  typeof insert === 'object' &&
+                  insert !== null &&
+                  'video' in insert
+                ) {
+                  quill.deleteText(targetIndex, 1, Quill.sources.USER)
+                  return false
+                }
+
+                currentIndex += length
+              }
+
+              return true
+            },
+          },
+        },
+      },
     },
   })
 
@@ -114,7 +195,9 @@ onMounted(() => {
   }
 
   quill.on('text-change', () => {
-    emit('update:modelValue', quill!.root.innerHTML)
+    if (quill) {
+      emit('update:modelValue', quill.root.innerHTML)
+    }
   })
 })
 
@@ -139,7 +222,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
-/* Style Toolbar Bawaan Kamu */
 .ql-toolbar.ql-snow {
   border: none;
   border-bottom: 1px solid color-mix(in srgb, var(--color-text-alt) 20%, transparent);
@@ -158,14 +240,16 @@ onBeforeUnmount(() => {
   min-height: 12rem;
 }
 
+/* Gambar di editor tetap proporsional */
 .ql-editor img {
+  display: block;
   max-width: 100%;
   height: auto;
   border-radius: 0.5rem;
   cursor: pointer;
 }
 
-/* Hover & Active States Sesuai Warna Bawaan Kamu */
+/* Toolbar hover dan active */
 .ql-snow.ql-toolbar button,
 .ql-snow .ql-toolbar button,
 .ql-snow.ql-toolbar .ql-picker,
@@ -188,38 +272,29 @@ onBeforeUnmount(() => {
 }
 
 .ql-snow.ql-toolbar button.ql-active,
-.ql-snow .ql-toolbar button.ql-active {
+.ql-snow .ql-toolbar button.ql-active,
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover {
   color: var(--color-primary) !important;
 }
 
 .ql-snow.ql-toolbar button.ql-active .ql-stroke,
 .ql-snow .ql-toolbar button.ql-active .ql-stroke,
 .ql-snow.ql-toolbar button.ql-active .ql-stroke-miter,
-.ql-snow .ql-toolbar button.ql-active .ql-stroke-miter {
-  stroke: var(--color-primary) !important;
-}
-
-.ql-snow.ql-toolbar button.ql-active .ql-fill,
-.ql-snow .ql-toolbar button.ql-active .ql-fill {
-  fill: var(--color-primary) !important;
-}
-
-.ql-snow.ql-toolbar button:hover,
-.ql-snow .ql-toolbar button:hover {
-  color: var(--color-primary) !important;
-}
-
+.ql-snow .ql-toolbar button.ql-active .ql-stroke-miter,
 .ql-snow.ql-toolbar button:hover .ql-stroke,
 .ql-snow .ql-toolbar button:hover .ql-stroke {
   stroke: var(--color-primary) !important;
 }
 
+.ql-snow.ql-toolbar button.ql-active .ql-fill,
+.ql-snow .ql-toolbar button.ql-active .ql-fill,
 .ql-snow.ql-toolbar button:hover .ql-fill,
 .ql-snow .ql-toolbar button:hover .ql-fill {
   fill: var(--color-primary) !important;
 }
 
-/* Tooltip / Popup Input Link & Video Sesuai Warna Bawaan Kamu */
+/* Tooltip link dan video */
 .ql-snow .ql-tooltip {
   z-index: 50 !important;
   background-color: #1e293b !important;
@@ -245,29 +320,10 @@ onBeforeUnmount(() => {
   font-weight: bold;
 }
 
-/* Perbaikan khusus Iframe & Video Alignment */
-.ql-editor iframe {
-  pointer-events: none !important;
-  display: inline-block;
-}
-
-.ql-editor p.ql-align-center {
-  text-align: center;
-}
-
-.ql-editor p.ql-align-right {
-  text-align: right;
-}
-
-.ql-editor p.ql-align-center iframe,
-.ql-editor .ql-video.ql-align-center {
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-.ql-editor p.ql-align-right iframe,
-.ql-editor .ql-video.ql-align-right {
-  margin-left: auto !important;
-  margin-right: 0 !important;
+/* Video di editor: tidak dipaksa mengikuti alignment */
+.ql-editor iframe.ql-video {
+  display: block;
+  max-width: 100%;
+  cursor: pointer;
 }
 </style>

@@ -6,7 +6,7 @@ import SectionTitle from '@/components/ui/SectionTitle.vue'
 import MajorCard from '@/components/cards/MajorCard.vue'
 
 const store = useSiteDataStore()
-const { majors } = storeToRefs(store)
+const { majors, schoolName } = storeToRefs(store)
 
 onMounted(() => {
   store.fetchMajors()
@@ -16,15 +16,17 @@ onMounted(() => {
 <template>
   <section
     id="kompetensi"
-    class="px-6 py-10 flex flex-col items-center gap-10 scroll-mt-20 md:px-12 md:py-16 md:gap-16"
+    class="scroll-mt-20 flex flex-col items-center gap-8 px-6 py-10 sm:gap-10 sm:px-8 sm:py-12 md:gap-12 md:px-12 md:py-16"
   >
+    <!-- Judul -->
     <div class="flex flex-col items-center gap-3 text-center md:gap-4">
       <SectionTitle title="Kompetensi Keahlian" />
-      <p class="text-base text-text-neutral md:text-lg">Kompetensi Keahlian di SMKN 7 Semarang</p>
+      <p class="text-base text-text-neutral md:text-lg">Kompetensi Keahlian di {{ schoolName }}</p>
     </div>
 
+    <!-- Grid Jurusan -->
     <div
-      class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 lg:max-w-14xl"
+      class="grid w-full grid-cols-1 auto-rows-fr items-stretch gap-4 sm:grid-cols-2 sm:gap-5 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 lg:max-w-14xl"
     >
       <MajorCard
         v-for="major in majors"

@@ -80,7 +80,7 @@ const fetchDetail = async () => {
     news.value = response.data.data
   } catch (err) {
     console.error('Gagal mengambil detail berita:', err)
-    toastStore.show('Gagal memuat detail data.', 'error')
+    toastStore.show('Gagal memuat Detail Berita.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -93,48 +93,61 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Kartu Metadata / Detail Data -->
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <BackButton to="/dashboard/berita" :sticky="false" />
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="flex flex-col gap-4">
+        <span>
+          <BackButton to="/dashboard/berita" :sticky="false" />
+        </span>
 
-      <div class="border-t border-text-alt/50 mt-2 mb-6"></div>
+        <div class="border-t border-text-alt/50"></div>
 
-      <h1 class="text-xl font-bold text-text-neutral mb-4">Detail Berita</h1>
+        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Berita</h1>
+      </div>
 
-      <!-- State Loading -->
+      <!-- Loading -->
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
         <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
-      <!-- State Data Tidak Ditemukan -->
-      <div v-else-if="!news" class="text-center text-text-alt py-8">Data tidak ditemukan.</div>
+      <!-- Empty State -->
+      <div v-else-if="!news" class="text-center text-text-alt py-10 text-sm sm:text-base">
+        Data berita tidak ditemukan.
+      </div>
 
-      <!-- Detail Data -->
-      <dl v-else class="flex flex-col">
+      <!-- Detail -->
+      <dl v-else class="flex flex-col mt-4 lg:mt-6">
         <!-- Judul -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Judul</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium break-all">
-            {{ news.title }}
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Judul Berita</dt>
+
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
+            {{ news.title || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Kategori -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Kategori</dt>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Kategori</dt>
+
           <dd class="sm:col-span-2 flex items-center">
             <CategoryBadge :categoryName="news.rel_category_id" />
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Cover Berita -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Cover Berita</dt>
-          <dd class="sm:col-span-2 text-text-neutral">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Cover Berita</dt>
+
+          <dd class="sm:col-span-2 min-w-0 text-sm lg:text-base text-text-neutral">
             <a
               v-if="news.img_cover?.url"
               :href="getImageUrl(news.img_cover.url)"
@@ -144,63 +157,77 @@ onMounted(() => {
             >
               {{ getImageUrl(news.img_cover.url) }}
             </a>
+
             <span v-else class="text-text-alt">-</span>
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Status -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Status</dt>
-          <dd class="sm:col-span-2 flex items-center gap-2">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Status</dt>
+
+          <dd class="sm:col-span-2 flex items-center">
             <EnumStatusBadge :status="news.status" />
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Diubah Terakhir Oleh -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Diubah Terakhir Oleh</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Diubah Terakhir Oleh</dt>
+
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
             {{ news.rel_updated_by || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Tanggal Diubah -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(news.updated_at) }}</dd>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Diubah</dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDate(news.updated_at) }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Dibuat Oleh -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Dibuat Oleh</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Dibuat Oleh</dt>
+
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
             {{ news.rel_created_by || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Tanggal Dibuat -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(news.created_at) }}</dd>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5">
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Dibuat</dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDate(news.created_at) }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
-        <div class="py-8">
-          <h2 class="text-text-neutral font-semibold pb-3 mb-4 border-b border-text-alt/50">
+        <!-- Deskripsi Berita -->
+        <div class="border-t border-text-alt/15">
+          <h2
+            class="text-sm lg:text-base font-semibold text-text-neutral pb-3 mb-4 border-b border-text-alt/20"
+          >
             Deskripsi Berita
           </h2>
-          <RichTextContent :content="news.content" class="max-w-4xl" />
+
+          <RichTextContent :content="news.content" class="max-w-4xl text-sm lg:text-base" />
         </div>
       </dl>
     </div>

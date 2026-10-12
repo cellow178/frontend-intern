@@ -101,7 +101,7 @@ const fetchMajors = async () => {
     imageErrors.value = {}
   } catch (error) {
     if (axios.isCancel(error)) return
-    toastStore.show('Gagal memuat data jurusan.', 'error')
+    toastStore.show('Gagal memuat Jurusan.', 'error')
   } finally {
     if (!fetchAbortController.signal.aborted) {
       isLoading.value = false
@@ -148,7 +148,7 @@ const confirmDelete = async () => {
   isDeleting.value = true
   try {
     await api.delete('/majors/delete', { data: { id: selectedDeleteId.value } })
-    toastStore.show('Jurusan berhasil dihapus.', 'success')
+    toastStore.show('Jurusan berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchMajors()
   } catch (error) {
@@ -191,7 +191,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
     <div>
       <h1 class="text-xl font-bold text-text-neutral">Kelola Jurusan</h1>
     </div>

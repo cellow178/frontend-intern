@@ -83,17 +83,28 @@ const fetchProfileData = async () => {
     }
   } catch (err) {
     console.error('Gagal memuat profil sekolah:', err)
-    toastStore.show('Gagal memuat data profil sekolah.', 'error')
+    toastStore.show('Gagal memuat Profil Sekolah.', 'error')
   } finally {
     isLoading.value = false
   }
+}
+
+const isRichTextEmpty = (value: string): boolean => {
+  const text = value
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#160;/g, ' ')
+    .replace(/&amp;/gi, '&')
+    .trim()
+
+  return text.length === 0
 }
 
 const validate = () => {
   errors.schoolName = !schoolName.value.trim()
   errors.motto = !motto.value.trim()
   errors.profileTitle = !profileTitle.value.trim()
-  errors.profileDescription = !profileDescription.value.trim()
+  errors.profileDescription = isRichTextEmpty(profileDescription.value)
   errors.imgProfile1 = !imgProfile1.value
 
   if (
@@ -114,6 +125,7 @@ const validate = () => {
 
     return false
   }
+
   return true
 }
 
@@ -136,13 +148,13 @@ const handleSave = async () => {
 
   try {
     await api.put('/global-config/update', payload)
-    toastStore.show('Profil sekolah berhasil disimpan.', 'success')
+    toastStore.show('Profil Sekolah berhasil disimpan!', 'success')
     isSuccess = true
   } catch (err) {
     console.error('Error saat update:', err)
     const errorResponse = err as { response?: { data?: { message?: string } } }
     toastStore.show(
-      errorResponse.response?.data?.message || 'Gagal menyimpan profil sekolah.',
+      errorResponse.response?.data?.message || 'Gagal menyimpan Profil Sekolah.',
       'error',
     )
   } finally {
@@ -161,9 +173,12 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <h1 class="text-xl font-bold text-text-neutral">Profil Sekolah</h1>
-
     <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">Profil Sekolah</h1>
+      </div>
+
       <div v-if="isLoading" class="text-text-alt py-16 text-center">
         <LoadingSpinner size="lg" label="Memuat profil sekolah..." />
       </div>

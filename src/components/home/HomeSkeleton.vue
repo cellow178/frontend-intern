@@ -96,7 +96,7 @@ import NewsCardSkeleton from '../skeletons/NewsCardSkeleton.vue'
       </div>
 
       <!-- Statistik Skeleton -->
-      <div
+      <!-- <div
         class="flex flex-col items-start gap-6 sm:flex-row sm:flex-nowrap sm:items-stretch sm:justify-center sm:gap-4 md:gap-6 lg:flex-wrap lg:gap-16 xl:gap-30"
       >
         <div
@@ -104,27 +104,23 @@ import NewsCardSkeleton from '../skeletons/NewsCardSkeleton.vue'
           :key="`stat-skel-${n}`"
           class="w-full max-w-96 flex flex-col items-start gap-4 bg-text-alt/15 rounded-2xl p-4 sm:max-w-none sm:flex-1 sm:min-w-0 sm:p-4 sm:gap-2.5 sm:items-center md:p-5 md:gap-3 lg:w-76 lg:flex-none lg:p-8 lg:gap-4"
         >
-          <!-- Header Skeleton: Icon + Label -->
           <div class="flex flex-row gap-4 items-center w-full sm:flex-col sm:gap-4 sm:items-center">
-            <!-- Icon -->
             <div
               class="w-12 h-12 rounded-full bg-text-alt/20 shrink-0 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-18 lg:h-18"
             ></div>
 
-            <!-- Label (2 baris text) -->
             <div class="flex flex-col gap-1.5 w-full sm:items-center">
               <div class="h-5 w-24 bg-text-alt/20 rounded sm:h-4 md:h-5 lg:h-6"></div>
               <div class="h-5 w-32 bg-text-alt/20 rounded sm:h-4 md:h-5 lg:h-6"></div>
             </div>
           </div>
 
-          <!-- Description Skeleton (2 baris text) -->
           <div class="flex flex-col gap-2 w-full sm:items-center">
             <div class="h-3.5 w-full bg-text-alt/20 rounded lg:h-4"></div>
             <div class="h-3.5 w-4/5 bg-text-alt/20 rounded lg:h-4"></div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Video Profil Skeleton -->
@@ -133,39 +129,49 @@ import NewsCardSkeleton from '../skeletons/NewsCardSkeleton.vue'
     </div>
 
     <!-- Major Skeleton -->
-    <div class="px-6 py-10 flex flex-col items-center gap-10 md:px-12 md:py-16 md:gap-16">
+    <div
+      class="flex flex-col items-center gap-8 px-6 py-10 sm:gap-10 sm:px-8 sm:py-12 md:gap-12 md:px-12 md:py-16"
+    >
+      <!-- Skeleton Judul -->
       <div class="flex flex-col items-center gap-3 text-center md:gap-4">
-        <div class="h-7 w-52 bg-text-alt/15 rounded-lg"></div>
-        <div class="h-5 w-64 bg-text-alt/15 rounded sm:w-80"></div>
+        <div class="h-7 w-52 rounded-lg bg-text-alt/15"></div>
+        <div class="h-5 w-64 rounded bg-text-alt/15 sm:w-80"></div>
       </div>
 
+      <!-- Skeleton Grid Jurusan -->
       <div
-        class="grid grid-cols-2 gap-4 w-full sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14 lg:max-w-14xl"
+        class="grid w-full grid-cols-1 auto-rows-fr items-stretch gap-4 sm:grid-cols-2 sm:gap-5 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 lg:max-w-14xl"
       >
         <div
           v-for="n in 8"
           :key="`major-skel-${n}`"
-          class="w-full lg:w-90 bg-text-alt/5 rounded-xl p-4 sm:p-5 lg:p-6 flex flex-col gap-2 sm:gap-4"
+          class="flex w-full flex-col gap-2 rounded-xl border border-transparent bg-text-alt/5 p-4 sm:gap-4 sm:p-5 lg:w-90 lg:p-6"
         >
+          <!-- Header Logo & Kode -->
           <div class="flex items-center gap-2.5 sm:gap-3">
             <div
-              class="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full bg-text-alt/15 shrink-0"
+              class="h-7 w-7 shrink-0 rounded-full bg-text-alt/15 sm:h-8 sm:w-8 lg:h-10 lg:w-10"
             ></div>
-            <div class="h-5 w-16 sm:h-6 sm:w-20 lg:h-7 lg:w-24 bg-text-alt/15 rounded"></div>
+
+            <div class="h-5 w-16 rounded bg-text-alt/15 sm:h-6 sm:w-20 lg:h-7 lg:w-24"></div>
           </div>
 
-          <div class="flex-1 flex flex-col gap-2">
-            <div class="h-4 w-3/4 sm:h-5 lg:h-6 bg-text-alt/15 rounded mb-1"></div>
-            <div class="space-y-1.5">
-              <div class="h-3.5 w-full bg-text-alt/15 rounded sm:h-4"></div>
-              <div class="h-3.5 w-full bg-text-alt/15 rounded sm:h-4"></div>
-              <div class="h-3.5 w-2/3 bg-text-alt/15 rounded sm:h-4"></div>
+          <!-- Judul & Deskripsi -->
+          <div class="flex flex-1 flex-col">
+            <div class="mb-2 h-4 w-3/4 rounded bg-text-alt/15 sm:h-5 lg:h-6"></div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="h-3.5 w-full rounded bg-text-alt/15 sm:h-4"></div>
+              <div class="h-3.5 w-full rounded bg-text-alt/15 sm:h-4"></div>
+              <div class="h-3.5 w-2/3 rounded bg-text-alt/15 sm:h-4"></div>
+              <div class="hidden h-4 w-4/5 rounded bg-text-alt/15 lg:block"></div>
             </div>
           </div>
 
-          <div class="hidden lg:flex items-center gap-2 mt-auto pt-2">
-            <div class="h-4 w-20 bg-text-alt/15 rounded"></div>
-            <div class="w-4 h-4 bg-text-alt/15 rounded"></div>
+          <!-- Lihat Detail: Desktop -->
+          <div class="mt-auto hidden items-center gap-1 pt-2 lg:flex">
+            <div class="h-4 w-20 rounded bg-text-alt/15"></div>
+            <div class="h-4 w-4 rounded bg-text-alt/15"></div>
           </div>
         </div>
       </div>

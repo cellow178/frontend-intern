@@ -29,7 +29,7 @@ defineProps<{
 
     <!-- Judul & Deskripsi -->
     <div class="flex-1 flex flex-col">
-      <h3 class="font-bold text-xs sm:text-base lg:text-lg text-text-alt mb-2">
+      <h3 class="font-bold text-sm sm:text-base lg:text-lg text-text-alt mb-2">
         {{ majorName }}
       </h3>
       <p

@@ -124,7 +124,7 @@ watch(
         <div v-else>
           <!-- HERO SECTION (Header & Gambar Utama) -->
           <section
-            class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-10 items-center mb-12 md:mb-16 lg:mb-20"
+            class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 md:gap-8 lg:gap-10 items-center mb-10 sm:mb-12 md:mb-16 lg:mb-20"
           >
             <!-- Gambar Utama Hero -->
             <div class="md:col-span-5 flex justify-center">
@@ -133,7 +133,7 @@ watch(
                 :class="[
                   isUsingLogo
                     ? 'w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 aspect-square p-6 bg-white/50'
-                    : 'w-full h-56 sm:h-64 md:h-72 lg:h-80',
+                    : 'w-full aspect-4/3',
                 ]"
               >
                 <img
@@ -186,39 +186,38 @@ watch(
           </section>
 
           <!-- DESKRIPSI LENGKAP & GAMBAR KEDUA -->
-          <section
-            class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-10 items-start mb-12 md:mb-16 lg:mb-24"
-          >
-            <!-- RichTextContent untuk Deskripsi Lengkap -->
-            <div :class="secondGalleryImage ? 'md:col-span-7' : 'md:col-span-12'">
-              <RichTextContent :content="majorData.full_description" />
-            </div>
-
-            <!-- Gambar Kedua (Galleries[1]) -->
-            <div v-if="secondGalleryImage" class="md:col-span-5">
-              <div
-                class="rounded-2xl md:rounded-3xl overflow-hidden bg-text-alt/20 h-56 sm:h-64 md:h-72 lg:h-80 shadow-sm border border-secondary flex items-center justify-center md:sticky md:top-28"
-              >
-                <img
-                  v-if="!secondImgError"
-                  :src="secondGalleryImage"
-                  :alt="majorData.major_name"
-                  class="w-full h-full object-cover"
-                  @error="secondImgError = true"
-                />
+          <section class="mb-8">
+            <div class="major-description">
+              <div v-if="secondGalleryImage" class="major-description-image">
                 <div
-                  v-else
-                  class="flex flex-col items-center justify-center text-text-alt p-6 text-center"
+                  class="w-full aspect-4/3 rounded-2xl md:rounded-3xl overflow-hidden bg-text-alt/20 shadow-sm border border-secondary"
                 >
-                  <RiImageLine class="w-8 h-8 md:w-10 md:h-10 mb-2" />
-                  <span class="text-xs font-medium tracking-wide">Gambar tidak tersedia</span>
+                  <img
+                    v-if="!secondImgError"
+                    :src="secondGalleryImage"
+                    :alt="majorData.major_name"
+                    class="w-full h-full object-cover"
+                    @error="secondImgError = true"
+                  />
+
+                  <div
+                    v-else
+                    class="w-full h-full flex flex-col items-center justify-center text-text-alt p-6 text-center"
+                  >
+                    <RiImageLine class="w-8 h-8 md:w-10 md:h-10 mb-2" />
+                    <span class="text-xs font-medium tracking-wide">Gambar tidak tersedia</span>
+                  </div>
                 </div>
               </div>
+
+              <RichTextContent :content="majorData.full_description" />
+
+              <div class="clear-both"></div>
             </div>
           </section>
 
           <!-- STATISTIK KELAS & DURASI STUDI -->
-          <section class="mb-12 md:mb-16 lg:mb-24">
+          <section class="mb-24 lg:mb-32">
             <div class="grid grid-cols-2 gap-4 md:gap-6 max-w-xl md:max-w-2xl mx-auto">
               <div
                 class="rounded-2xl md:rounded-3xl p-4 md:p-6 bg-secondary/50 text-center flex flex-col items-center justify-center"
@@ -226,7 +225,7 @@ watch(
                 <div class="text-primary mb-2">
                   <RiDoorOpenLine class="w-7 h-7 md:w-8 md:h-8" />
                 </div>
-                <div class="text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
+                <div class="text-xl md:text-3xl font-extrabold text-primary tracking-tight">
                   {{ majorData.total_classes }} Indeks
                 </div>
                 <div class="text-xs md:text-sm text-text-alt font-semibold mt-1">Total Kelas</div>
@@ -238,7 +237,7 @@ watch(
                 <div class="text-primary mb-2">
                   <RiBriefcaseLine class="w-7 h-7 md:w-8 md:h-8" />
                 </div>
-                <div class="text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
+                <div class="text-xl md:text-3xl font-extrabold text-primary tracking-tight">
                   {{ majorData.major_duration }} Tahun
                 </div>
                 <div class="text-xs md:text-sm text-text-alt font-semibold mt-1">Program Studi</div>
@@ -249,7 +248,7 @@ watch(
           <!-- SECTION: KOMPETENSI JURUSAN -->
           <section
             v-if="hasCompetencies"
-            class="mb-12 md:mb-16 lg:mb-24 flex flex-col gap-6 md:gap-8 lg:gap-10"
+            class="mb-24 lg:mb-32 flex flex-col gap-6 md:gap-8 lg:gap-10"
           >
             <div class="flex flex-col items-center gap-2">
               <h2
@@ -294,3 +293,19 @@ watch(
     </div>
   </main>
 </template>
+
+<style scoped>
+.major-description-image {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .major-description-image {
+    float: right;
+    width: 41.666667%;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+</style>

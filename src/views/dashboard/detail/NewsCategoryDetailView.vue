@@ -48,7 +48,7 @@ const fetchDetail = async () => {
     category.value = response.data.data
   } catch (err) {
     console.error('Gagal mengambil detail kategori berita:', err)
-    toastStore.show('Gagal memuat detail data.', 'error')
+    toastStore.show('Gagal memuat Detail Kategori Berita.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -61,56 +61,86 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <BackButton to="/dashboard/daftar-kategori?tab=news-categories" :sticky="false" />
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="flex flex-col gap-4">
+        <span>
+          <BackButton to="/dashboard/daftar-kategori?tab=news-categories" :sticky="false" />
+        </span>
 
-      <div class="border-t border-text-alt/50 mt-2 mb-6"></div>
+        <div class="border-t border-text-alt/50"></div>
 
-      <h1 class="text-xl font-bold text-text-neutral mb-4">Detail Kategori Berita</h1>
+        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Kategori Berita</h1>
+      </div>
 
+      <!-- Loading -->
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
         <LoadingSpinner size="lg" label="Memuat data..." />
       </div>
 
-      <div v-else-if="!category" class="text-center text-text-alt py-8">Data tidak ditemukan.</div>
+      <!-- Empty State -->
+      <div v-else-if="!category" class="text-center text-text-alt py-10 text-sm sm:text-base">
+        Data kategori berita tidak ditemukan.
+      </div>
 
-      <dl v-else class="flex flex-col">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-medium">Nama Kategori</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ category.name }}</dd>
+      <!-- Detail -->
+      <dl v-else class="flex flex-col mt-4 lg:mt-6">
+        <!-- Nama Kategori -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Nama Kategori</dt>
+
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
+            {{ category.name || '-' }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Deskripsi -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Deskripsi</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-medium">Deskripsi</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ category.description || '-' }}</dd>
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral leading-relaxed wrap-break-word"
+          >
+            {{ category.description || '-' }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Status -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Status</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-medium">Status</dt>
-          <dd class="sm:col-span-2 flex items-center gap-2">
+          <dd class="sm:col-span-2 flex items-center">
             <DashboardStatusBadge :active="category.active" />
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Tanggal Diubah -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Diubah</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-medium">Tanggal Diubah</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(category.updated_at) }}</dd>
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDate(category.updated_at) }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Tanggal Dibuat -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5">
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Dibuat</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-medium">Tanggal Dibuat</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(category.created_at) }}</dd>
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDate(category.created_at) }}
+          </dd>
         </div>
-
-        <div class="border-t border-text-alt/10"></div>
       </dl>
     </div>
   </div>

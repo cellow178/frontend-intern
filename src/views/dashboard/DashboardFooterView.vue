@@ -47,7 +47,7 @@ const fetchFooter = async () => {
     linkedin.value = data.footer_linkedin ?? ''
   } catch (err) {
     console.error('Gagal ambil konfigurasi footer:', err)
-    toastStore.show('Gagal memuat data footer.', 'error')
+    toastStore.show('Gagal memuat Footer.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -98,11 +98,11 @@ const handleSave = async () => {
       footer_fb: fb.value || null,
       footer_linkedin: linkedin.value || null,
     })
-    toastStore.show('Konfigurasi footer berhasil disimpan.', 'success')
+    toastStore.show('Konfigurasi Footer berhasil disimpan!', 'success')
     fetchFooter()
   } catch (err: any) {
     console.error('Gagal simpan konfigurasi footer:', err)
-    toastStore.show(err.response?.data?.message || 'Gagal menyimpan konfigurasi footer.', 'error')
+    toastStore.show(err.response?.data?.message || 'Gagal menyimpan Konfigurasi Footer.', 'error')
   } finally {
     isSaving.value = false
   }
@@ -115,7 +115,10 @@ onMounted(() => {
 
 <template>
   <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
-    <h1 class="text-xl font-bold text-text-neutral mb-6">Konfigurasi Footer Website</h1>
+    <!-- Card Header -->
+    <div class="border-b border-text-alt/50 pb-4 mb-8">
+      <h1 class="text-xl font-bold text-text-neutral">Konfigurasi Footer</h1>
+    </div>
 
     <div v-if="isLoading" class="text-text-alt py-16 text-center">
       <LoadingSpinner size="lg" label="Memuat footer..." />

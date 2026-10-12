@@ -97,10 +97,12 @@ watch(
 
 <template>
   <main class="pt-24 pb-16 px-6 lg:px-12">
-    <BackButton class="mb-6 sm:mb-8" />
-
     <!-- Loading State menggunakan Skeleton -->
-    <NewsDetailSkeleton v-if="isLoading" />
+    <div v-if="isLoading">
+      <BackButton class="mb-6 sm:mb-8" />
+
+      <NewsDetailSkeleton />
+    </div>
 
     <!-- State Berita Tidak Ditemukan -->
     <div v-else-if="isNotFound" class="min-h-[50vh] flex items-center justify-center">
@@ -109,6 +111,8 @@ watch(
 
     <!-- Tampilan Utama Berita -->
     <div v-else-if="news">
+      <BackButton class="mb-6 sm:mb-8" />
+
       <article class="max-w-4xl mx-auto">
         <!-- Judul Berita -->
         <h1

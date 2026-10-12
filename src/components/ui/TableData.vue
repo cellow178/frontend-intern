@@ -67,7 +67,7 @@ const totalData = computed(() => props.totalItems ?? props.items.length)
 
 <template>
   <div
-    class="bg-neutral rounded-2xl shadow-sm border border-secondary/20 overflow-hidden p-4 flex flex-col gap-4 sm:gap-6"
+    class="flex flex-col gap-4 sm:gap-6 w-full min-w-0"
   >
     <!-- Top Bar -->
     <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">

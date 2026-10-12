@@ -67,8 +67,8 @@ const fetchVideoProfile = async () => {
     videoUrl.value = data.video_profile ?? ''
     mapEmbed.value = data.map_embed ?? ''
   } catch (err) {
-    console.error('Gagal ambil data video profil:', err)
-    toastStore.show('Gagal memuat data video profil.', 'error')
+    console.error('Gagal ambil video & lokasi:', err)
+    toastStore.show('Gagal memuat Video & Lokasi.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -97,11 +97,11 @@ const handleSave = async () => {
       video_profile: videoUrl.value.trim() || null,
       map_embed: mapEmbed.value.trim() || null,
     })
-    toastStore.show('Video & lokasi berhasil disimpan.', 'success')
+    toastStore.show('Video & Lokasi berhasil disimpan!', 'success')
     fetchVideoProfile()
   } catch (err: any) {
     console.error('Gagal simpan video & lokasi:', err)
-    toastStore.show(err.response?.data?.message || 'Gagal menyimpan video & lokasi.', 'error')
+    toastStore.show(err.response?.data?.message || 'Gagal menyimpan Video & Lokasi.', 'error')
   } finally {
     isSaving.value = false
   }
@@ -114,9 +114,12 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <h1 class="text-xl font-bold text-text-neutral">Video & Lokasi</h1>
-
     <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">Video & Lokasi</h1>
+      </div>
+
       <div v-if="isLoading" class="text-text-alt py-16 text-center">
         <LoadingSpinner size="lg" label="Memuat video & lokasi..." />
       </div>
@@ -125,7 +128,7 @@ onMounted(() => {
         <!-- Input Video Profil -->
         <div>
           <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
-            <span>Link Youtube Video Profil</span>
+            <span>Link Youtube Video</span>
           </label>
           <Input
             v-model="videoUrl"

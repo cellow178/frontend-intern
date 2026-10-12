@@ -80,7 +80,7 @@ const isWhiteMode = computed(() =>
 
 const accountHref = computed(() => (isAuthenticated.value ? '/dashboard' : '/login'))
 const accountLabel = computed(() =>
-  isAuthenticated.value ? (user.value?.fullname ?? 'Akun Saya') : 'Login Guru & Admin',
+  isAuthenticated.value ? (user.value?.fullname ?? 'Login Guru & Admin') : 'Login Guru & Admin',
 )
 
 const scrollToSection = async (href: string) => {
@@ -132,7 +132,7 @@ const handleLogout = async () => {
 
   isLoggingOut.value = false
   isMobileMenuOpen.value = false
-  toastStore.show('Logout berhasil.', 'info')
+  toastStore.show('Logout berhasil!', 'success')
   router.push('/')
 }
 
@@ -158,11 +158,16 @@ onUnmounted(() => {
     <RouterLink
       to="/"
       @click="scrollToSection('#beranda')"
-      class="flex items-center gap-2 cursor-pointer shrink-0"
+      class="flex items-center gap-2 cursor-pointer shrink-0 min-w-0"
     >
-      <img :src="logoImg" class="w-5 h-5" />
+      <img
+        :src="logoImg"
+        alt="Logo sekolah"
+        class="w-7 h-7 lg:w-8 lg:h-8 object-contain shrink-0"
+      />
+
       <span
-        class="font-bold text-base lg:text-lg uppercase"
+        class="font-bold text-base lg:text-lg uppercase leading-tight truncate"
         :class="isWhiteMode ? 'text-text-neutral' : 'text-neutral'"
       >
         {{ schoolName }}

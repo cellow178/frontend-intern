@@ -63,7 +63,7 @@ const fetchCategories = async () => {
     })
     categories.value = response.data.data
   } catch {
-    toastStore.show('Gagal memuat kategori feedback.', 'error')
+    toastStore.show('Gagal memuat Kategori Feedback.', 'error')
   }
 }
 
@@ -82,7 +82,7 @@ const fetchFeedback = async () => {
     feedbackList.value = response.data.data
     totalData.value = response.data.total ?? 0
   } catch {
-    toastStore.show('Gagal memuat data kritik & saran.', 'error')
+    toastStore.show('Gagal memuat Kritik & Saran.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -120,7 +120,7 @@ const confirmDelete = async () => {
   isDeleting.value = true
   try {
     await api.delete('/feedbacks/delete', { data: { id: selectedDeleteId.value } })
-    toastStore.show('Pesan berhasil dihapus.', 'success')
+    toastStore.show('Pesan berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchFeedback()
   } catch {
@@ -151,7 +151,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
     <div>
       <h1 class="text-xl font-bold text-text-neutral">Kritik & Saran</h1>
     </div>
@@ -175,30 +175,34 @@ onMounted(async () => {
     >
       <!-- Filters -->
       <template #filters>
-        <div class="w-fit">
-          <Select
-            v-model="selectedCategoryId"
-            size="normal"
-            placeholder=""
-            :options="[
-              { value: '', label: 'Semua Kategori' },
-              ...categories.map((c) => ({ value: String(c.id), label: c.category_name })),
-            ]"
-            @update:model-value="onFilterChange"
-          />
-        </div>
-        <div class="w-fit">
-          <Select
-            v-model="selectedType"
-            size="normal"
-            placeholder=""
-            :options="[
-              { value: '', label: 'Semua Tipe' },
-              { value: '0', label: 'Kritik' },
-              { value: '1', label: 'Saran' },
-            ]"
-            @update:model-value="onFilterChange"
-          />
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+          <div class="w-full sm:w-fit sm:min-w-44">
+            <Select
+              v-model="selectedCategoryId"
+              size="normal"
+              variant="semi-rounded"
+              placeholder=""
+              :options="[
+                { value: '', label: 'Semua Kategori' },
+                ...categories.map((c) => ({ value: String(c.id), label: c.category_name })),
+              ]"
+              @update:model-value="onFilterChange"
+            />
+          </div>
+          <div class="w-full sm:w-fit sm:min-w-44">
+            <Select
+              v-model="selectedType"
+              size="normal"
+              variant="semi-rounded"
+              placeholder=""
+              :options="[
+                { value: '', label: 'Semua Tipe' },
+                { value: '0', label: 'Kritik' },
+                { value: '1', label: 'Saran' },
+              ]"
+              @update:model-value="onFilterChange"
+            />
+          </div>
         </div>
       </template>
 

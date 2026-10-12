@@ -29,12 +29,15 @@ interface LoginResponse {
   message: string
 }
 
+let fetchUserPromise: Promise<void> | null = null
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as User | null,
     token: localStorage.getItem('token'),
     permissions: [] as string[],
     loading: false,
+    initialized: false,
   }),
 
   getters: {
@@ -77,6 +80,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = data.user
         this.token = data.token
         this.permissions = data.permissions
+        this.initialized = true
 
         localStorage.setItem('token', data.token)
 
@@ -93,20 +97,50 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false
       }
     },
+
     async fetchUser() {
-      if (!this.token) return
+      if (this.initialized) return
+
+      // Jika request /me sedang berjalan, tunggu request yang sama.
+      if (fetchUserPromise) {
+        await fetchUserPromise
+        return
+      }
+
+      if (!this.token) {
+        this.initialized = true
+        return
+      }
+
+      fetchUserPromise = (async () => {
+        try {
+          const response = await api.get<{
+            success: boolean
+            user: User
+            permissions: string[]
+          }>('/me')
+
+          if (response.data.success) {
+            this.user = response.data.user
+            this.permissions = response.data.permissions
+          } else {
+            await this.logout()
+          }
+        } catch (error: any) {
+          if (error.response?.status === 401) {
+            await this.logout()
+          } else {
+            console.error('Gagal mengambil data user:', error)
+          }
+        } finally {
+          this.initialized = true
+        }
+      })()
 
       try {
-        const response = await api.get<{ success: boolean; user: User; permissions: string[] }>(
-          '/me',
-        )
-        if (response.data.success) {
-          this.user = response.data.user
-          this.permissions = response.data.permissions
-        }
-      } catch (error) {
-        // token invalid/expired -> logout paksa
-        this.logout()
+        await fetchUserPromise
+      } finally {
+        fetchUserPromise = null
       }
     },
 
@@ -116,6 +150,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.token = null
       this.permissions = []
+      this.initialized = true
       localStorage.removeItem('token')
     },
   },

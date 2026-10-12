@@ -93,12 +93,12 @@ const sizeStyles = {
     iconPos: { left: 'left-3', right: 'right-3' },
   },
   mobile: {
-    input: 'py-1.5 text-xs sm:py-2 sm:text-sm',
-    padX: 'px-2.5 sm:px-3',
-    padXIconLeft: 'pl-8 pr-3.5 sm:pl-9 sm:pr-4',
-    padXIconRight: 'pl-3.5 pr-8 sm:pl-4 sm:pr-9',
+    input: 'py-2 text-sm sm:py-2 sm:text-sm',
+    padX: 'px-4',
+    padXIconLeft: 'pl-9 pr-4',
+    padXIconRight: 'pl-4 pr-9',
     icon: 'w-4 h-4',
-    iconPos: { left: 'left-2.5 sm:left-3', right: 'right-2.5 sm:right-3' },
+    iconPos: { left: 'left-3', right: 'right-3' },
   },
 }
 
@@ -120,7 +120,7 @@ const inputPaddingClass = computed(() => {
 const iconPositionClass = computed(() => currentSize.value.iconPos[props.iconPosition])
 
 const radiusClass = computed(() =>
-  props.variant === 'rounded-full' ? 'rounded-full' : 'rounded-lg sm:rounded-xl',
+  props.variant === 'rounded-full' ? 'rounded-full' : 'rounded-xl',
 )
 </script>
 

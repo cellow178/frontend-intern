@@ -44,7 +44,7 @@ const fetchDetail = async () => {
     formData.order = data.order != null ? String(data.order) : ''
     formData.active = data.active ? 'true' : 'false'
   } catch {
-    toastStore.show('Gagal memuat detail misi.', 'error')
+    toastStore.show('Gagal memuat Detail Misi.', 'error')
     router.push({ name: 'dashboard-visi-misi' })
   } finally {
     isLoading.value = false
@@ -121,7 +121,7 @@ const handleSubmit = async () => {
         })
       })
     } else {
-      toastStore.show(backendMessage || 'Terjadi kesalahan saat menyimpan data.', 'error')
+      toastStore.show(backendMessage || 'Terjadi kesalahan saat menyimpan Misi.', 'error')
     }
   } finally {
     isSubmitting.value = false
@@ -142,28 +142,38 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Misi Sekolah' : 'Tambah Misi Sekolah' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Misi Sekolah' : 'Tambah Misi Sekolah' }}
+        </h1>
+      </div>
 
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5 max-w-4xl"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Misi Sekolah' : 'Tambah Misi Sekolah' }}
+        </h1>
+      </div>
+
+      <!-- Judul Misi -->
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Judul Misi</span>
           <RequiredBadge />
         </label>
+
         <Input
           v-model="formData.content"
           type="textarea"
@@ -173,14 +183,17 @@ onMounted(() => {
           :error="errors.content"
           @input="errors.content = false"
         />
+
         <p v-if="errors.content" class="text-sm text-error mt-1">Judul misi wajib diisi.</p>
       </div>
 
+      <!-- Urutan -->
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Urutan</span>
           <RequiredBadge />
         </label>
+
         <Input
           v-model="formData.order"
           type="number"
@@ -189,22 +202,27 @@ onMounted(() => {
           :error="errors.order"
           @input="errors.order = false"
         />
+
         <p v-if="errors.order" class="text-sm text-error mt-1">Urutan wajib diisi.</p>
         <p v-else-if="!isEditMode" class="text-xs text-text-alt mt-1">
           Terisi otomatis dari urutan terakhir — bisa diubah manual jika perlu.
         </p>
       </div>
 
+      <!-- Status -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-text-neutral sm:text-base">Status</label>
+        <label class="text-sm font-medium text-text-neutral sm:text-base"> Status </label>
+
         <div class="flex items-center gap-6">
           <Radio v-model="formData.active" value="true" size="normal" label="Aktif" />
           <Radio v-model="formData.active" value="false" size="normal" label="Nonaktif" />
         </div>
       </div>
 
+      <!-- Tombol Aksi -->
       <div class="flex items-center gap-3 mt-4">
         <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
+
         <Button
           type="submit"
           size="md"

@@ -48,12 +48,12 @@ const formattedDate = computed(() => {
     <!-- Gambar Cover untuk Desktop & Mobile -->
     <div
       v-if="imageUrl"
-      class="w-full h-52 sm:h-60 md:h-auto md:w-80 lg:w-88 md:shrink-0 overflow-hidden flex items-center justify-center bg-black/10 relative"
+      class="relative w-full h-52 sm:h-60 md:w-72 lg:w-80 md:min-h-72 md:self-stretch md:shrink-0 overflow-hidden bg-black/10"
     >
       <img
         :src="imageUrl"
         :alt="title"
-        class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+        class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
       />
     </div>
 
@@ -66,8 +66,8 @@ const formattedDate = computed(() => {
 
     <!-- Konten Berita Highlight -->
     <div
-      class="relative z-10 flex-1 flex flex-col justify-between transition-all"
-      :class="imageUrl ? 'p-5 md:p-7 lg:p-8' : 'p-6 md:p-10'"
+      class="relative z-10 flex-1 min-w-0 flex flex-col justify-between transition-all"
+      :class="imageUrl ? 'p-5 md:p-6 lg:p-7' : 'p-6 md:p-8 lg:p-9'"
     >
       <div class="flex flex-col" :class="imageUrl ? 'gap-2.5 md:gap-3' : 'gap-3 md:gap-4'">
         <div class="flex items-center gap-2.5 flex-wrap">

@@ -51,7 +51,7 @@ const fetchDetail = async () => {
     feedback.value = response.data.data
   } catch (err) {
     console.error('Gagal ambil detail feedback:', err)
-    toastStore.show('Gagal memuat detail data.', 'error')
+    toastStore.show('Gagal memuat Detail Feedback.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -64,55 +64,87 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <BackButton to="/dashboard/kritik-saran" :sticky="false" />
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="flex flex-col gap-4">
+        <span>
+          <BackButton to="/dashboard/kritik-saran" :sticky="false" />
+        </span>
 
-      <div class="border-t border-text-alt/20 mt-2 mb-6"></div>
+        <div class="border-t border-text-alt/50"></div>
 
-      <h1 class="text-xl font-bold text-text-neutral mb-4">
-        Detail {{ feedback ? ` ${feedback.type ? 'Saran' : 'Kritik'}` : '' }}
-      </h1>
+        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">
+          Detail{{ feedback ? ` ${feedback.type ? 'Saran' : 'Kritik'}` : ' Kritik & Saran' }}
+        </h1>
+      </div>
 
+      <!-- Loading -->
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
         <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
-      <div v-else-if="!feedback" class="text-center text-text-alt py-8">Data tidak ditemukan.</div>
+      <!-- Empty State -->
+      <div v-else-if="!feedback" class="text-center text-text-alt py-10 text-sm sm:text-base">
+        Data kritik dan saran tidak ditemukan.
+      </div>
 
-      <dl v-else class="flex flex-col">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral">Nama Pengirim</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ feedback.sender_name ?? 'Anonim' }}</dd>
+      <!-- Detail -->
+      <dl v-else class="flex flex-col mt-4 lg:mt-6">
+        <!-- Nama Pengirim -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Nama Pengirim</dt>
+
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
+            {{ feedback.sender_name || 'Anonim' }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Tipe -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tipe</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral">Tipe</dt>
-          <dd class="sm:col-span-2 flex items-center gap-2">
+          <dd class="sm:col-span-2 flex items-center">
             <FeedbackTypeBadge :type="feedback.type" />
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Kategori -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Kategori</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral">Kategori</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ feedback.rel_category_id }}</dd>
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ feedback.rel_category_id || '-' }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Tanggal -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral">Tanggal</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(feedback.created_at) }}</dd>
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDate(feedback.created_at) }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Pesan -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5">
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Pesan</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral">Pesan</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ feedback.message }}</dd>
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral whitespace-pre-wrap wrap-break-word"
+          >
+            {{ feedback.message }}
+          </dd>
         </div>
       </dl>
     </div>

@@ -73,7 +73,7 @@ const columns: Column[] = [
   { key: 'action', label: 'Aksi', width: 'w-36 text-center' },
   { key: 'img_cover', label: 'Gambar', width: 'w-32 text-center' },
   { key: 'title', label: 'Judul', width: 'min-w-[220px]' },
-  { key: 'event_date', label: 'Tanggal Event', width: 'min-w-[180px] text-center' },
+  { key: 'event_date', label: 'Tanggal Mulai', width: 'min-w-[180px] text-center' },
   { key: 'status', label: 'Status', width: 'w-28 text-center' },
 ]
 
@@ -102,7 +102,7 @@ const fetchEvents = async () => {
     imageErrors.value = {}
   } catch (error) {
     if (axios.isCancel(error) || (error as Error).name === 'CanceledError') return
-    toastStore.show('Gagal memuat data event.', 'error')
+    toastStore.show('Gagal memuat Event.', 'error')
   } finally {
     if (!fetchAbortController.signal.aborted) {
       isLoading.value = false
@@ -141,13 +141,13 @@ const handleToggleHighlight = async (id: number) => {
       id: item.id,
       is_highlight: !item.is_highlight,
     })
-    toastStore.show('Status highlight berhasil diperbarui.', 'success')
+    toastStore.show('Status Highlight Event berhasil diperbarui!', 'success')
     await fetchEvents()
   } catch (err) {
     const error = err as AxiosError<{ message?: string; errors?: { id?: string[] } }>
     const resData = error.response?.data
     const errorMessage =
-      resData?.errors?.id?.[0] || resData?.message || 'Gagal memperbarui status highlight.'
+      resData?.errors?.id?.[0] || resData?.message || 'Gagal memperbarui status Highlight Event!'
 
     toastStore.show(errorMessage, 'error')
   } finally {
@@ -171,12 +171,12 @@ const confirmDelete = async () => {
   isDeleting.value = true
   try {
     await api.delete('/events/delete', { data: { id: selectedDeleteId.value } })
-    toastStore.show('Event berhasil dihapus.', 'success')
+    toastStore.show('Event berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchEvents()
   } catch (err) {
     const error = err as AxiosError<{ message?: string }>
-    toastStore.show(error.response?.data?.message || 'Gagal menghapus event.', 'error')
+    toastStore.show(error.response?.data?.message || 'Gagal menghapus Event.', 'error')
   } finally {
     isDeleting.value = false
   }
@@ -222,7 +222,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
     <div>
       <h1 class="text-xl font-bold text-text-neutral">Kelola Event</h1>
     </div>
@@ -246,11 +246,12 @@ onUnmounted(() => {
       @update:items-per-page="handlePerPageChange"
     >
       <template #filters>
-        <div class="flex items-center gap-3">
-          <div class="w-fit">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+          <div class="w-full sm:w-fit sm:min-w-44">
             <Select
               v-model="selectedSortOrder"
               size="normal"
+              variant="semi-rounded"
               placeholder=""
               :options="[
                 { value: 'asc', label: 'Terlama ke Terbaru' },
@@ -260,10 +261,11 @@ onUnmounted(() => {
             />
           </div>
 
-          <div class="w-fit">
+          <div class="w-full sm:w-fit sm:min-w-40">
             <Select
               v-model="selectedStatus"
               size="normal"
+              variant="semi-rounded"
               placeholder=""
               :options="[
                 { value: '', label: 'Semua Status' },
@@ -448,10 +450,10 @@ onUnmounted(() => {
             </p>
             <p
               v-if="item.location"
-              class="flex items-center gap-1 text-xs text-text-alt line-clamp-1"
+              class="flex items-start gap-1 text-xs text-text-alt line-clamp-2"
             >
-              <RiMapPinFill class="w-3.5 h-3.5 shrink-0" />
-              <span>{{ item.location }}</span>
+              <RiMapPinFill class="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <span class="line-clamp-2 min-w-0">{{ item.location }}</span>
             </p>
             <div class="flex items-center gap-2 flex-wrap mt-0.5">
               <EnumStatusBadge :status="item.status" />
@@ -461,7 +463,7 @@ onUnmounted(() => {
 
         <div class="flex flex-col text-xs text-text-alt border-t border-secondary/20 pt-2 gap-0.5">
           <p>
-            Tanggal:
+            Tanggal Mulai:
             <span class="font-semibold text-text-neutral">
               {{ formatEventRange(item.start_date, item.end_date) }}
             </span>

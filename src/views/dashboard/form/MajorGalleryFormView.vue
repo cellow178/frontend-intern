@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, nextTick } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import api from '@/services/api'
@@ -38,6 +38,11 @@ interface MajorDetail {
 const route = useRoute()
 const router = useRouter()
 const toastStore = useToastStore()
+let isLeaving = false
+
+onBeforeUnmount(() => {
+  isLeaving = true
+})
 
 // ID Galeri jika dalam mode Edit
 const galleryId = computed(() => (route.params.id ? Number(route.params.id) : null))
@@ -52,6 +57,8 @@ const majorId = computed(() => {
   const idFromQuery = route.query.major_id ? Number(route.query.major_id) : null
   return idFromParam || idFromQuery
 })
+
+const resolvedMajorId = ref<number | null>(majorId.value)
 
 // Inisialisasi isLoading = true jika dalam mode edit agar form tidak langsung dirender dalam keadaan kosong
 const isLoading = ref(isEditMode.value)
@@ -73,50 +80,73 @@ const errors = reactive({
 
 const submitButtonLabel = computed(() => (isSubmitting.value ? 'Menyimpan...' : 'Simpan'))
 
-// Fetch Info Detail Jurusan berdasarkan majorId
 const fetchMajorDetail = async () => {
-  if (!majorId.value) return
+  if (!majorId.value || isLeaving) return
   try {
     const response = await api.get(`/majors/${majorId.value}`)
+    if (isLeaving) return
     majorDetail.value = response.data.data
   } catch (err) {
+    if (isLeaving) return
     console.error('Gagal mengambil informasi jurusan:', err)
   }
 }
 
 // Fetch Detail Galeri saat Edit Mode
 const fetchDetail = async () => {
-  if (!galleryId.value) return
+  if (!galleryId.value || isLeaving) return
 
   isLoading.value = true
+
   try {
     const response = await api.get(`/major-gallery/${galleryId.value}`)
+
+    if (isLeaving) return
+
     const data: MajorGalleryDetail = response.data.data
 
     formData.description = data.description || ''
     formData.active = data.active ? 'true' : 'false'
 
-    // Penanganan objek img_cover dari API
+    // Simpan ID jurusan dari data galeri
+    if (data.major_id) {
+      resolvedMajorId.value = Number(data.major_id)
+    }
+
+    // Penanganan img_cover dari API
     if (typeof data.img_cover === 'object' && data.img_cover !== null) {
       formData.img_cover = data.img_cover.field_value || null
       imagePreviewUrl.value = data.img_cover.url ? getFullFileUrl(data.img_cover.url) : null
     } else if (typeof data.img_cover === 'string') {
       formData.img_cover = data.img_cover
       imagePreviewUrl.value = getFullFileUrl(data.img_cover)
+    } else {
+      formData.img_cover = null
+      imagePreviewUrl.value = null
     }
 
-    // Jika major_id belum didapat dari rute, ambil dari detail data galeri
+    // Ambil detail jurusan jika belum tersedia
     if (!majorDetail.value && data.major_id) {
       const respMajor = await api.get(`/majors/${data.major_id}`)
+
+      if (isLeaving) return
+
       majorDetail.value = respMajor.data.data
     }
   } catch (err: any) {
-    console.error('Gagal memuat detail galeri:', err)
+    if (isLeaving) return
+
+    console.error('Gagal memuat foto galeri:', err)
+
     const backendMessage = err.response?.data?.message
-    toastStore.show(backendMessage || 'Gagal memuat detail foto galeri.', 'error')
+
+    toastStore.show(backendMessage || 'Gagal memuat foto galeri.', 'error')
+
     handleCancel()
   } finally {
-    isLoading.value = false
+    if (!isLeaving) {
+      isLoading.value = false
+    }
   }
 }
 
@@ -145,7 +175,7 @@ const handleSubmit = async () => {
   if (!validate()) return
 
   if (!majorId.value && !isEditMode.value) {
-    toastStore.show('ID Jurusan tidak terdeteksi.', 'error')
+    toastStore.show('Jurusan tidak terdeteksi.', 'error')
     return
   }
 
@@ -159,28 +189,46 @@ const handleSubmit = async () => {
 
   try {
     if (isEditMode.value) {
-      await api.put('/major-gallery/update', { id: galleryId.value, ...payload })
-      toastStore.show('Foto galeri berhasil diperbarui!', 'success')
+      await api.put('/major-gallery/update', {
+        id: galleryId.value,
+        ...payload,
+      })
     } else {
       await api.post('/major-gallery/create', payload)
-      toastStore.show('Foto galeri berhasil ditambahkan!', 'success')
     }
+
+    if (isLeaving) return
+
+    toastStore.show(
+      isEditMode.value ? 'Foto galeri berhasil diperbarui!' : 'Foto galeri berhasil ditambahkan!',
+      'success',
+    )
 
     handleCancel()
   } catch (err) {
+    if (isLeaving) return
+
     console.error('Error saat menyimpan galeri:', err)
-    let msg = 'Terjadi kesalahan saat menyimpan data.'
+
+    let msg = 'Terjadi kesalahan saat menyimpan Foto Galeri.'
+
     if (axios.isAxiosError(err) && err.response?.data?.message) {
       msg = err.response.data.message
     }
+
     toastStore.show(msg, 'error')
   } finally {
-    isSubmitting.value = false
+    if (!isLeaving) {
+      isSubmitting.value = false
+    }
   }
 }
 
 const handleCancel = () => {
-  const targetMajorId = majorId.value || majorDetail.value?.id
+  isLeaving = true
+
+  const targetMajorId = resolvedMajorId.value || majorId.value || majorDetail.value?.id
+
   if (targetMajorId) {
     router.push({
       name: 'dashboard-jurusan-detail',
@@ -194,6 +242,7 @@ const handleCancel = () => {
 
 onMounted(async () => {
   await fetchMajorDetail()
+  if (isLeaving) return
   if (isEditMode.value) {
     await fetchDetail()
   }
@@ -201,25 +250,30 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Galeri Jurusan' : 'Tambah Galeri Jurusan' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Foto Galeri' : 'Tambah Foto Galeri' }}
+        </h1>
+      </div>
 
-    <!-- Indicator Loading Utama saat Edit Mode -->
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
-    <!-- Form Hanya Muncul Ketika Loading Selesai -->
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-6 max-w-4xl"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Foto Galeri' : 'Tambah Foto Galeri' }}
+        </h1>
+      </div>
       <!-- Informational Badge Jurusan -->
       <div
         v-if="majorDetail"

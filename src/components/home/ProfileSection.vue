@@ -17,7 +17,7 @@ const img2 = computed(() => getFullFileUrl(profile.value.img_2))
 
 const imageContainerClass = computed(() => {
   if (img2.value) {
-    return 'w-full max-w-104 sm:max-w-none sm:flex-row lg:flex-col lg:gap-8 lg:w-auto lg:max-w-104'
+    return 'w-full max-w-104 sm:max-w-[635px] sm:flex-row lg:flex-col lg:gap-8 lg:w-auto lg:max-w-104'
   }
 
   return 'w-full max-w-104 sm:max-w-none lg:w-130 lg:max-w-none'
@@ -26,9 +26,7 @@ const imageContainerClass = computed(() => {
 const DESC_LENGTH_THRESHOLD = 650
 
 const profileContainer = computed(() =>
-  (profileDesc.value?.length || 0) > DESC_LENGTH_THRESHOLD
-    ? 'items-start'
-    : 'items-start lg:items-center',
+  (profileDesc.value?.length || 0) > DESC_LENGTH_THRESHOLD ? 'items-start' : 'items-center',
 )
 const descTextSize = computed(() =>
   (profileDesc.value?.length || 0) > DESC_LENGTH_THRESHOLD

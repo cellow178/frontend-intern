@@ -46,7 +46,7 @@ const fetchDetail = async () => {
     formData.description = data.description || ''
     formData.active = data.active ? 'true' : 'false'
   } catch {
-    toastStore.show('Gagal memuat detail kategori.', 'error')
+    toastStore.show('Gagal memuat Detail Kategori Berita.', 'error')
     router.push({ name: 'dashboard-daftar-kategori' })
   } finally {
     isLoading.value = false
@@ -77,6 +77,7 @@ const handleSubmit = async () => {
   if (!validate()) return
 
   isSubmitting.value = true
+
   const payload = {
     name: formData.name,
     description: formData.description,
@@ -85,16 +86,24 @@ const handleSubmit = async () => {
 
   try {
     if (isEditMode.value) {
-      await api.put(`/news-categories/${categoryId.value}`, payload)
-      toastStore.show('Kategori berita berhasil diperbarui!', 'success')
+      await api.put('/news-categories/update', {
+        ...payload,
+        id: categoryId.value,
+      })
+
+      toastStore.show('Kategori Berita berhasil diperbarui!', 'success')
     } else {
-      await api.post('/news-categories', payload)
-      toastStore.show('Kategori berita berhasil ditambahkan!', 'success')
+      await api.post('/news-categories/create', payload)
+      toastStore.show('Kategori Berita berhasil ditambahkan!', 'success')
     }
 
-    router.push({ name: 'dashboard-daftar-kategori', query: { tab: route.query.tab } })
+    router.push({
+      name: 'dashboard-daftar-kategori',
+      query: { tab: route.query.tab },
+    })
   } catch (err: any) {
-    const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.'
+    const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan Kategori Berita.'
+
     toastStore.show(msg, 'error')
   } finally {
     isSubmitting.value = false
@@ -113,23 +122,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Kategori Berita' : 'Tambah Kategori Berita' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Kategori Berita' : 'Tambah Kategori Berita' }}
+        </h1>
+      </div>
 
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5 max-w-4xl"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Kategori Berita' : 'Tambah Kategori Berita' }}
+        </h1>
+      </div>
+
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Nama Kategori</span>

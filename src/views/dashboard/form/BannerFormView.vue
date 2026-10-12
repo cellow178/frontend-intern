@@ -66,7 +66,7 @@ const fetchDetail = async () => {
     imagePreviewUrl.value = data.img_cover?.url ? getFullFileUrl(data.img_cover.url) : null
   } catch (err) {
     console.error('Gagal memuat detail banner:', err)
-    toastStore.show('Gagal memuat detail banner.', 'error')
+    toastStore.show('Gagal memuat Detail Banner.', 'error')
     router.push({ name: 'dashboard-banner' })
   } finally {
     isLoading.value = false
@@ -117,7 +117,7 @@ const handleSubmit = async () => {
     router.push({ name: 'dashboard-banner' })
   } catch (err) {
     console.error('Error saat menyimpan banner:', err)
-    let msg = 'Terjadi kesalahan saat menyimpan data.'
+    let msg = 'Terjadi kesalahan saat menyimpan Banner.'
     if (axios.isAxiosError(err) && err.response?.data?.message) {
       msg = err.response.data.message
     }
@@ -139,41 +139,54 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Banner' : 'Tambah Banner' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Banner' : 'Tambah Banner' }}
+        </h1>
+      </div>
 
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-8 max-w-4xl"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-8"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Banner' : 'Tambah Banner' }}
+        </h1>
+      </div>
+
+      <!-- Gambar Banner -->
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Gambar Banner</span>
           <RequiredBadge />
         </label>
+
         <ImageUpload
           v-model="formData.img_cover"
           v-model:preview-url="imagePreviewUrl"
           @update:model-value="errors.img_cover = false"
         />
+
         <p v-if="errors.img_cover" class="text-sm text-error mt-1">Gambar banner wajib diunggah.</p>
       </div>
 
+      <!-- Judul -->
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Judul</span>
           <RequiredBadge />
         </label>
+
         <Input
           v-model="formData.title"
           variant="semi-rounded"
@@ -182,26 +195,39 @@ onMounted(() => {
           :error="errors.title"
           @input="errors.title = false"
         />
+
         <p v-if="errors.title" class="text-sm text-error mt-1">Judul wajib diisi.</p>
       </div>
 
+      <!-- Tautan -->
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-text-neutral sm:text-base">
           Tautan (URL Target)
         </label>
-        <Input v-model="formData.url" type="url" variant="semi-rounded" placeholder="Masukkan tautan tujuan..." size="large" />
+
+        <Input
+          v-model="formData.url"
+          type="url"
+          variant="semi-rounded"
+          placeholder="Masukkan tautan tujuan..."
+          size="large"
+        />
       </div>
 
+      <!-- Status -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-text-neutral sm:text-base">Status</label>
+        <label class="text-sm font-medium text-text-neutral sm:text-base"> Status </label>
+
         <div class="flex items-center gap-6">
           <Radio v-model="formData.active" value="true" size="normal" label="Aktif" />
           <Radio v-model="formData.active" value="false" size="normal" label="Tidak Aktif" />
         </div>
       </div>
 
+      <!-- Tombol Aksi -->
       <div class="flex items-center gap-3 mt-4">
         <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
+
         <Button
           type="submit"
           size="md"

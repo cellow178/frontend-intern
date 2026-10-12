@@ -103,7 +103,7 @@ const fetchCategories = async () => {
     totalPage.value = response.data.totalPage ?? 1
     totalData.value = response.data.total ?? 0
   } catch {
-    toastStore.show('Gagal memuat master data.', 'error')
+    toastStore.show('Gagal memuat Daftar Kategori.', 'error')
   } finally {
     isLoading.value = false
   }
@@ -193,16 +193,16 @@ const confirmDelete = async () => {
     const response = await api.delete(endpoint, { data: { id: selectedDeleteId.value } })
 
     if (response.data.success === false) {
-      toastStore.show('Gagal menghapus kategori.', 'error')
+      toastStore.show('Gagal menghapus Kategori.', 'error')
       return
     }
 
     // Tampilkan teks biasa sebagai ganti key dari backend
-    toastStore.show('Kategori berhasil dihapus.', 'success')
+    toastStore.show('Kategori berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchCategories()
   } catch (err: any) {
-    toastStore.show('Gagal menghapus kategori.', 'error')
+    toastStore.show('Gagal menghapus Kategori.', 'error')
   } finally {
     isDeleting.value = false
   }
@@ -223,224 +223,226 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
-    <div>
-      <h1 class="text-xl font-bold text-text-neutral">Daftar Kategori</h1>
-    </div>
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+    <h1 class="text-xl font-bold text-text-neutral">Daftar Kategori</h1>
 
     <TableTabs :tabs="tabs" v-model="activeTab" @update:model-value="onTabChange">
       <template #news-categories>
-        <TableData
-          v-model:search="searchQuery"
-          :columns="newsColumns"
-          :items="newsCategories"
-          :is-loading="isLoading"
-          :search-placeholder="searchPlaceholder"
-          :add-button-label="addButtonLabel"
-          :current-page="currentPage"
-          :total-page="totalPage"
-          :items-per-page="pageSize"
-          :total-items="totalData"
-          empty-message="Tidak ada kategori berita ditemukan."
-          @add="handleAdd"
-          @update:current-page="handlePageChange"
-          @update:items-per-page="handlePerPageChange"
-        >
-          <template #col-no="{ index }">
-            <div class="text-center font-medium">
-              {{ (currentPage - 1) * pageSize + index + 1 }}
-            </div>
-          </template>
+        <div class="pt-4">
+          <TableData
+            v-model:search="searchQuery"
+            :columns="newsColumns"
+            :items="newsCategories"
+            :is-loading="isLoading"
+            :search-placeholder="searchPlaceholder"
+            :add-button-label="addButtonLabel"
+            :current-page="currentPage"
+            :total-page="totalPage"
+            :items-per-page="pageSize"
+            :total-items="totalData"
+            empty-message="Tidak ada kategori berita ditemukan."
+            @add="handleAdd"
+            @update:current-page="handlePageChange"
+            @update:items-per-page="handlePerPageChange"
+          >
+            <template #col-no="{ index }">
+              <div class="text-center font-medium">
+                {{ (currentPage - 1) * pageSize + index + 1 }}
+              </div>
+            </template>
 
-          <template #col-action="{ item }">
-            <div class="flex items-center justify-center gap-1.5">
-              <DashboardIconButton
-                variant="info"
-                label="detail"
-                class="w-7 h-7"
-                @click.stop="handleDetail(item.id)"
-              />
-              <DashboardIconButton
-                variant="edit"
-                label="Edit"
-                class="w-7 h-7"
-                @click.stop="handleEdit(item.id)"
-              />
-              <DashboardIconButton
-                variant="delete"
-                label="Hapus"
-                class="w-7 h-7"
-                @click.stop="openDeleteModal(item.id)"
-              />
-            </div>
-          </template>
-
-          <template #col-description="{ item }">
-            <span :title="item.description">
-              {{ item.description || '-' }}
-            </span>
-          </template>
-
-          <template #col-active="{ item }">
-            <div class="flex justify-center">
-              <DashboardStatusBadge :active="item.active" />
-            </div>
-          </template>
-
-          <template #mobile-card="{ item, index }">
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-text-alt font-medium">
-                #{{ (currentPage - 1) * pageSize + index + 1 }}
-              </span>
-              <div class="flex items-center gap-2">
+            <template #col-action="{ item }">
+              <div class="flex items-center justify-center gap-1.5">
                 <DashboardIconButton
                   variant="info"
                   label="detail"
+                  class="w-7 h-7"
                   @click.stop="handleDetail(item.id)"
                 />
                 <DashboardIconButton
                   variant="edit"
                   label="Edit"
+                  class="w-7 h-7"
                   @click.stop="handleEdit(item.id)"
                 />
                 <DashboardIconButton
                   variant="delete"
                   label="Hapus"
+                  class="w-7 h-7"
                   @click.stop="openDeleteModal(item.id)"
                 />
               </div>
-            </div>
-            <p class="text-sm font-semibold text-text-neutral">{{ item.name }}</p>
-            <p class="text-xs text-text-alt leading-relaxed">{{ item.description }}</p>
-            <div>
-              <DashboardStatusBadge :active="item.active" />
-            </div>
-          </template>
-        </TableData>
+            </template>
+
+            <template #col-description="{ item }">
+              <span :title="item.description">
+                {{ item.description || '-' }}
+              </span>
+            </template>
+
+            <template #col-active="{ item }">
+              <div class="flex justify-center">
+                <DashboardStatusBadge :active="item.active" />
+              </div>
+            </template>
+
+            <template #mobile-card="{ item, index }">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-text-alt font-medium">
+                  #{{ (currentPage - 1) * pageSize + index + 1 }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <DashboardIconButton
+                    variant="info"
+                    label="detail"
+                    @click.stop="handleDetail(item.id)"
+                  />
+                  <DashboardIconButton
+                    variant="edit"
+                    label="Edit"
+                    @click.stop="handleEdit(item.id)"
+                  />
+                  <DashboardIconButton
+                    variant="delete"
+                    label="Hapus"
+                    @click.stop="openDeleteModal(item.id)"
+                  />
+                </div>
+              </div>
+              <p class="text-sm font-semibold text-text-neutral">{{ item.name }}</p>
+              <p class="text-xs text-text-alt leading-relaxed">{{ item.description }}</p>
+              <div>
+                <DashboardStatusBadge :active="item.active" />
+              </div>
+            </template>
+          </TableData>
+        </div>
       </template>
 
       <!-- Tab 2: Kategori Feedback -->
       <template #feedback-categories>
-        <TableData
-          v-model:search="searchQuery"
-          :columns="feedbackColumns"
-          :items="feedbackCategories"
-          :is-loading="isLoading"
-          :search-placeholder="searchPlaceholder"
-          :add-button-label="addButtonLabel"
-          :current-page="currentPage"
-          :total-page="totalPage"
-          :items-per-page="pageSize"
-          :total-items="totalData"
-          empty-message="Tidak ada kategori kritik & saran ditemukan."
-          @add="handleAdd"
-          @update:current-page="handlePageChange"
-          @update:items-per-page="handlePerPageChange"
-        >
-          <!-- Column No -->
-          <template #col-no="{ index }">
-            <div class="text-center font-medium">
-              {{ (currentPage - 1) * pageSize + index + 1 }}
-            </div>
-          </template>
+        <div class="pt-4">
+          <TableData
+            v-model:search="searchQuery"
+            :columns="feedbackColumns"
+            :items="feedbackCategories"
+            :is-loading="isLoading"
+            :search-placeholder="searchPlaceholder"
+            :add-button-label="addButtonLabel"
+            :current-page="currentPage"
+            :total-page="totalPage"
+            :items-per-page="pageSize"
+            :total-items="totalData"
+            empty-message="Tidak ada kategori kritik & saran ditemukan."
+            @add="handleAdd"
+            @update:current-page="handlePageChange"
+            @update:items-per-page="handlePerPageChange"
+          >
+            <!-- Column No -->
+            <template #col-no="{ index }">
+              <div class="text-center font-medium">
+                {{ (currentPage - 1) * pageSize + index + 1 }}
+              </div>
+            </template>
 
-          <!-- Column Action -->
-          <template #col-action="{ item }">
-            <div class="flex items-center justify-center gap-1.5">
-              <DashboardIconButton
-                variant="info"
-                label="Detail"
-                class="w-7 h-7"
-                @click.stop="handleDetail(item.id)"
-              />
-              <DashboardIconButton
-                variant="edit"
-                label="Edit"
-                class="w-7 h-7"
-                @click.stop="handleEdit(item.id)"
-              />
-              <!-- Tombol Hapus di-disable jika feedbacks_count > 0 -->
-              <DashboardIconButton
-                variant="delete"
-                label="Hapus"
-                class="w-7 h-7 transition-opacity"
-                :class="{ 'opacity-30 cursor-not-allowed': (item.feedbacks_count ?? 0) > 0 }"
-                :title="
-                  (item.feedbacks_count ?? 0) > 0
-                    ? 'Kategori tidak bisa dihapus karena masih digunakan'
-                    : 'Hapus Kategori'
-                "
-                @click.stop="(item.feedbacks_count ?? 0) === 0 && openDeleteModal(item.id)"
-              />
-            </div>
-          </template>
-
-          <!-- Column Jumlah Feedback (KOLOM BARU) -->
-          <template #col-feedbacks_count="{ item }">
-            <div class="flex justify-center">
-              <span
-                class="px-2.5 py-1 rounded-full text-xs font-semibold"
-                :class="
-                  (item.feedbacks_count ?? 0) > 0
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-secondary/20 text-text-alt'
-                "
-              >
-                {{ item.feedbacks_count ?? 0 }} Feedback
-              </span>
-            </div>
-          </template>
-
-          <!-- Column Status -->
-          <template #col-active="{ item }">
-            <div class="flex justify-center">
-              <DashboardStatusBadge :active="item.active" />
-            </div>
-          </template>
-
-          <!-- Card View Mobile -->
-          <template #mobile-card="{ item, index }">
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-text-alt font-medium">
-                #{{ (currentPage - 1) * pageSize + index + 1 }}
-              </span>
-              <div class="flex items-center gap-2">
+            <!-- Column Action -->
+            <template #col-action="{ item }">
+              <div class="flex items-center justify-center gap-1.5">
                 <DashboardIconButton
                   variant="info"
                   label="Detail"
+                  class="w-7 h-7"
                   @click.stop="handleDetail(item.id)"
                 />
                 <DashboardIconButton
                   variant="edit"
                   label="Edit"
+                  class="w-7 h-7"
                   @click.stop="handleEdit(item.id)"
                 />
+                <!-- Tombol Hapus di-disable jika feedbacks_count > 0 -->
                 <DashboardIconButton
                   variant="delete"
                   label="Hapus"
+                  class="w-7 h-7 transition-opacity"
                   :class="{ 'opacity-30 cursor-not-allowed': (item.feedbacks_count ?? 0) > 0 }"
+                  :title="
+                    (item.feedbacks_count ?? 0) > 0
+                      ? 'Kategori tidak bisa dihapus karena masih digunakan'
+                      : 'Hapus Kategori'
+                  "
                   @click.stop="(item.feedbacks_count ?? 0) === 0 && openDeleteModal(item.id)"
                 />
               </div>
-            </div>
-            <div class="flex items-center justify-between gap-2 my-1">
-              <p class="text-sm font-semibold text-text-neutral">{{ item.category_name }}</p>
-              <span
-                class="px-2 py-0.5 rounded-full text-sm font-semibold shrink-0"
-                :class="
-                  (item.feedbacks_count ?? 0) > 0
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-secondary/20 text-text-alt'
-                "
-              >
-                {{ item.feedbacks_count ?? 0 }} Feedback
-              </span>
-            </div>
-            <div>
-              <DashboardStatusBadge :active="item.active" />
-            </div>
-          </template>
-        </TableData>
+            </template>
+
+            <!-- Column Jumlah Feedback (KOLOM BARU) -->
+            <template #col-feedbacks_count="{ item }">
+              <div class="flex justify-center">
+                <span
+                  class="px-2.5 py-1 rounded-full text-xs font-semibold"
+                  :class="
+                    (item.feedbacks_count ?? 0) > 0
+                      ? 'bg-primary/10 text-primary'
+                      : 'bg-secondary/20 text-text-alt'
+                  "
+                >
+                  {{ item.feedbacks_count ?? 0 }} Feedback
+                </span>
+              </div>
+            </template>
+
+            <!-- Column Status -->
+            <template #col-active="{ item }">
+              <div class="flex justify-center">
+                <DashboardStatusBadge :active="item.active" />
+              </div>
+            </template>
+
+            <!-- Card View Mobile -->
+            <template #mobile-card="{ item, index }">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-text-alt font-medium">
+                  #{{ (currentPage - 1) * pageSize + index + 1 }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <DashboardIconButton
+                    variant="info"
+                    label="Detail"
+                    @click.stop="handleDetail(item.id)"
+                  />
+                  <DashboardIconButton
+                    variant="edit"
+                    label="Edit"
+                    @click.stop="handleEdit(item.id)"
+                  />
+                  <DashboardIconButton
+                    variant="delete"
+                    label="Hapus"
+                    :class="{ 'opacity-30 cursor-not-allowed': (item.feedbacks_count ?? 0) > 0 }"
+                    @click.stop="(item.feedbacks_count ?? 0) === 0 && openDeleteModal(item.id)"
+                  />
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-2 my-1">
+                <p class="text-sm font-semibold text-text-neutral">{{ item.category_name }}</p>
+                <span
+                  class="px-2 py-0.5 rounded-full text-sm font-semibold shrink-0"
+                  :class="
+                    (item.feedbacks_count ?? 0) > 0
+                      ? 'bg-primary/10 text-primary'
+                      : 'bg-secondary/20 text-text-alt'
+                  "
+                >
+                  {{ item.feedbacks_count ?? 0 }} Feedback
+                </span>
+              </div>
+              <div>
+                <DashboardStatusBadge :active="item.active" />
+              </div>
+            </template>
+          </TableData>
+        </div>
       </template>
     </TableTabs>
 

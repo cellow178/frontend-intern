@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSiteDataStore } from '@/stores/siteData'
@@ -41,7 +41,6 @@ const newsList = ref<NewsItem[]>([])
 const categories = ref<Category[]>([])
 const isLoading = ref(true)
 
-// Filter & Pagination States
 const searchQuery = ref('')
 const selectedCategoryId = ref<number | null>(null)
 const sortOrder = ref<'desc' | 'asc'>('desc')
@@ -51,18 +50,13 @@ const totalPage = ref(1)
 const TARGET_LIMIT = 12
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
-// FIX: Selalu keluarkan berita highlight dari grid utama saat di halaman 1 agar tidak duplikat
+// Hindari berita highlight muncul kembali sebagai card biasa.
 const filteredNewsList = computed(() => {
   if (!highlightNews.value) return newsList.value
 
-  if (currentPage.value === 1) {
-    return newsList.value.filter((item) => item.id !== highlightNews.value?.id)
-  }
-
-  return newsList.value
+  return newsList.value.filter((item) => item.id !== highlightNews.value?.id)
 })
 
-// Fetch Categories
 const fetchCategories = async () => {
   try {
     const response = await api.get('/no-auth/news-categories')
@@ -72,13 +66,13 @@ const fetchCategories = async () => {
   }
 }
 
-// Fetch News List Paginasi
 const fetchNews = async () => {
   isLoading.value = true
+
   try {
     const response = await api.get('/no-auth/news', {
       params: {
-        search: searchQuery.value || undefined,
+        search: searchQuery.value.trim() || undefined,
         category_id: selectedCategoryId.value || undefined,
         sort_by: 'created_at',
         sort: sortOrder.value,
@@ -87,50 +81,57 @@ const fetchNews = async () => {
       },
     })
 
-    newsList.value = response.data?.data || []
-
-    if (response.data?.totalPage) {
-      totalPage.value = response.data.totalPage
-    } else {
-      const totalData = response.data?.totalData || 0
-      totalPage.value = Math.ceil(totalData / TARGET_LIMIT) || 1
-    }
+    newsList.value = response.data?.data ?? []
+    totalPage.value = response.data?.totalPage ?? 1
   } catch (err) {
     console.error('Gagal ambil data berita:', err)
     newsList.value = []
+    totalPage.value = 1
   } finally {
     isLoading.value = false
   }
 }
 
-// Handlers
-const onSearchInput = () => {
-  clearTimeout(searchDebounce)
-  searchDebounce = setTimeout(() => {
+const resetPageAndFetch = () => {
+  if (currentPage.value !== 1) {
     currentPage.value = 1
+  } else {
     fetchNews()
+  }
+}
+
+const onSearchInput = () => {
+  if (searchDebounce) clearTimeout(searchDebounce)
+
+  searchDebounce = setTimeout(() => {
+    resetPageAndFetch()
   }, 400)
 }
 
 const onCategoryChange = (val: string | number | null) => {
   selectedCategoryId.value = val !== null && val !== '' ? Number(val) : null
-  currentPage.value = 1
-  fetchNews()
+
+  resetPageAndFetch()
 }
 
 const toggleSort = () => {
   sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
-  currentPage.value = 1
-  fetchNews()
+  resetPageAndFetch()
 }
 
 watch(currentPage, (newPage, oldPage) => {
-  if (newPage !== oldPage) {
-    if (newsListSection.value) {
-      newsListSection.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-    fetchNews()
-  }
+  if (newPage === oldPage) return
+
+  newsListSection.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  })
+
+  fetchNews()
+})
+
+onBeforeUnmount(() => {
+  if (searchDebounce) clearTimeout(searchDebounce)
 })
 
 onMounted(async () => {
@@ -143,12 +144,11 @@ onMounted(async () => {
     const queryStr = categoryParam.trim().toLowerCase()
 
     if (queryStr.includes('prestasi')) {
-      selectedCategoryId.value = null
-
-      searchQuery.value = 'prestasi, kejuaraan, lomba, juara'
+      searchQuery.value = 'prestasi, lomba, juara, menang, penghargaan, kompetisi, olimpiade'
     } else {
-      // Untuk kategori umum lainnya (misal: "Pengumuman", "Ekstrakurikuler", dll)
-      const matchedCategory = categories.value.find((c) => c.name.toLowerCase() === queryStr)
+      const matchedCategory = categories.value.find(
+        (category) => category.name.toLowerCase() === queryStr,
+      )
 
       if (matchedCategory) {
         selectedCategoryId.value = matchedCategory.id
@@ -158,7 +158,7 @@ onMounted(async () => {
     }
   }
 
-  fetchNews()
+  await fetchNews()
 })
 </script>
 
@@ -174,7 +174,7 @@ onMounted(async () => {
       </p>
     </div>
 
-    <div v-if="highlightNews && currentPage === 1" class="flex justify-center w-full mb-10">
+    <div v-if="highlightNews" class="flex justify-center w-full mb-10">
       <NewsHighlightCard
         :slug="highlightNews.slug"
         :title="highlightNews.title"
@@ -234,7 +234,7 @@ onMounted(async () => {
     <!-- Grid Berita Skeleton / Content -->
     <div
       v-if="isLoading"
-      class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
     >
       <NewsCardSkeleton v-for="n in TARGET_LIMIT" :key="`skeleton-${n}`" />
     </div>
@@ -245,7 +245,7 @@ onMounted(async () => {
 
     <div
       v-else
-      class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16 max-w-7xl mx-auto"
     >
       <NewsCard
         v-for="item in filteredNewsList"

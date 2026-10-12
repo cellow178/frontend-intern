@@ -43,7 +43,9 @@ const colorClasses = computed(() => {
   return 'text-text-neutral hover:text-primary active:text-primary/80'
 })
 
-const positionClasses = computed(() => (props.sticky ? 'lg:sticky lg:top-24 lg:z-10' : ''))
+const positionClasses = computed(() =>
+  props.sticky ? 'min-[1240px]:sticky min-[1240px]:top-24 min-[1240px]:z-10' : '',
+)
 </script>
 
 <template>

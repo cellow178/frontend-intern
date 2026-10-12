@@ -111,7 +111,7 @@ const fetchDetail = async () => {
     await nextTick()
     takeSnapshot()
   } catch {
-    toastStore.show('Gagal memuat detail berita.', 'error')
+    toastStore.show('Gagal memuat Detail Berita.', 'error')
     router.push({ name: 'dashboard-berita' })
   } finally {
     isLoading.value = false
@@ -176,7 +176,7 @@ const handleSubmit = async () => {
     }
     isSuccess = true
   } catch (err: any) {
-    const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.'
+    const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan Berita.'
     toastStore.show(msg, 'error')
   } finally {
     isSubmitting.value = false
@@ -255,23 +255,30 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Berita' : 'Tambah Berita' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Berita' : 'Tambah Berita' }}
+        </h1>
+      </div>
 
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-8 max-w-4xl"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Berita' : 'Tambah Berita' }}
+        </h1>
+      </div>
       <!-- Judul Berita -->
       <div class="flex flex-col gap-1.5">
         <div class="flex items-center justify-between mb-1.5">

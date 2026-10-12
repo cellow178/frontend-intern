@@ -39,14 +39,6 @@ const totalPage = ref(1)
 const TARGET_LIMIT = 12
 let searchDebounce: ReturnType<typeof setTimeout> | undefined
 
-// Dynamic Limit untuk API Request
-const apiLimit = computed(() => {
-  if (currentPage.value === 1 && highlightEvent.value && !searchQuery.value) {
-    return TARGET_LIMIT + 1
-  }
-  return TARGET_LIMIT
-})
-
 // Helper Format Range Tanggal
 const formatDateRange = (start: string, end: string) => {
   if (!start) return '-'
@@ -85,29 +77,24 @@ const formatDateRange = (start: string, end: string) => {
 // Fetch List Events
 const fetchEvents = async () => {
   isLoading.value = true
+
   try {
     const response = await api.get('/no-auth/events', {
       params: {
-        search: searchQuery.value || undefined,
+        search: searchQuery.value.trim() || undefined,
         sort_by: 'start_date',
         sort: sortOrder.value,
-        limit: apiLimit.value,
+        limit: TARGET_LIMIT,
         page: currentPage.value,
       },
     })
-    eventList.value = response.data?.data || []
 
-    const totalData = response.data?.totalData || 0
-    if (totalData) {
-      const adjustedTotalData =
-        highlightEvent.value && !searchQuery.value ? Math.max(0, totalData - 1) : totalData
-      totalPage.value = Math.ceil(adjustedTotalData / TARGET_LIMIT) || 1
-    } else {
-      totalPage.value = response.data?.totalPage || 1
-    }
+    eventList.value = response.data?.data ?? []
+    totalPage.value = response.data?.totalPage ?? 1
   } catch (err) {
     console.error('Gagal ambil data event:', err)
     eventList.value = []
+    totalPage.value = 1
   } finally {
     isLoading.value = false
   }
@@ -115,14 +102,9 @@ const fetchEvents = async () => {
 
 // PERBAIKAN: Filter highlight & pastikan jumlah item yang ditampilkan selalu <= TARGET_LIMIT
 const filteredEventList = computed(() => {
-  let list = eventList.value
+  if (!highlightEvent.value) return eventList.value
 
-  if (highlightEvent.value) {
-    list = list.filter((item) => item.id !== highlightEvent.value?.id)
-  }
-
-  // Potong list agar maksimal sesuai TARGET_LIMIT (3)
-  return list.slice(0, TARGET_LIMIT)
+  return eventList.value.filter((item) => item.id !== highlightEvent.value?.id)
 })
 
 // Search & Sort Handlers

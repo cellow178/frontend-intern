@@ -50,7 +50,7 @@ const sizeStyles = {
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
       class="w-full appearance-none border bg-neutral text-text-neutral cursor-pointer focus:outline-none transition-colors"
       :class="[
-        variant === 'rounded-full' ? 'rounded-full' : 'rounded-xl sm:rounded-2xl',
+        variant === 'rounded-full' ? 'rounded-full' : 'rounded-xl',
         error ? 'border-red-500' : 'border-text-alt/30 focus:border-primary',
         sizeStyles[size].select,
       ]"

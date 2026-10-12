@@ -367,10 +367,10 @@ onMounted(() => {
         <button
           v-if="hasBannerPermission"
           type="button"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-primary/20 bg-neutral hover:bg-secondary hover:border-primary text-text-neutral hover:text-accent transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/banner')"
         >
-          <RiImageLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiImageLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-accent" />
           <span>Atur Banner</span>
         </button>
 
@@ -378,20 +378,20 @@ onMounted(() => {
         <button
           v-if="hasGlobalConfigPermission"
           type="button"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-primary/20 bg-neutral hover:bg-secondary hover:border-primary text-text-neutral hover:text-accent transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/profil-sekolah')"
         >
-          <RiUser3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiUser3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-accent" />
           <span>Profil Sekolah</span>
         </button>
 
         <!-- 3. Visi & Misi -->
         <button
           v-if="isDeveloperOrSuperAdmin"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-primary/20 bg-neutral hover:bg-secondary hover:border-primary text-text-neutral hover:text-accent transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/visi-misi')"
         >
-          <RiCompass3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiCompass3Line class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-accent" />
           <span>Visi & Misi</span>
         </button>
 
@@ -399,10 +399,10 @@ onMounted(() => {
         <button
           v-if="hasGlobalConfigPermission"
           type="button"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-primary/20 bg-neutral hover:bg-secondary hover:border-primary text-text-neutral hover:text-accent transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/video-profil')"
         >
-          <RiVideoLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiVideoLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-accent" />
           <span>Video & Lokasi</span>
         </button>
 
@@ -410,10 +410,10 @@ onMounted(() => {
         <button
           v-if="hasEventPermission"
           type="button"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-primary/20 bg-neutral hover:bg-secondary hover:border-primary text-text-neutral hover:text-accent transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/event/create')"
         >
-          <RiCalendarEventLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiCalendarEventLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-accent" />
           <span>Tambah Event</span>
         </button>
 
@@ -421,10 +421,10 @@ onMounted(() => {
         <button
           v-if="hasNewsPermission"
           type="button"
-          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-secondary bg-secondary/30 hover:bg-primary/10 hover:border-primary/30 text-text-neutral hover:text-primary transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
+          class="flex items-center gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-xl border border-primary/20 bg-neutral hover:bg-secondary hover:border-primary text-text-neutral hover:text-accent transition-all text-xs sm:text-sm font-medium text-left cursor-pointer"
           @click="navigateTo('/dashboard/berita/create')"
         >
-          <RiNewspaperLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-text-alt" />
+          <RiNewspaperLine class="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-accent" />
           <span>Tambah Berita</span>
         </button>
       </div>

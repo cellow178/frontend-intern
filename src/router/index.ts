@@ -16,6 +16,11 @@ const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/loading-preview',
+      name: 'loading-preview',
+      component: () => import('@/views/LoadingPreview.vue'),
+    },
+    {
       path: '/',
       name: 'home',
       component: () => import('../views/HomeView.vue'),
@@ -384,7 +389,7 @@ const router = createRouter({
         {
           path: 'daftar-kategori',
           name: 'dashboard-daftar-kategori',
-          component: () => import('@/views/dashboard/DashboardDaftarKategoriView.vue'),
+          component: () => import('@/views/dashboard/DashboardCategoryListView.vue'),
           meta: {
             breadcrumb: ['Daftar Kategori'],
             permission: 'view-news-categories',
@@ -481,25 +486,25 @@ const router = createRouter({
   },
 })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
-  // Belum login
+  if (!authStore.initialized) {
+    await authStore.fetchUser()
+  }
+
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next({
+    return {
       name: 'login',
       query: { redirect: to.fullPath },
-    })
-    return
+    }
   }
 
-  // Tidak memiliki permission
-  if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
-    next({ name: 'dashboard' })
-    return
+  if (typeof to.meta.permission === 'string' && !authStore.hasPermission(to.meta.permission)) {
+    return { name: 'dashboard' }
   }
 
-  next()
+  return true
 })
 
 export default router

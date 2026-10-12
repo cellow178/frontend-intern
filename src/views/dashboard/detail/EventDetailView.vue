@@ -89,7 +89,7 @@ const fetchDetail = async () => {
     const response = await api.get(`/events/${route.params.id}`)
     event.value = response.data?.data ?? null
   } catch (err) {
-    let errorMessage = 'Gagal memuat detail data event.'
+    let errorMessage = 'Gagal memuat Detail Event.'
     if (axios.isAxiosError(err) && err.response?.data?.message) {
       errorMessage = err.response.data.message
     }
@@ -106,60 +106,69 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Kartu Metadata / Detail Data -->
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
-      <BackButton to="/dashboard/event" :sticky="false" />
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="flex flex-col gap-4">
+        <span><BackButton to="/dashboard/event" :sticky="false" /></span>
 
-      <div class="border-t border-text-alt/50 mt-2 mb-6"></div>
+        <div class="border-t border-text-alt/50"></div>
+        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Event</h1>
+      </div>
 
-      <h1 class="text-xl font-bold text-text-neutral mb-4">Detail Event</h1>
-
-      <!-- State Loading -->
+      <!-- Loading -->
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
         <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
-      <!-- State Data Tidak Ditemukan -->
-      <div v-else-if="!event" class="text-center text-text-alt py-8">
+      <!-- Empty State -->
+      <div v-else-if="!event" class="text-center text-text-alt py-10 text-sm sm:text-base">
         Data event tidak ditemukan.
       </div>
 
-      <!-- Detail Data -->
-      <dl v-else class="flex flex-col">
+      <!-- Detail -->
+      <dl v-else class="flex flex-col mt-4 lg:mt-6">
         <!-- Judul -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Judul Event</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium break-all">
-            {{ event.title }}
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Judul Event</dt>
+
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
+            {{ event.title || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Lokasi -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Lokasi</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Lokasi</dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
             {{ event.location || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Tanggal Pelaksanaan -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Pelaksanaan</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Pelaksanaan</dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
             {{ formatEventRange(event.start_date, event.end_date) }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Cover Event -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Cover Event</dt>
-          <dd class="sm:col-span-2 text-text-neutral">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Cover Event</dt>
+
+          <dd class="sm:col-span-2 min-w-0 text-sm lg:text-base text-text-neutral">
             <a
               v-if="coverUrl"
               :href="coverUrl"
@@ -169,61 +178,77 @@ onMounted(() => {
             >
               {{ coverUrl }}
             </a>
+
             <span v-else class="text-text-alt">-</span>
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Status -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Status</dt>
-          <dd class="sm:col-span-2 flex items-center gap-2">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Status</dt>
+
+          <dd class="sm:col-span-2 flex items-center">
             <EnumStatusBadge :status="event.status" />
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Diubah Terakhir Oleh -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Diubah Terakhir Oleh</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Diubah Terakhir Oleh</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
             {{ event.rel_updated_by || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Tanggal Diubah -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDateTime(event.updated_at) }}</dd>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Diubah</dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDateTime(event.updated_at) }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
+        <!-- Dibuat Oleh -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Dibuat Oleh</dt>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary">
-          <dt class="text-text-neutral font-semibold">Dibuat Oleh</dt>
-          <dd class="sm:col-span-2 text-text-neutral font-medium">
+          <dd
+            class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+          >
             {{ event.rel_created_by || '-' }}
           </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
         <!-- Tanggal Dibuat -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-          <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
-          <dd class="sm:col-span-2 text-text-neutral">{{ formatDateTime(event.created_at) }}</dd>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5">
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Dibuat</dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ formatDateTime(event.created_at) }}
+          </dd>
         </div>
 
-        <div class="border-t border-text-alt/10"></div>
-
-        <div class="py-8">
-          <h2 class="text-text-neutral font-semibold pb-3 mb-4 border-b border-text-alt/50">
+        <!-- Deskripsi Event -->
+        <div class="py-6 lg:py-8 border-t border-text-alt/15">
+          <h2
+            class="text-sm lg:text-base font-semibold text-text-neutral pb-3 mb-4 border-b border-text-alt/20"
+          >
             Deskripsi Event
           </h2>
-          <RichTextContent :content="event.content" class="max-w-4xl" />
+
+          <RichTextContent :content="event.content" class="max-w-4xl text-sm lg:text-base" />
         </div>
       </dl>
     </div>

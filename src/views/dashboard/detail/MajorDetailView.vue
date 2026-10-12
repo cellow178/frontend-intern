@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
@@ -161,16 +161,38 @@ const formatDate = (dateStr: string) => {
   return `${formattedDate} • ${formattedTime} WIB`
 }
 
+let fetchRequestId = 0
+
 const fetchDetail = async () => {
+  const requestId = ++fetchRequestId
+  const majorId = route.params.id
+
+  if (!majorId) {
+    major.value = null
+    isLoading.value = false
+    return
+  }
+
   isLoading.value = true
+
   try {
-    const response = await api.get(`/majors/${route.params.id}`)
+    const response = await api.get(`/majors/${majorId}`)
+
+    // Abaikan respons dari request yang sudah tidak relevan
+    if (requestId !== fetchRequestId) return
+
     major.value = response.data.data
   } catch (err) {
+    // Jangan tampilkan error dari request lama
+    if (requestId !== fetchRequestId) return
+
     console.error('Gagal mengambil detail jurusan:', err)
-    toastStore.show('Gagal memuat detail data.', 'error')
+    toastStore.show('Gagal memuat Detail Jurusan.', 'error')
   } finally {
-    isLoading.value = false
+    // Jangan matikan loading milik request yang lebih baru
+    if (requestId === fetchRequestId) {
+      isLoading.value = false
+    }
   }
 }
 
@@ -234,17 +256,17 @@ const handleConfirmDelete = async () => {
   try {
     if (deleteType.value === 'competence') {
       await api.delete(`/major-competent/${selectedDeleteId.value}`)
-      toastStore.show('Kompetensi berhasil dihapus.', 'success')
+      toastStore.show('Kompetensi berhasil dihapus!', 'success')
     } else if (deleteType.value === 'gallery') {
       await api.delete(`/major-gallery/${selectedDeleteId.value}`)
-      toastStore.show('Foto galeri berhasil dihapus.', 'success')
+      toastStore.show('Foto galeri berhasil dihapus!', 'success')
     }
     closeDeleteModal()
     fetchDetail()
   } catch (err) {
     console.error(`Gagal menghapus ${deleteType.value}:`, err)
     toastStore.show(
-      `Gagal menghapus ${deleteType.value === 'competence' ? 'kompetensi' : 'foto galeri'}.`,
+      `Gagal menghapus ${deleteType.value === 'competence' ? 'Kompetensi' : 'Foto Galeri'}.`,
       'error',
     )
   } finally {
@@ -252,322 +274,340 @@ const handleConfirmDelete = async () => {
   }
 }
 
-onMounted(() => {
-  if (route.query.tab) {
-    activeTab.value = route.query.tab as string
-  }
-  fetchDetail()
-})
+// Pantau perubahan ID jurusan
+watch(
+  () => route.params.id,
+  () => {
+    fetchDetail()
+  },
+  { immediate: true },
+)
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    const tabKey = typeof tab === 'string' ? tab : 'detail'
+
+    activeTab.value = detailTabs.some((item) => item.key === tabKey) ? tabKey : 'detail'
+  },
+  { immediate: true },
+)
 </script>
 
+vue
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Header Back Button & Judul Halaman -->
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 flex flex-col gap-4">
-      <span
-        ><BackButton to="/dashboard/jurusan" :sticky="false" />
-        <div class="border-t border-text-alt/50 my-2"></div>
-      </span>
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <h1 class="text-xl font-bold text-text-neutral">
-          {{ major ? major.major_name : 'Detail Jurusan' }}
-        </h1>
-        <DashboardStatusBadge v-if="major" :active="major.active" />
+    <!-- Card Utama -->
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="flex flex-col gap-4">
+        <BackButton to="/dashboard/jurusan" :sticky="false" />
+
+        <div class="border-t border-text-alt/50"></div>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h1 class="text-xl lg:text-2xl font-bold text-text-neutral wrap-break-word">
+            {{ major ? major.major_name : 'Detail Jurusan' }}
+          </h1>
+
+          <div v-if="major" class="flex items-center">
+            <DashboardStatusBadge :active="major.active" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="isLoading" class="py-16 flex justify-center items-center">
+        <LoadingSpinner size="lg" label="Memuat detail..." />
+      </div>
+
+      <!-- Data Tidak Ditemukan -->
+      <div v-else-if="!major" class="text-center text-text-alt py-10 text-sm sm:text-base">
+        Data jurusan tidak ditemukan.
       </div>
     </div>
 
-    <!-- State Loading Utama -->
+    <!-- Detail Jurusan dan Tab -->
     <div
-      v-if="isLoading"
-      class="bg-neutral rounded-2xl shadow-sm p-12 flex justify-center items-center"
+      v-if="!isLoading && major"
+      class="bg-neutral rounded-2xl pt-2 shadow-sm overflow-hidden px-4 sm:px-5"
     >
-      <LoadingSpinner size="lg" label="Memuat detail..." />
-    </div>
-
-    <!-- State Data Tidak Ditemukan -->
-    <div v-else-if="!major" class="bg-neutral rounded-2xl shadow-sm p-12 text-center text-text-alt">
-      Data jurusan tidak ditemukan.
-    </div>
-
-    <div v-else class="bg-neutral rounded-2xl pt-2 shadow-sm overflow-hidden">
       <TableTabs :tabs="detailTabs" :model-value="activeTab" @update:model-value="handleTabChange">
-        <!-- ================= TAB 1: DETAIL JURUSAN ================= -->
+        <!-- TAB 1: DETAIL JURUSAN -->
         <template #detail>
-          <div class="p-6 sm:p-8 flex flex-col gap-8">
-            <!-- Informasi Spesifikasi Data -->
+          <div class="p-4 flex flex-col gap-6 lg:gap-8">
             <dl class="flex flex-col">
+              <!-- Kode Jurusan -->
               <div
-                class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary"
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
               >
-                <dt class="text-text-neutral font-semibold">Kode Jurusan</dt>
-                <dd class="sm:col-span-2 text-text-neutral font-medium break-all">
-                  {{ major.code }}
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Kode Jurusan</dt>
+                <dd
+                  class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+                >
+                  {{ major.code || '-' }}
                 </dd>
               </div>
 
-              <div class="border-t border-text-alt/10"></div>
-
+              <!-- Nama Jurusan -->
               <div
-                class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary"
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
               >
-                <dt class="text-text-neutral font-semibold">Nama Jurusan</dt>
-                <dd class="sm:col-span-2 text-text-neutral font-medium break-all">
-                  {{ major.major_name }}
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Nama Jurusan</dt>
+                <dd
+                  class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+                >
+                  {{ major.major_name || '-' }}
                 </dd>
               </div>
 
-              <div class="border-t border-text-alt/10"></div>
-
+              <!-- Logo Jurusan -->
               <div
-                class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary"
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
               >
-                <dt class="text-text-neutral font-semibold">Logo Jurusan</dt>
-                <dd class="sm:col-span-2 text-text-neutral">
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Logo Jurusan</dt>
+                <dd class="sm:col-span-2 min-w-0">
                   <a
                     v-if="major.img_logo"
                     :href="getFullFileUrl(major.img_logo) || '#'"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-primary hover:underline break-all"
+                    class="text-sm lg:text-base text-primary hover:underline wrap-break-word"
                   >
                     {{ getFullFileUrl(major.img_logo) }}
                   </a>
-                  <span v-else class="text-text-alt">-</span>
+                  <span v-else class="text-sm lg:text-base text-text-alt"> - </span>
                 </dd>
               </div>
 
-              <div class="border-t border-text-alt/10"></div>
-
+              <!-- Ringkasan -->
               <div
-                class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary"
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
               >
-                <dt class="text-text-neutral font-semibold">Ringkasan</dt>
-                <dd class="sm:col-span-2 text-text-neutral">{{ major.summary || '-' }}</dd>
-              </div>
-
-              <div class="border-t border-text-alt/10"></div>
-
-              <div
-                class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4 border-b border-secondary"
-              >
-                <dt class="text-text-neutral font-semibold">Jumlah Kelas / Durasi</dt>
-                <dd class="sm:col-span-2 text-text-neutral font-medium">
-                  {{ major.total_classes }} Indeks Kelas / {{ major.major_duration }} Tahun
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Ringkasan</dt>
+                <dd
+                  class="sm:col-span-2 text-sm lg:text-base text-text-neutral leading-relaxed wrap-break-word"
+                >
+                  {{ major.summary || '-' }}
                 </dd>
               </div>
 
-              <div class="border-t border-text-alt/10"></div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-                <dt class="text-text-neutral font-semibold">Tanggal Diubah</dt>
-                <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(major.updated_at) }}</dd>
+              <!-- Jumlah Kelas / Durasi -->
+              <div
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+              >
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">
+                  Jumlah Kelas / Durasi
+                </dt>
+                <dd
+                  class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+                >
+                  {{ major.total_classes ?? '-' }} Indeks Kelas /
+                  {{ major.major_duration ?? '-' }} Tahun
+                </dd>
               </div>
 
-              <div class="border-t border-text-alt/10"></div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-1 sm:gap-4 py-4">
-                <dt class="text-text-neutral font-semibold">Tanggal Dibuat</dt>
-                <dd class="sm:col-span-2 text-text-neutral">{{ formatDate(major.created_at) }}</dd>
+              <!-- Tanggal Diubah -->
+              <div
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+              >
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Diubah</dt>
+                <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+                  {{ formatDate(major.updated_at) }}
+                </dd>
               </div>
 
-              <div class="border-t border-text-alt/10"></div>
+              <!-- Tanggal Dibuat -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5">
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Dibuat</dt>
+                <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+                  {{ formatDate(major.created_at) }}
+                </dd>
+              </div>
             </dl>
 
-            <!-- Deskripsi Rich Text -->
+            <!-- Deskripsi Lengkap -->
             <div>
-              <h2 class="text-text-neutral font-semibold pb-3 mb-4 border-b border-text-alt/50">
+              <h2
+                class="text-base lg:text-lg text-text-neutral font-semibold pb-3 mb-4 border-b border-text-alt/20"
+              >
                 Deskripsi Lengkap Jurusan
               </h2>
+
               <RichTextContent :content="major.full_description" class="max-w-4xl" />
             </div>
           </div>
         </template>
 
-        <!-- ================= TAB 2: KOMPETENSI JURUSAN ================= -->
+        <!-- TAB 2: KOMPETENSI JURUSAN -->
         <template #competence>
-          <TableData
-            :columns="competenceColumns"
-            :items="filteredCompetences"
-            v-model:search="competenceSearch"
-            add-button-label="Tambah Kompetensi"
-            search-placeholder="Cari kompetensi..."
-            empty-message="Belum ada data kompetensi jurusan."
-            @add="handleAddCompetence"
-          >
-            <!-- Slot Nomor -->
-            <template #col-no="{ index }">
-              <div class="text-center font-medium">
-                {{ index + 1 }}
-              </div>
-            </template>
+          <div class="px-4 py-4 sm:px-6 lg:px-8">
+            <TableData
+              :columns="competenceColumns"
+              :items="filteredCompetences"
+              v-model:search="competenceSearch"
+              add-button-label="Tambah Kompetensi"
+              search-placeholder="Cari kompetensi..."
+              empty-message="Belum ada data kompetensi jurusan."
+              @add="handleAddCompetence"
+            >
+              <!-- Slot Nomor -->
+              <template #col-no="{ index }">
+                <div class="text-center font-medium">
+                  {{ index + 1 }}
+                </div>
+              </template>
 
-            <!-- Slot Status -->
-            <template #col-active="{ item }">
-              <div class="flex justify-center">
-                <DashboardStatusBadge :active="(item as MajorCompetent).active" />
-              </div>
-            </template>
-
-            <!-- Slot Deskripsi -->
-            <template #col-description="{ item }">
-              <span :title="item.description">
-                {{ item.description || '-' }}
-              </span>
-            </template>
-
-            <!-- Slot Kolom Aksi Desktop -->
-            <template #col-action="{ item }">
-              <div class="flex items-center justify-center gap-1.5">
-                <DashboardIconButton
-                  variant="edit"
-                  label="Edit"
-                  class="w-7 h-7"
-                  @click="handleEditCompetence(item as MajorCompetent)"
-                />
-                <DashboardIconButton
-                  variant="delete"
-                  label="Hapus"
-                  class="w-7 h-7"
-                  @click="openDeleteCompetenceModal(item.id)"
-                />
-              </div>
-            </template>
-
-            <!-- Slot Mobile Card -->
-            <template #mobile-card="{ item, index }">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs text-text-alt font-medium">#{{ index + 1 }}</span>
+              <!-- Slot Status -->
+              <template #col-active="{ item }">
+                <div class="flex justify-center">
                   <DashboardStatusBadge :active="(item as MajorCompetent).active" />
                 </div>
-                <div class="flex items-center gap-1.5">
+              </template>
+
+              <!-- Slot Deskripsi -->
+              <template #col-description="{ item }">
+                <span :title="item.description">
+                  {{ item.description || '-' }}
+                </span>
+              </template>
+
+              <!-- Slot Kolom Aksi Desktop -->
+              <template #col-action="{ item }">
+                <div class="flex items-center justify-center gap-1.5">
                   <DashboardIconButton
                     variant="edit"
                     label="Edit"
+                    class="w-7 h-7"
                     @click="handleEditCompetence(item as MajorCompetent)"
                   />
                   <DashboardIconButton
                     variant="delete"
                     label="Hapus"
+                    class="w-7 h-7"
                     @click="openDeleteCompetenceModal(item.id)"
                   />
                 </div>
-              </div>
-              <p class="text-sm font-semibold text-text-neutral">{{ item.competent_name }}</p>
-              <p class="text-sm text-text-alt">{{ item.description || '-' }}</p>
-            </template>
-          </TableData>
+              </template>
+
+              <!-- Slot Mobile Card -->
+              <template #mobile-card="{ item, index }">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs text-text-alt font-medium">#{{ index + 1 }}</span>
+                    <DashboardStatusBadge :active="(item as MajorCompetent).active" />
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <DashboardIconButton
+                      variant="edit"
+                      label="Edit"
+                      @click="handleEditCompetence(item as MajorCompetent)"
+                    />
+                    <DashboardIconButton
+                      variant="delete"
+                      label="Hapus"
+                      @click="openDeleteCompetenceModal(item.id)"
+                    />
+                  </div>
+                </div>
+                <p class="text-sm font-semibold text-text-neutral">{{ item.competent_name }}</p>
+                <p class="text-sm text-text-alt">{{ item.description || '-' }}</p>
+              </template>
+            </TableData>
+          </div>
         </template>
 
-        <!-- ================= TAB 3: GALERI JURUSAN ================= -->
+        <!-- TAB 3: GALERI JURUSAN -->
         <template #gallery>
-          <TableData
-            v-model:search="gallerySearch"
-            :columns="galleryColumns"
-            :items="filteredGalleries"
-            search-placeholder="Cari foto galeri..."
-            add-button-label="Tambah Foto Galeri"
-            empty-message="Belum ada data foto galeri."
-            @add="handleAddGallery"
-          >
-            <!-- Slot Nomor -->
-            <template #col-no="{ index }">
-              <div class="text-center font-medium">
-                {{ index + 1 }}
-              </div>
-            </template>
-
-            <!-- Slot Status -->
-            <template #col-active="{ item }">
-              <div class="flex justify-center">
-                <DashboardStatusBadge :active="(item as MajorGallery).active" />
-              </div>
-            </template>
-
-            <!-- Slot Akses / Tombol Aksi -->
-            <template #col-action="{ item }">
-              <div class="flex items-center justify-center gap-1.5">
-                <DashboardIconButton
-                  variant="edit"
-                  label="Edit"
-                  class="w-7 h-7"
-                  @click.stop="handleEditGallery(item as MajorGallery)"
-                />
-                <DashboardIconButton
-                  variant="delete"
-                  label="Hapus"
-                  class="w-7 h-7"
-                  @click.stop="openDeleteGalleryModal(item.id)"
-                />
-              </div>
-            </template>
-
-            <!-- Slot Gambar Preview Desktop (Di-wrap dengan <a> tag target="_blank") -->
-            <template #col-img_cover="{ item }">
-              <a
-                v-if="getFullFileUrl(item.img_cover)"
-                :href="getFullFileUrl(item.img_cover)!"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="w-28 h-18 rounded-lg overflow-hidden bg-neutral-100 border border-secondary/30 shrink-0 my-1 block group relative cursor-pointer"
-                title="Klik untuk membuka gambar di tab baru"
-              >
-                <img
-                  :src="getFullFileUrl(item.img_cover)!"
-                  :alt="item.description || 'Foto Galeri'"
-                  class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                />
-                <div
-                  class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
-                >
-                  <RiExternalLinkLine class="w-5 h-5" />
+          <div class="px-4 py-4 sm:px-6 lg:px-8">
+            <TableData
+              v-model:search="gallerySearch"
+              :columns="galleryColumns"
+              :items="filteredGalleries"
+              search-placeholder="Cari foto galeri..."
+              add-button-label="Tambah Foto Galeri"
+              empty-message="Belum ada data foto galeri."
+              @add="handleAddGallery"
+            >
+              <!-- Slot Nomor -->
+              <template #col-no="{ index }">
+                <div class="text-center font-medium">
+                  {{ index + 1 }}
                 </div>
-              </a>
-              <div
-                v-else
-                class="w-28 h-18 rounded-lg bg-neutral-100 border border-secondary/30 flex items-center justify-center text-xs text-text-alt"
-              >
-                Tidak ada foto
-              </div>
-            </template>
+              </template>
 
-            <!-- Slot Mobile Card View (Di-wrap dengan <a> tag target="_blank") -->
-            <template #mobile-card="{ item, index }">
-              <div class="flex items-start gap-3">
+              <!-- Slot Status -->
+              <template #col-active="{ item }">
+                <div class="flex justify-center">
+                  <DashboardStatusBadge :active="(item as MajorGallery).active" />
+                </div>
+              </template>
+
+              <!-- Slot Akses / Tombol Aksi -->
+              <template #col-action="{ item }">
+                <div class="flex items-center justify-center gap-1.5">
+                  <DashboardIconButton
+                    variant="edit"
+                    label="Edit"
+                    class="w-7 h-7"
+                    @click.stop="handleEditGallery(item as MajorGallery)"
+                  />
+                  <DashboardIconButton
+                    variant="delete"
+                    label="Hapus"
+                    class="w-7 h-7"
+                    @click.stop="openDeleteGalleryModal(item.id)"
+                  />
+                </div>
+              </template>
+
+              <!-- Slot Gambar Preview Desktop (Di-wrap dengan <a> tag target="_blank") -->
+              <template #col-img_cover="{ item }">
                 <a
                   v-if="getFullFileUrl(item.img_cover)"
                   :href="getFullFileUrl(item.img_cover)!"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="w-16 h-16 rounded-xl border border-secondary/20 overflow-hidden shrink-0 block relative group cursor-pointer"
-                  title="Klik untuk membuka foto resolusi penuh"
+                  class="w-28 h-18 rounded-lg overflow-hidden bg-neutral-100 border border-secondary/30 shrink-0 my-1 block group relative cursor-pointer"
+                  title="Klik untuk membuka gambar di tab baru"
                 >
                   <img
                     :src="getFullFileUrl(item.img_cover)!"
                     :alt="item.description || 'Foto Galeri'"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                   />
+                  <div
+                    class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+                  >
+                    <RiExternalLinkLine class="w-5 h-5" />
+                  </div>
                 </a>
                 <div
                   v-else
-                  class="w-16 h-16 rounded-xl bg-neutral-100 border border-secondary/20 flex items-center justify-center text-xs text-text-alt shrink-0"
+                  class="w-28 h-18 rounded-lg bg-neutral-100 border border-secondary/30 flex items-center justify-center text-xs text-text-alt"
                 >
-                  No Image
+                  Tidak ada foto
                 </div>
+              </template>
 
-                <div class="flex flex-col justify-between flex-1 min-w-0 gap-1">
+              <!-- Slot Mobile Card View -->
+              <template #mobile-card="{ item, index }">
+                <div class="flex flex-col gap-3">
+                  <!-- Nomor dan Aksi -->
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
-                      <span class="text-xs text-text-alt font-medium">#{{ index + 1 }}</span>
+                      <span class="text-xs text-text-alt font-medium"> #{{ index + 1 }} </span>
+
                       <DashboardStatusBadge :active="(item as MajorGallery).active" />
                     </div>
-                    <div class="flex items-center gap-1.5">
+
+                    <div class="flex items-center gap-1.5 shrink-0">
                       <DashboardIconButton
                         variant="edit"
                         label="Edit"
                         class="w-7 h-7"
                         @click.stop="handleEditGallery(item as MajorGallery)"
                       />
+
                       <DashboardIconButton
                         variant="delete"
                         label="Hapus"
@@ -576,18 +616,55 @@ onMounted(() => {
                       />
                     </div>
                   </div>
-                  <p class="text-sm text-text-neutral truncate">
-                    {{ item.description || '-' }}
-                  </p>
+
+                  <!-- Informasi Galeri -->
+                  <div class="flex flex-col gap-2 min-w-0">
+                    <p class="text-sm font-semibold leading-snug text-text-neutral wrap-break-word">
+                      {{ item.description || '-' }}
+                    </p>
+
+                    <!-- Foto Galeri -->
+                    <div
+                      class="w-full h-40 rounded-lg border border-neutral/20 bg-gray-100 flex items-center justify-center overflow-hidden shadow-sm"
+                    >
+                      <a
+                        v-if="getFullFileUrl(item.img_cover)"
+                        :href="getFullFileUrl(item.img_cover)!"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-full h-full block relative cursor-pointer group"
+                        title="Klik untuk membuka foto resolusi penuh"
+                      >
+                        <img
+                          :src="getFullFileUrl(item.img_cover)!"
+                          :alt="item.description || 'Foto Galeri'"
+                          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                        />
+
+                        <!-- Overlay Ikon -->
+                        <div
+                          class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+                        >
+                          <RiExternalLinkLine class="w-5 h-5" />
+                        </div>
+                      </a>
+
+                      <!-- Placeholder Jika Tidak Ada Gambar -->
+                      <div v-else class="flex flex-col items-center justify-center text-text-alt">
+                        <RiImageLine class="w-6 h-6" />
+                        <span class="text-xs font-medium mt-1">Tidak ada foto</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </TableData>
+              </template>
+            </TableData>
+          </div>
         </template>
       </TableTabs>
     </div>
 
-    <!-- Confirm Modal Hapus -->
+    <!-- Modal Konfirmasi Hapus -->
     <ConfirmModal
       :is-open="isDeleteModalOpen"
       :is-loading="isDeleting"

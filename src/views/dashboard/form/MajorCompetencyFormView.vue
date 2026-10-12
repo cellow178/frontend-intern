@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, nextTick } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
@@ -14,6 +14,12 @@ const route = useRoute()
 const router = useRouter()
 const toastStore = useToastStore()
 
+let isLeaving = false
+
+onBeforeUnmount(() => {
+  isLeaving = true
+})
+
 // ID Kompetensi jika dalam mode Edit
 const competentId = computed(() => (route.params.id ? Number(route.params.id) : null))
 const isEditMode = computed(() => !!competentId.value)
@@ -27,6 +33,8 @@ const majorId = computed(() => {
   const idFromQuery = route.query.major_id ? Number(route.query.major_id) : null
   return idFromParam || idFromQuery
 })
+
+const resolvedMajorId = ref<number | null>(majorId.value)
 
 // Inisialisasi isLoading = true jika dalam mode edit agar form tidak langsung dirender dalam keadaan kosong
 const isLoading = ref(isEditMode.value)
@@ -46,46 +54,70 @@ const errors = reactive({
 
 const submitButtonLabel = computed(() => (isSubmitting.value ? 'Menyimpan...' : 'Simpan'))
 
-// Fetch Info Jurusan berdasarkan majorId
 const fetchMajorDetail = async () => {
-  if (!majorId.value) return
+  if (!majorId.value || isLeaving) return
+
   try {
     const response = await api.get(`/majors/${majorId.value}`)
+
+    if (isLeaving) return
+
     majorDetail.value = response.data.data
   } catch (err) {
+    if (isLeaving) return
+
     console.error('Gagal mengambil informasi jurusan:', err)
   }
 }
 
-// Fetch Detail Data saat Edit Mode
 const fetchDetail = async () => {
-  if (!competentId.value) return
+  if (!competentId.value || isLeaving) return
 
   isLoading.value = true
+
   try {
     const response = await api.get(`/major-competents/${competentId.value}`)
+
+    // Jangan proses hasil request jika user sudah keluar
+    if (isLeaving) return
+
     const data = response.data.data
+
     formData.competent_name = data.competent_name || ''
     formData.description = data.description || ''
     formData.active = data.active ? 'true' : 'false'
 
-    // Jika major_id belum didapat dari route, ambil dari data kompetensi
+    // Simpan ID jurusan dari data kompetensi jika belum tersedia
+    if (!majorId.value && data.major_id) {
+      resolvedMajorId.value = Number(data.major_id)
+    }
+
+    // Ambil detail jurusan hanya jika belum tersedia
     if (!majorDetail.value && data.major_id) {
       const respMajor = await api.get(`/majors/${data.major_id}`)
+
+      // Request kedua juga bisa selesai setelah user keluar
+      if (isLeaving) return
+
       majorDetail.value = respMajor.data.data
     }
   } catch (err: any) {
+    // Jangan munculkan toast dari request yang sudah tidak relevan
+    if (isLeaving) return
+
     const backendMessage = err.response?.data?.message
 
     if (backendMessage === 'message.dataNotFound') {
-      toastStore.show('Data kompetensi keahlian tidak ditemukan.', 'error')
+      toastStore.show('Kompetensi Jurusan tidak ditemukan.', 'error')
     } else {
-      toastStore.show(backendMessage || 'Gagal memuat detail kompetensi keahlian.', 'error')
+      toastStore.show(backendMessage || 'Gagal memuat Kompetensi Jurusan.', 'error')
     }
 
     handleCancel()
   } finally {
-    isLoading.value = false
+    if (!isLeaving) {
+      isLoading.value = false
+    }
   }
 }
 
@@ -114,7 +146,7 @@ const handleSubmit = async () => {
   if (!validate()) return
 
   if (!majorId.value && !isEditMode.value) {
-    toastStore.show('ID Jurusan tidak terdeteksi.', 'error')
+    toastStore.show('Jurusan tidak ditemukan.', 'error')
     return
   }
 
@@ -129,24 +161,30 @@ const handleSubmit = async () => {
   try {
     if (isEditMode.value) {
       await api.put('/major-competents/update', { id: competentId.value, ...payload })
-      toastStore.show('Kompetensi jurusan berhasil diperbarui!', 'success')
+      toastStore.show('Kompetensi Jurusan berhasil diperbarui!', 'success')
     } else {
       await api.post('/major-competents/create', payload)
-      toastStore.show('Kompetensi jurusan berhasil ditambahkan!', 'success')
+      toastStore.show('Kompetensi Jurusan berhasil ditambahkan!', 'success')
     }
 
     // Mengarahkan kembali ke halaman detail beserta query tab
     handleCancel()
   } catch (err: any) {
     const backendMessage = err.response?.data?.message
-    toastStore.show(backendMessage || 'Terjadi kesalahan saat menyimpan data.', 'error')
+    toastStore.show(
+      backendMessage || 'Terjadi kesalahan saat menyimpan Kompetensi Jurusan.',
+      'error',
+    )
   } finally {
     isSubmitting.value = false
   }
 }
 
 const handleCancel = () => {
-  const targetMajorId = majorId.value || majorDetail.value?.code
+  isLeaving = true
+
+  const targetMajorId = resolvedMajorId.value || majorId.value
+
   if (targetMajorId) {
     router.push({
       name: 'dashboard-jurusan-detail',
@@ -160,6 +198,7 @@ const handleCancel = () => {
 
 onMounted(async () => {
   await fetchMajorDetail()
+  if (isLeaving) return
   if (isEditMode.value) {
     await fetchDetail()
   }
@@ -167,25 +206,31 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Kompetensi' : 'Tambah Kompetensi' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Kompetensi Jurusan' : 'Tambah Kompetensi Jurusan' }}
+        </h1>
+      </div>
 
-    <!-- Indicator Loading Utama saat Edit Mode -->
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20 max-w-4xl"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
-    <!-- Form Hanya Muncul Ketika Loading Selesai -->
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5 max-w-4xl"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Kompetensi Jurusan' : 'Tambah Kompetensi Jurusan' }}
+        </h1>
+      </div>
+
       <!-- Informational Badge Jurusan -->
       <div
         v-if="majorDetail"

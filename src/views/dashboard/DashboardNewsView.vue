@@ -90,7 +90,7 @@ const columns: Column[] = [
   { key: 'title', label: 'Judul Berita', width: 'min-w-[220px]' },
   { key: 'rel_category_id', label: 'Kategori', width: 'min-w-[160px] text-center' },
   { key: 'status', label: 'Status', width: 'w-28 text-center' },
-  { key: 'rel_created_by', label: 'Penulis & Pengedit', width: 'min-w-[150px]' },
+  { key: 'rel_created_by', label: 'Penulis & Pengedit', width: 'min-w-[120px]' },
   { key: 'created_at', label: 'Waktu / Tanggal', width: 'w-36 text-center' },
 ]
 
@@ -100,7 +100,7 @@ const fetchCategories = async () => {
     const response = await api.get('/news-categories/dataset')
     categories.value = response.data?.data ?? []
   } catch {
-    toastStore.show('Gagal memuat kategori berita.', 'error')
+    toastStore.show('Gagal memuat Kategori Berita.', 'error')
   }
 }
 
@@ -130,7 +130,7 @@ const fetchNews = async () => {
     imageErrors.value = {}
   } catch (error) {
     if (axios.isCancel(error)) return
-    toastStore.show('Gagal memuat data berita.', 'error')
+    toastStore.show('Gagal memuat Berita.', 'error')
   } finally {
     if (!fetchAbortController.signal.aborted) {
       isLoading.value = false
@@ -167,21 +167,29 @@ const handleEdit = (id: number) => {
   router.push({ name: 'dashboard-berita-edit', params: { id } })
 }
 
-const handleToggleHighlight = async (item: NewsItem) => {
-  if (!item || !item.id || updatingHighlightId.value === item.id) return
+const handleToggleHighlight = async (id: number) => {
+  if (!id || updatingHighlightId.value === id) return
 
-  updatingHighlightId.value = item.id
+  const item = newsList.value.find((news) => news.id === id)
+  if (!item) return
+
+  updatingHighlightId.value = id
+
   try {
     await api.post('/news/update-highlight', {
       id: item.id,
       is_highlight: !item.is_highlight,
     })
 
-    toastStore.show('Status highlight berhasil diperbarui.', 'success')
+    toastStore.show('Status Highlight Berita berhasil diperbarui!', 'success')
     await fetchNews()
   } catch (error) {
-    const err = error as { response?: { data?: { message?: string } } }
-    const errorMessage = err.response?.data?.message || 'Gagal memperbarui status highlight.'
+    const err = error as {
+      response?: { data?: { message?: string } }
+    }
+
+    const errorMessage = err.response?.data?.message || 'Gagal memperbarui status Highlight Berita.'
+
     toastStore.show(errorMessage, 'error')
   } finally {
     updatingHighlightId.value = null
@@ -204,7 +212,7 @@ const confirmDelete = async () => {
   isDeleting.value = true
   try {
     await api.delete('/news/delete', { data: { id: selectedDeleteId.value } })
-    toastStore.show('Berita berhasil dihapus.', 'success')
+    toastStore.show('Berita berhasil dihapus!', 'success')
     closeDeleteModal()
     fetchNews()
   } catch (error) {
@@ -265,7 +273,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
     <div>
       <h1 class="text-xl font-bold text-text-neutral">Kelola Berita</h1>
     </div>
@@ -289,12 +297,12 @@ onUnmounted(() => {
       @update:items-per-page="handlePerPageChange"
     >
       <template #filters>
-        <div class="flex items-center gap-3">
-          <!-- Filter Kategori -->
-          <div class="w-fit">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+          <div class="w-full sm:w-fit sm:min-w-44">
             <Select
               v-model="selectedCategoryId"
               size="normal"
+              variant="semi-rounded"
               placeholder=""
               :options="[
                 { value: '', label: 'Semua Kategori' },
@@ -308,10 +316,11 @@ onUnmounted(() => {
           </div>
 
           <!-- Filter Status -->
-          <div class="w-fit">
+          <div class="w-full sm:w-fit sm:min-w-44">
             <Select
               v-model="selectedStatus"
               size="normal"
+              variant="semi-rounded"
               placeholder=""
               :options="[
                 { value: '', label: 'Semua Status' },
@@ -407,7 +416,10 @@ onUnmounted(() => {
 
       <!-- Column: Title -->
       <template #col-title="{ item }">
-        <span class="font-medium text-text-neutral line-clamp-2 break-all" :title="item.title">
+        <span
+          class="font-medium text-text-neutral line-clamp-2 wrap-break-word"
+          :title="item.title"
+        >
           {{ item.title }}
         </span>
       </template>
@@ -459,10 +471,12 @@ onUnmounted(() => {
 
       <!-- Mobile View Card -->
       <template #mobile-card="{ item, index }">
-        <div class="flex items-center justify-between">
+        <!-- Nomor dan Aksi -->
+        <div class="flex items-center justify-between gap-2">
           <span class="text-xs text-text-alt font-medium">
             #{{ (currentPage - 1) * pageSize + index + 1 }}
           </span>
+
           <div class="flex items-center gap-1.5">
             <div
               v-if="updatingHighlightId === item.id"
@@ -470,6 +484,7 @@ onUnmounted(() => {
             >
               <LoadingSpinner size="sm" />
             </div>
+
             <DashboardIconButton
               v-else
               variant="highlight"
@@ -477,22 +492,45 @@ onUnmounted(() => {
               :label="item.is_highlight ? 'Batal Highlight' : 'Jadikan Highlight'"
               @click="handleToggleHighlight(item.id)"
             />
+
             <DashboardIconButton variant="info" label="Detail" @click="handleDetail(item.id)" />
+
             <DashboardIconButton variant="edit" label="Edit" @click="handleEdit(item.id)" />
+
             <DashboardIconButton variant="delete" label="Hapus" @click="openDeleteModal(item.id)" />
           </div>
         </div>
 
-        <div class="flex gap-3 items-start my-1">
+        <!-- Informasi Berita -->
+        <div class="flex flex-col gap-2 my-3 min-w-0">
+          <!-- Judul -->
+          <p
+            class="text-sm font-semibold leading-snug text-text-neutral line-clamp-2 wrap-break-word"
+            :title="item.title"
+          >
+            {{ item.title }}
+          </p>
+
+          <!-- Kategori dan Status -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <NewsCategoryBadge
+              :category-name="item.rel_category_id || '-'"
+              variant="primary"
+              size="sm"
+            />
+            <EnumStatusBadge :status="item.status" />
+          </div>
+
+          <!-- Gambar di Bawah Informasi Berita -->
           <div
-            class="w-24 h-16 rounded-md border border-neutral/20 bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm"
+            class="w-full h-40 rounded-lg border border-neutral/20 bg-gray-100 flex items-center justify-center overflow-hidden shadow-sm"
           >
             <a
               v-if="getImageUrl(item.img_cover) && !imageErrors[item.id]"
               :href="getImageUrl(item.img_cover)"
               target="_blank"
               rel="noopener noreferrer"
-              class="w-full h-full block cursor-pointer group"
+              class="w-full h-full block relative cursor-pointer group"
               title="Klik untuk membuka gambar di tab baru"
             >
               <img
@@ -501,29 +539,27 @@ onUnmounted(() => {
                 class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                 @error="handleImageError(item.id)"
               />
+
+              <!-- Overlay Ikon -->
+              <div
+                class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+              >
+                <RiExternalLinkLine class="w-5 h-5" />
+              </div>
             </a>
+
+            <!-- Placeholder Jika Tidak Ada Gambar -->
             <div v-else class="flex flex-col items-center justify-center text-text-alt">
-              <RiImageLine />
-              <span class="text-[9px] font-medium mt-0.5 text-text-alt">No Image</span>
-            </div>
-          </div>
-          <div class="flex flex-col gap-1 min-w-0 flex-1">
-            <p class="text-sm font-semibold text-text-neutral line-clamp-2 break-all">
-              {{ item.title }}
-            </p>
-            <div class="flex items-center gap-2 flex-wrap">
-              <NewsCategoryBadge
-                :category-name="item.rel_category_id || '-'"
-                variant="primary"
-                size="sm"
-              />
-              <EnumStatusBadge :status="item.status" />
+              <RiImageLine class="w-6 h-6" />
+              <span class="text-xs font-medium mt-1">No Image</span>
             </div>
           </div>
         </div>
 
-        <!-- Detail Pembuat & Diubah (Mobile) -->
-        <div class="flex flex-col text-xs text-text-alt border-t border-secondary/20 pt-2 gap-0.5">
+        <!-- Detail Pembuat dan Waktu -->
+        <div
+          class="flex flex-col text-xs text-text-alt border-t border-secondary/20 pt-2 gap-1 leading-relaxed"
+        >
           <p>
             Terakhir diubah:
             <span class="font-semibold text-text-neutral">
@@ -534,8 +570,16 @@ onUnmounted(() => {
               {{ item.rel_updated_by || item.rel_created_by || '-' }}
             </span>
           </p>
+
           <p v-if="isEdited(item.created_at, item.updated_at)">
-            Dibuat: {{ formatDate(item.created_at) }} oleh {{ item.rel_created_by ?? '-' }}
+            Dibuat:
+            <span class="font-semibold text-text-neutral">
+              {{ formatDate(item.created_at) }}
+            </span>
+            oleh
+            <span class="font-semibold text-text-neutral">
+              {{ item.rel_created_by ?? '-' }}
+            </span>
           </p>
         </div>
       </template>

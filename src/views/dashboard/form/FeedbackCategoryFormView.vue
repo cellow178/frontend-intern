@@ -44,7 +44,7 @@ const fetchDetail = async () => {
     formData.category_name = data.category_name || ''
     formData.active = data.active ? 'true' : 'false'
   } catch {
-    toastStore.show('Gagal memuat detail kategori.', 'error')
+    toastStore.show('Gagal memuat Detail Kategori Kritik & Saran.', 'error')
     router.push({ name: 'dashboard-daftar-kategori' })
   } finally {
     isLoading.value = false
@@ -83,15 +83,16 @@ const handleSubmit = async () => {
   try {
     if (isEditMode.value) {
       await api.put(`/feedbacks-categories/${categoryId.value}`, payload)
-      toastStore.show('Kategori kritik & saran berhasil diperbarui!', 'success')
+      toastStore.show('Kategori Kritik & Saran berhasil diperbarui!', 'success')
     } else {
       await api.post('/feedbacks-categories', payload)
-      toastStore.show('Kategori kritik & saran berhasil ditambahkan!', 'success')
+      toastStore.show('Kategori Kritik & Saran berhasil ditambahkan!', 'success')
     }
 
     router.push({ name: 'dashboard-daftar-kategori', query: { tab: route.query.tab } })
   } catch (err: any) {
-    const msg = err.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.'
+    const msg =
+      err.response?.data?.message || 'Terjadi kesalahan saat menyimpan Kategori Kritik & Saran.'
     toastStore.show(msg, 'error')
   } finally {
     isSubmitting.value = false
@@ -110,28 +111,40 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 max-w-4xl">
-    <h1 class="text-xl font-bold text-text-neutral">
-      {{ isEditMode ? 'Edit Kategori Kritik & Saran' : 'Tambah Kategori Kritik & Saran' }}
-    </h1>
+  <div class="flex flex-col gap-4">
+    <!-- Loading State -->
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div class="border-b border-text-alt/50 pb-4 mb-8">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Kategori Kritik & Saran' : 'Tambah Kategori Kritik & Saran' }}
+        </h1>
+      </div>
 
-    <div
-      v-if="isLoading"
-      class="p-16 flex justify-center items-center bg-neutral rounded-2xl border border-text-alt/20"
-    >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data..." />
+      </div>
     </div>
 
+    <!-- Form -->
     <form
       v-else
       @submit.prevent="handleSubmit"
-      class="p-6 bg-neutral rounded-2xl border border-text-alt/20 flex flex-col gap-5"
+      class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <!-- Card Header -->
+      <div class="border-b border-text-alt/50 pb-4">
+        <h1 class="text-xl font-bold text-text-neutral">
+          {{ isEditMode ? 'Edit Kategori Kritik & Saran' : 'Tambah Kategori Kritik & Saran' }}
+        </h1>
+      </div>
+
+      <!-- Nama Kategori -->
       <div class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Nama Kategori</span>
           <RequiredBadge />
         </label>
+
         <Input
           v-model="formData.category_name"
           variant="semi-rounded"
@@ -139,21 +152,27 @@ onMounted(() => {
           :error="errors.category_name"
           @input="errors.category_name = false"
         />
+
         <p v-if="errors.category_name" class="text-sm text-error mt-1">
           Nama kategori wajib diisi.
         </p>
       </div>
 
+      <!-- Status -->
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-text-neutral sm:text-base">Status</label>
+        <label class="text-sm font-medium text-text-neutral sm:text-base"> Status </label>
+
         <div class="flex items-center gap-6">
           <Radio v-model="formData.active" value="true" size="normal" label="Aktif" />
+
           <Radio v-model="formData.active" value="false" size="normal" label="Nonaktif" />
         </div>
       </div>
 
+      <!-- Action Buttons -->
       <div class="flex items-center gap-3 mt-4">
         <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
+
         <Button
           type="submit"
           size="md"

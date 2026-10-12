@@ -74,7 +74,7 @@ onMounted(() => {
 
     <div
       v-else
-      class="grid grid-cols-2 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16"
+      class="grid grid-cols-1 gap-4 w-full sm:grid-cols-3 sm:gap-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-16"
     >
       <!-- PERBAIKAN: Mengubah 'item in newsList' menjadi 'item in news' -->
       <NewsCard
@@ -90,7 +90,7 @@ onMounted(() => {
       />
 
       <!-- Placeholder dekoratif: mobile (grid 2 kolom, ganjil) -->
-      <div v-if="news.length % 2 !== 0" class="relative h-full min-h-40 sm:hidden">
+      <div v-if="news.length % 2 !== 0" class="relative h-full min-h-40 hidden sm:block lg:hidden">
         <div
           class="absolute inset-0 bg-neutral border-2 border-secondary rounded-xl -rotate-4 shadow-sm"
         ></div>

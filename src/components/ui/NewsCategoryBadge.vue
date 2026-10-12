@@ -30,7 +30,7 @@ const sizeClasses = computed(() => {
       return 'text-[10px] px-2 py-0.5 rounded-sm lg:text-xs lg:px-2.5 lg:py-1'
     case 'md':
     default:
-      return 'text-xs px-3 py-1 rounded-md'
+      return 'text-xs px-2 py-1 rounded-md'
   }
 })
 </script>
