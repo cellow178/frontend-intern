@@ -113,8 +113,8 @@ watch(
     <MajorDetailSkeleton v-if="loading" />
 
     <!-- Main Content Utama -->
-    <div v-else class="max-w-6xl mx-auto">
-      <div class="max-w-6xl mx-auto">
+    <div v-else class="max-w-5xl mx-auto">
+      <div class="max-w-5xl mx-auto">
         <!-- State Data Kosong -->
         <div v-if="!majorData" class="min-h-[50vh] flex items-center justify-center">
           <p class="text-text-alt font-medium text-base">Data jurusan tidak ditemukan.</p>
@@ -186,9 +186,9 @@ watch(
           </section>
 
           <!-- DESKRIPSI LENGKAP & GAMBAR KEDUA -->
-          <section class="mb-8">
-            <div class="major-description">
-              <div v-if="secondGalleryImage" class="major-description-image">
+          <section class="mb-16">
+            <div class="major-description flex flex-col md:block">
+              <div v-if="secondGalleryImage" class="major-description-image order-2">
                 <div
                   class="w-full aspect-4/3 rounded-2xl md:rounded-3xl overflow-hidden bg-text-alt/20 shadow-sm border border-secondary"
                 >
@@ -210,9 +210,9 @@ watch(
                 </div>
               </div>
 
-              <RichTextContent :content="majorData.full_description" />
+              <RichTextContent :content="majorData.full_description" class="order-1" />
 
-              <div class="clear-both"></div>
+              <div class="clear-both order-3"></div>
             </div>
           </section>
 
@@ -256,7 +256,7 @@ watch(
               >
                 Kompetensi Jurusan
               </h2>
-              <div class="w-16 md:w-20 h-1 bg-primary rounded-full"></div>
+              <div class="w-20 h-1 bg-primary rounded-full lg:w-30"></div>
             </div>
 
             <!-- Grid Kompetensi: 2 Kolom di Tablet (md) agar tidak terlalu sempit -->
@@ -277,7 +277,7 @@ watch(
               >
                 Galeri Jurusan
               </h2>
-              <div class="w-16 md:w-20 h-1 bg-primary rounded-full"></div>
+              <div class="w-20 h-1 bg-primary rounded-full lg:w-30"></div>
             </div>
 
             <div class="max-w-4xl mx-auto">
@@ -297,13 +297,14 @@ watch(
 <style scoped>
 .major-description-image {
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .major-description-image {
     float: right;
     width: 41.666667%;
+    margin-top: 0;
     margin-left: 2rem;
     margin-bottom: 1rem;
   }

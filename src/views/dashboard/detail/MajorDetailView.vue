@@ -44,6 +44,8 @@ interface MajorDetail {
   active: boolean
   created_at: string
   updated_at: string
+  rel_created_by?: string
+  rel_updated_by?: string
   child_data_major_competent?: MajorCompetent[]
   child_data_major_gallery?: MajorGallery[]
 }
@@ -294,7 +296,6 @@ watch(
 )
 </script>
 
-vue
 <template>
   <div class="flex flex-col gap-4">
     <!-- Card Utama -->
@@ -406,6 +407,20 @@ vue
                 </dd>
               </div>
 
+              <!-- Diubah Terakhir Oleh -->
+              <div
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+              >
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">
+                  Diubah Terakhir Oleh
+                </dt>
+                <dd
+                  class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+                >
+                  {{ major.rel_updated_by || '-' }}
+                </dd>
+              </div>
+
               <!-- Tanggal Diubah -->
               <div
                 class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
@@ -413,6 +428,18 @@ vue
                 <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tanggal Diubah</dt>
                 <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
                   {{ formatDate(major.updated_at) }}
+                </dd>
+              </div>
+
+              <!-- Dibuat Oleh -->
+              <div
+                class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+              >
+                <dt class="text-sm lg:text-base font-semibold text-text-neutral">Dibuat Oleh</dt>
+                <dd
+                  class="sm:col-span-2 text-sm lg:text-base text-text-neutral font-medium wrap-break-word"
+                >
+                  {{ major.rel_created_by || '-' }}
                 </dd>
               </div>
 

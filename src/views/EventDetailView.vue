@@ -158,7 +158,7 @@ watch(
 
         <figure class="mb-8 sm:mb-12 flex justify-center">
           <div
-            class="relative w-full max-w-2xl sm:max-w-3xl overflow-hidden shadow-md border border-black/10 flex items-center justify-center bg-text-alt/20"
+            class="relative w-full max-w-2xl sm:max-w-3xl overflow-hidden border border-black/10 flex items-center justify-center bg-text-alt/10"
           >
             <img
               v-if="imageUrl && !imageLoadError"
