@@ -81,6 +81,11 @@ class CustomVideo extends Video {
 Quill.register(CustomImage, true)
 Quill.register(CustomVideo, true)
 
+// Daftarkan format size agar toolbar ukuran font tersedia
+const Size = Quill.import('formats/size') as any
+Size.whitelist = ['small', false, 'large', 'huge']
+Quill.register(Size, true)
+
 const props = defineProps<{
   modelValue: string
 }>()
@@ -101,6 +106,7 @@ onMounted(() => {
     modules: {
       toolbar: [
         [{ header: [1, 2, 3, 4, false] }],
+        [{ size: Size.whitelist }],
         ['bold', 'italic', 'underline', 'strike'],
         [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
         ['blockquote', 'code-block'],

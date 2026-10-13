@@ -98,9 +98,9 @@ const isEmpty = computed(() => {
 
 .rich-text-container :deep(p) {
   font-size: 1rem;
-  line-height: 1.75;
+  line-height: 1.625;
   margin-top: 0;
-  margin-bottom: 0.375rem;
+  margin-bottom: 0.25rem;
 }
 
 @media (min-width: 768px) {
@@ -115,8 +115,15 @@ const isEmpty = computed(() => {
 }
 
 .rich-text-container :deep(p:empty) {
-  min-height: 0.5rem;
+  min-height: 0.25rem;
   margin-bottom: 0;
+}
+
+/* Paragraf kosong bawaan Quill (<p><br></p>) — rapatkan jadi spasi kecil */
+.rich-text-container :deep(p:has(> br:only-child)) {
+  line-height: 1;
+  min-height: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 /* -------------------------------------------------------------
@@ -208,6 +215,22 @@ const isEmpty = computed(() => {
 
 .rich-text-container :deep(.ql-align-justify) {
   text-align: justify !important;
+}
+
+/* -------------------------------------------------------------
+   4b. SIZE (hasil toolbar ukuran font editor)
+------------------------------------------------------------- */
+
+.rich-text-container :deep(.ql-size-small) {
+  font-size: 0.75em;
+}
+
+.rich-text-container :deep(.ql-size-large) {
+  font-size: 1.5em;
+}
+
+.rich-text-container :deep(.ql-size-huge) {
+  font-size: 2.5em;
 }
 
 /* -------------------------------------------------------------
