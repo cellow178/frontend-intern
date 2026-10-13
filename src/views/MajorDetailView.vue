@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api'
 import MajorCompetencyCard from '@/components/cards/MajorCompetencyCard.vue'
@@ -10,7 +10,7 @@ import { getFullFileUrl } from '@/utils/file'
 import MajorDetailSkeleton from '@/components/skeletons/MajorDetailSkeleton.vue'
 
 // Import Icon Komponen dari @remixicon/vue
-import { RiImageLine, RiDoorOpenLine, RiBriefcaseLine } from '@remixicon/vue'
+import { RiImageLine, RiDoorOpenLine, RiBriefcaseLine, RiCloseLine } from '@remixicon/vue'
 
 const route = useRoute()
 
@@ -20,6 +20,7 @@ const majorData = ref<any>(null)
 const heroImgError = ref(false)
 const secondImgError = ref(false)
 const logoImgError = ref(false)
+const logoLightboxOpen = ref(false)
 
 // Menggunakan getFullFileUrl secara langsung
 const logoImage = computed(() => getFullFileUrl(majorData.value?.img_logo))
@@ -63,6 +64,23 @@ const resetImageErrors = () => {
   heroImgError.value = false
   secondImgError.value = false
   logoImgError.value = false
+  logoLightboxOpen.value = false
+}
+
+// Lightbox Logo Jurusan (seperti galeri)
+const openLogoLightbox = () => {
+  if (!logoImage.value || logoImgError.value) return
+  logoLightboxOpen.value = true
+}
+
+const closeLogoLightbox = () => {
+  logoLightboxOpen.value = false
+}
+
+const handleLogoKeydown = (event: KeyboardEvent) => {
+  if (logoLightboxOpen.value && event.key === 'Escape') {
+    closeLogoLightbox()
+  }
 }
 
 // Fetch Data Detail Jurusan
@@ -95,6 +113,11 @@ onMounted(() => {
   if (route.params.slug) {
     fetchMajorDetail()
   }
+  window.addEventListener('keydown', handleLogoKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleLogoKeydown)
 })
 
 watch(
@@ -158,13 +181,20 @@ watch(
             <div class="md:col-span-7 flex flex-col justify-center">
               <!-- Logo Jurusan & Kode Jurusan -->
               <div class="flex items-center space-x-2.5 mb-2.5 sm:mb-3">
-                <img
+                <button
                   v-if="logoImage && !logoImgError"
-                  :src="logoImage"
-                  :alt="majorData.code"
-                  class="w-8 h-8 md:w-9 md:h-9 object-contain rounded-full"
-                  @error="logoImgError = true"
-                />
+                  type="button"
+                  @click="openLogoLightbox"
+                  :aria-label="`Perbesar logo ${majorData.code || 'jurusan'}`"
+                  class="cursor-zoom-in rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <img
+                    :src="logoImage"
+                    :alt="majorData.code"
+                    class="w-8 h-8 md:w-9 md:h-9 object-contain rounded-full transition-transform duration-200 hover:scale-110"
+                    @error="logoImgError = true"
+                  />
+                </button>
                 <span v-else class="w-3.5 h-3.5 rounded-full bg-primary inline-block"></span>
 
                 <span
@@ -291,6 +321,54 @@ watch(
         </div>
       </div>
     </div>
+
+    <!-- LIGHTBOX LOGO JURUSAN -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="logoLightboxOpen && logoImage && !logoImgError"
+          class="fixed inset-0 z-9999 flex items-center justify-center bg-black/95 p-3 sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="`Logo ${majorData?.code || 'jurusan'}`"
+          @click.self="closeLogoLightbox"
+        >
+          <button
+            type="button"
+            @click="closeLogoLightbox"
+            aria-label="Tutup gambar"
+            class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          >
+            <RiCloseLine />
+          </button>
+
+          <figure
+            class="flex h-full w-full max-w-7xl flex-col items-center justify-center gap-4 px-8 sm:px-16 py-14"
+            @click.stop
+          >
+            <img
+              :src="logoImage"
+              :alt="majorData?.code || 'Logo Jurusan'"
+              class="max-h-full max-w-full object-contain"
+            />
+
+            <figcaption
+              v-if="majorData?.code"
+              class="max-w-3xl text-center text-sm sm:text-base text-white/90 uppercase tracking-wider"
+            >
+              {{ majorData.code }}
+            </figcaption>
+          </figure>
+        </div>
+      </Transition>
+    </Teleport>
   </main>
 </template>
 
