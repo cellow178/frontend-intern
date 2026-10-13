@@ -440,7 +440,7 @@ vue
 
         <!-- TAB 2: KOMPETENSI JURUSAN -->
         <template #competence>
-          <div class="px-4 py-4 sm:px-6 lg:px-8">
+          <div class="py-4">
             <TableData
               :columns="competenceColumns"
               :items="filteredCompetences"
@@ -518,7 +518,7 @@ vue
 
         <!-- TAB 3: GALERI JURUSAN -->
         <template #gallery>
-          <div class="px-4 py-4 sm:px-6 lg:px-8">
+          <div class="py-4">
             <TableData
               v-model:search="gallerySearch"
               :columns="galleryColumns"

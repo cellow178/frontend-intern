@@ -37,7 +37,7 @@ const formatDate = (dateStr: string) => {
   if (isNaN(date.getTime())) return null
 
   const day = date.toLocaleDateString('id-ID', { day: '2-digit' })
-  const month = date.toLocaleDateString('id-ID', { month: 'short' })
+  const month = date.toLocaleDateString('id-ID', { month: 'long' })
   const year = date.getFullYear()
 
   return { day, month, year, full: `${day} ${month} ${year}` }
@@ -52,12 +52,12 @@ const formatDateRange = (start: string, end: string) => {
   if (!startDate) return start
   if (!endDate || start === end) return startDate.full
 
-  // Jika Bulan & Tahun Sama (Contoh: 29 - 30 Sep 2026)
+  // Jika Bulan & Tahun Sama (Contoh: 29 - 30 September 2026)
   if (startDate.month === endDate.month && startDate.year === endDate.year) {
     return `${startDate.day} - ${endDate.day} ${endDate.month} ${endDate.year}`
   }
 
-  // Jika Tahun Sama (Contoh: 29 Sep - 10 Okt 2026)
+  // Jika Tahun Sama (Contoh: 29 September - 10 Oktober 2026)
   if (startDate.year === endDate.year) {
     return `${startDate.day} ${startDate.month} - ${endDate.day} ${endDate.month} ${endDate.year}`
   }
