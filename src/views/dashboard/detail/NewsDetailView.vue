@@ -24,6 +24,7 @@ interface NewsDetail {
   title: string
   content: string
   img_cover: ImgCover | null
+  img_description?: string | null
   status: string
   is_highlight: boolean
   created_by: number
@@ -162,6 +163,19 @@ onMounted(() => {
           </dd>
         </div>
 
+        <!-- Deskripsi Cover Berita -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">
+            Deskripsi Cover Berita
+          </dt>
+
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ news.img_description || '-' }}
+          </dd>
+        </div>
+
         <!-- Status -->
         <div
           class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
@@ -220,11 +234,11 @@ onMounted(() => {
         </div>
 
         <!-- Deskripsi Berita -->
-        <div class="border-t border-text-alt/15">
+        <div class="border-t border-text-alt/15 py-6 lg:py-8">
           <h2
             class="text-sm lg:text-base font-semibold text-text-neutral pb-3 mb-4 border-b border-text-alt/20"
           >
-            Deskripsi Berita
+            Konten Berita
           </h2>
 
           <RichTextContent :content="news.content" class="max-w-4xl text-sm lg:text-base" />

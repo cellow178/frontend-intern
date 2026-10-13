@@ -37,6 +37,7 @@ const formData = reactive({
   category_id: '',
   content: '',
   img_cover: null as string | null,
+  img_description: '',
   status: 'draft',
 })
 
@@ -101,6 +102,7 @@ const fetchDetail = async () => {
     formData.title = data.title || ''
     formData.category_id = data.category_id ? String(data.category_id) : ''
     formData.content = data.content || ''
+    formData.img_description = data.img_description || ''
     formData.img_cover = data.img_cover?.field_value || null
     initialImgCover.value = data.img_cover?.field_value || null
     formData.status = data.status || 'draft'
@@ -161,6 +163,7 @@ const handleSubmit = async () => {
         : null,
     content: formData.content,
     status: formData.status,
+    img_description: formData.img_description.trim() || null,
     img_cover: formData.img_cover ? formData.img_cover : null,
   }
 
@@ -352,6 +355,32 @@ onUnmounted(() => {
           <span>Gambar Sampul Berita</span>
         </label>
         <ImageUpload v-model="formData.img_cover" v-model:preview-url="imagePreviewUrl" />
+      </div>
+
+      <!-- Deskripsi Gambar Sampul -->
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="flex items-center text-sm font-medium text-text-neutral">
+            <span>Deskripsi Gambar Sampul</span>
+          </label>
+          <span
+            class="text-xs transition-colors"
+            :class="
+              formData.img_description.length >= 255 ? 'text-error font-semibold' : 'text-text-alt'
+            "
+          >
+            {{ formData.img_description.length }}/255
+          </span>
+        </div>
+
+        <Input
+          v-model="formData.img_description"
+          variant="semi-rounded"
+          maxlength="255"
+          type="textarea"
+          :rows="2"
+          placeholder="Masukkan deskripsi singkat..."
+        />
       </div>
 
       <!-- Status Berita (Radio) -->

@@ -16,6 +16,7 @@ interface EventDetail {
   start_date: string
   end_date: string
   img_cover?: FileSource | null
+  img_description?: string | null
   description?: string
   content?: string
 }
@@ -156,9 +157,9 @@ watch(
           </div>
         </div>
 
-        <figure class="mb-8 sm:mb-12 flex justify-center">
+        <figure class="mb-8 sm:mb-12">
           <div
-            class="relative w-full max-w-2xl sm:max-w-3xl overflow-hidden border border-black/10 flex items-center justify-center bg-text-alt/10"
+            class="relative w-full max-w-2xl sm:max-w-3xl mx-auto overflow-hidden border border-black/10 flex items-center justify-center bg-text-alt/10"
           >
             <img
               v-if="imageUrl && !imageLoadError"
@@ -175,6 +176,12 @@ watch(
               <span class="text-sm sm:text-base font-medium">Gambar event tidak tersedia</span>
             </div>
           </div>
+          <figcaption
+            v-if="event.img_description"
+            class="mt-2 text-center text-xs sm:text-sm text-text-alt italic wrap-break-word"
+          >
+            {{ event.img_description }}
+          </figcaption>
         </figure>
 
         <RichTextContent

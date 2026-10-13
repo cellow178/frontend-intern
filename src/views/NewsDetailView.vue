@@ -15,6 +15,7 @@ interface NewsDetail {
   category_name?: string
   content: string
   img_cover?: FileSource | null
+  img_description?: string | null
   is_highlight?: boolean
   author: string
   created_at: string
@@ -133,17 +134,25 @@ watch(
         </div>
 
         <!-- Image Cover -->
-        <div
-          class="w-full aspect-video overflow-hidden mb-6 sm:mb-10 bg-linear-to-b from-primary to-accent flex items-center justify-center"
-        >
-          <img
-            v-if="imageUrl && !imageLoadError"
-            :src="imageUrl"
-            class="w-full h-full object-cover"
-            alt="Cover Berita"
-            @error="handleImageError"
-          />
-        </div>
+        <figure class="mb-6 sm:mb-10">
+          <div
+            class="w-full aspect-video overflow-hidden bg-linear-to-b from-primary to-accent flex items-center justify-center"
+          >
+            <img
+              v-if="imageUrl && !imageLoadError"
+              :src="imageUrl"
+              class="w-full h-full object-cover"
+              alt="Cover Berita"
+              @error="handleImageError"
+            />
+          </div>
+          <figcaption
+            v-if="news.img_description"
+            class="mt-2 text-center text-xs sm:text-sm text-text-alt italic wrap-break-word"
+          >
+            {{ news.img_description }}
+          </figcaption>
+        </figure>
 
         <!-- Konten Berita -->
         <RichTextContent :content="news.content" empty-message="Konten berita belum tersedia." />

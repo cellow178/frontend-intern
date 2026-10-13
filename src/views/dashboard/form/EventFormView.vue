@@ -28,6 +28,7 @@ interface EventDetailResponse {
   end_date?: string | null
   content?: string
   status?: string
+  img_description?: string | null
   img_cover?: EventCoverImage | string | null
 }
 
@@ -47,6 +48,7 @@ const formData = reactive({
   start_date: '',
   end_date: '',
   content: '',
+  img_description: '',
   status: 'draft',
 })
 
@@ -89,7 +91,6 @@ const takeSnapshot = () => {
   })
   isFormDirty.value = false
 }
-
 watch(
   [formData, imgCover],
   () => {
@@ -130,6 +131,7 @@ const fetchDetail = async () => {
     formData.end_date = data.end_date ? (data.end_date.split('T')[0] ?? '') : ''
 
     formData.content = data.content ?? ''
+    formData.img_description = data.img_description ?? ''
     formData.status = data.status ?? 'draft'
 
     // --- Penanganan Gambar Cover dari Backend menggunakan getFullFileUrl ---
@@ -225,6 +227,7 @@ const handleSubmit = async () => {
     end_date: formData.end_date || formData.start_date,
     content: formData.content,
     status: formData.status,
+    img_description: formData.img_description.trim() || null,
     img_cover: imgCover.value ? imgCover.value : null,
   }
   let isSuccess = false
@@ -445,6 +448,31 @@ onUnmounted(() => {
           v-model:previewUrl="previewImgCover"
           aspectRatio="portrait"
           :maxSizeMB="5"
+        />
+      </div>
+
+      <!-- Deskripsi Gambar Sampul -->
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="block text-sm font-medium text-text-neutral">
+            Deskripsi Gambar Sampul Event
+          </label>
+          <span
+            class="text-xs transition-colors"
+            :class="
+              formData.img_description.length >= 255 ? 'text-error font-semibold' : 'text-text-alt'
+            "
+          >
+            {{ formData.img_description.length }}/255
+          </span>
+        </div>
+        <Input
+          v-model="formData.img_description"
+          variant="semi-rounded"
+          maxlength="255"
+          type="textarea"
+          :rows="2"
+          placeholder="Masukkan deskripsi singkat..."
         />
       </div>
 
