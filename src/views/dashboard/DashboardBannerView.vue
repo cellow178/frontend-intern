@@ -234,7 +234,7 @@ onUnmounted(() => {
       </h1>
 
       <div v-if="isHeroTaglineLoading" class="flex flex-col items-center justify-center py-8">
-        <LoadingSpinner size="lg" label="Memuat Hero Tagline..." />
+        <LoadingSpinner size="lg" label="Memuat hero tagline..." />
       </div>
 
       <div v-else class="flex flex-col gap-4">
@@ -271,6 +271,7 @@ onUnmounted(() => {
         :items-per-page="pageSize"
         :total-items="totalData"
         empty-message="Tidak ada banner ditemukan."
+        loading-label="Memuat banner..."
         @add="handleAdd"
         @update:current-page="handlePageChange"
         @update:items-per-page="handlePerPageChange"

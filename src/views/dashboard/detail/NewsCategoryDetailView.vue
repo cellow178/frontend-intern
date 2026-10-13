@@ -75,7 +75,7 @@ onMounted(() => {
 
       <!-- Loading -->
       <div v-if="isLoading" class="py-16 flex justify-center items-center">
-        <LoadingSpinner size="lg" label="Memuat data..." />
+        <LoadingSpinner size="lg" label="Memuat detail..." />
       </div>
 
       <!-- Empty State -->

@@ -169,6 +169,7 @@ onMounted(async () => {
       :items-per-page="pageSize"
       search-placeholder="Cari kritik & saran..."
       empty-message="Tidak ada kritik & saran ditemukan."
+      loading-label="Memuat kritik & saran..."
       @reset-filters="handleResetFilters"
       @update:current-page="handlePageChange"
       @update:items-per-page="handlePerPageChange"

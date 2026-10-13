@@ -208,6 +208,7 @@ onUnmounted(() => {
       :items-per-page="pageSize"
       search-placeholder="Cari jurusan..."
       empty-message="Tidak ada jurusan ditemukan."
+      loading-label="Memuat data jurusan..."
       @add="handleAdd"
       @update:current-page="handlePageChange"
       @update:items-per-page="handlePerPageChange"

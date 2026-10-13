@@ -240,6 +240,7 @@ onUnmounted(() => {
       :items-per-page="pageSize"
       search-placeholder="Cari event..."
       empty-message="Tidak ada event ditemukan."
+      loading-label="Memuat event..."
       @add="handleAdd"
       @reset-filters="handleResetFilters"
       @update:current-page="handlePageChange"

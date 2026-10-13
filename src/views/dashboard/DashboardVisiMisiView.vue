@@ -250,6 +250,7 @@ onUnmounted(() => {
         :items-per-page="pageSize"
         :total-items="totalData"
         empty-message="Tidak ada misi ditemukan."
+        loading-label="Memuat misi..."
         @add="handleAdd"
         @update:current-page="handlePageChange"
         @update:items-per-page="handlePerPageChange"

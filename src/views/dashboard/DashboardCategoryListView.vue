@@ -80,6 +80,12 @@ const searchPlaceholder = computed(() =>
     : 'Cari kategori kritik & saran...',
 )
 
+const loadingLabel = computed(() =>
+  activeTab.value === 'news-categories'
+    ? 'Memuat kategori berita...'
+    : 'Memuat kategori kritik & saran...',
+)
+
 const fetchCategories = async () => {
   isLoading.value = true
   const endpoint =
@@ -236,6 +242,7 @@ onUnmounted(() => {
             :is-loading="isLoading"
             :search-placeholder="searchPlaceholder"
             :add-button-label="addButtonLabel"
+            :loading-label="loadingLabel"
             :current-page="currentPage"
             :total-page="totalPage"
             :items-per-page="pageSize"
@@ -329,6 +336,7 @@ onUnmounted(() => {
             :is-loading="isLoading"
             :search-placeholder="searchPlaceholder"
             :add-button-label="addButtonLabel"
+            :loading-label="loadingLabel"
             :current-page="currentPage"
             :total-page="totalPage"
             :items-per-page="pageSize"

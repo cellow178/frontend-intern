@@ -475,6 +475,7 @@ watch(
               add-button-label="Tambah Kompetensi"
               search-placeholder="Cari kompetensi..."
               empty-message="Belum ada data kompetensi jurusan."
+              loading-label="Memuat data kompetensi jurusan..."
               @add="handleAddCompetence"
             >
               <!-- Slot Nomor -->
@@ -553,6 +554,7 @@ watch(
               search-placeholder="Cari foto galeri..."
               add-button-label="Tambah Foto Galeri"
               empty-message="Belum ada data foto galeri."
+              loading-label="Memuat data galeri jurusan..."
               @add="handleAddGallery"
             >
               <!-- Slot Nomor -->

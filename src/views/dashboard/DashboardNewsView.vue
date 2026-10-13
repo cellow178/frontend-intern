@@ -291,6 +291,7 @@ onUnmounted(() => {
       :items-per-page="pageSize"
       search-placeholder="Cari berita..."
       empty-message="Tidak ada berita ditemukan."
+      loading-label="Memuat berita..."
       @add="handleAdd"
       @reset-filters="handleResetFilters"
       @update:current-page="handlePageChange"

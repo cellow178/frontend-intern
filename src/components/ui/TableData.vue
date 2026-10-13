@@ -23,6 +23,7 @@ const props = withDefaults(
     showAddButton?: boolean
     addButtonLabel?: string
     showFilterButton?: boolean
+    loadingLabel?: string
     totalItems?: number
     totalPage?: number
     itemsPerPage?: number
@@ -35,6 +36,7 @@ const props = withDefaults(
     showAddButton: true,
     addButtonLabel: 'Tambah Baru',
     showFilterButton: false,
+    loadingLabel: 'Memuat data...',
     totalPage: 1,
     itemsPerPage: 10,
     currentPage: 1,
@@ -64,7 +66,7 @@ watch(isFilterOpen, (isOpen) => {
 
 const totalData = computed(() => props.totalItems ?? props.items.length)
 
-// Loading awal (belum ada data sama sekali) -> tampilkan spinner besar.
+// Loading awal (belum ada data sama sekali) -> tampilkan spinner dengan label dinamis.
 // Pindah page / ganti filter saat data lama masih ada -> pertahankan tabel lama,
 // cukup tampilkan spinner kecil di sebelah info total pagination.
 const hasData = computed(() => props.items.length > 0)
@@ -73,9 +75,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
 </script>
 
 <template>
-  <div
-    class="flex flex-col gap-4 sm:gap-6 w-full min-w-0"
-  >
+  <div class="flex flex-col gap-4 sm:gap-6 w-full min-w-0">
     <!-- Top Bar -->
     <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
       <div class="flex items-center gap-2 flex-1 min-w-0 flex-wrap">
@@ -128,7 +128,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
       v-if="isInitialLoading"
       class="flex flex-col items-center justify-center py-16 border-t border-secondary/30"
     >
-      <LoadingSpinner size="lg" label="Memuat data..." />
+      <LoadingSpinner size="lg" :label="loadingLabel" />
     </div>
 
     <!-- State Empty -->
