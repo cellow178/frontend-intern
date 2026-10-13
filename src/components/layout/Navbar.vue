@@ -80,7 +80,7 @@ const isWhiteMode = computed(() =>
 
 const accountHref = computed(() => (isAuthenticated.value ? '/dashboard' : '/login'))
 const accountLabel = computed(() =>
-  isAuthenticated.value ? (user.value?.fullname ?? 'Login Guru & Admin') : 'Login Guru & Admin',
+  isAuthenticated.value ? (user.value?.username ?? 'Login Guru & Admin') : 'Login Guru & Admin',
 )
 
 const scrollToSection = async (href: string) => {
@@ -431,7 +431,7 @@ onUnmounted(() => {
         <!-- Mobile: super-admin & guru dapat 3 opsi -->
         <div v-if="hasAccountDropdown" class="mt-2 pt-3 border-t-2 border-primary/20">
           <div class="px-1 mb-2">
-            <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.fullname }}</p>
+            <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.username }}</p>
             <p class="text-xs text-primary tracking-wide">{{ user?.role_name }}</p>
           </div>
           <div class="bg-secondary rounded-xl overflow-hidden flex flex-col">

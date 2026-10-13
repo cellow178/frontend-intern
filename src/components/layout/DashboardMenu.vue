@@ -238,7 +238,7 @@ onUnmounted(() => {
             >
               {{ user?.fullname?.charAt(0) || 'A' }}
             </div>
-            <span class="hidden sm:block max-w-32 truncate">{{ user?.fullname }}</span>
+            <span class="hidden sm:block max-w-32 truncate">{{ user?.username }}</span>
             <RiArrowDownSLine
               class="w-4 h-4 text-text-alt transition-transform duration-200"
               :class="isAccountDropdownOpen ? 'rotate-180' : ''"
@@ -251,7 +251,7 @@ onUnmounted(() => {
             class="absolute top-full right-0 mt-2 w-56 bg-neutral border border-secondary rounded-2xl shadow-xl p-1.5 z-50"
           >
             <div class="px-3 py-2 border-b border-secondary/60 mb-1">
-              <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.fullname }}</p>
+              <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.username }}</p>
               <p class="text-xs text-text-alt capitalize">
                 {{ user?.role_name || 'Administrator' }}
               </p>
