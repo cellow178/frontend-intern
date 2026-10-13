@@ -63,6 +63,13 @@ watch(isFilterOpen, (isOpen) => {
 })
 
 const totalData = computed(() => props.totalItems ?? props.items.length)
+
+// Loading awal (belum ada data sama sekali) -> tampilkan spinner besar.
+// Pindah page / ganti filter saat data lama masih ada -> pertahankan tabel lama,
+// cukup tampilkan spinner kecil di sebelah info total pagination.
+const hasData = computed(() => props.items.length > 0)
+const isInitialLoading = computed(() => props.isLoading && !hasData.value)
+const isPageLoading = computed(() => props.isLoading && hasData.value)
 </script>
 
 <template>
@@ -116,9 +123,9 @@ const totalData = computed(() => props.totalItems ?? props.items.length)
       />
     </div>
 
-    <!-- State Loading -->
+    <!-- State Loading Awal (belum ada data sama sekali) -->
     <div
-      v-if="isLoading"
+      v-if="isInitialLoading"
       class="flex flex-col items-center justify-center py-16 border-t border-secondary/30"
     >
       <LoadingSpinner size="lg" label="Memuat data..." />
@@ -134,7 +141,10 @@ const totalData = computed(() => props.totalItems ?? props.items.length)
 
     <template v-else>
       <!-- View Desktop: Table -->
-      <div class="hidden md:block overflow-x-auto border-t border-secondary/30">
+      <div
+        class="hidden md:block overflow-x-auto border-t border-secondary/30 transition-opacity duration-200"
+        :class="isPageLoading ? 'opacity-60 pointer-events-none select-none' : 'opacity-100'"
+      >
         <table class="w-full text-sm">
           <thead class="bg-primary/20">
             <tr class="text-left text-text-alt font-semibold uppercase text-xs">
@@ -166,7 +176,10 @@ const totalData = computed(() => props.totalItems ?? props.items.length)
       </div>
 
       <!-- View Mobile: Custom Card Slot -->
-      <div class="md:hidden flex flex-col gap-3 pt-2 border-t border-secondary/30">
+      <div
+        class="md:hidden flex flex-col gap-3 pt-2 border-t border-secondary/30 transition-opacity duration-200"
+        :class="isPageLoading ? 'opacity-60 pointer-events-none select-none' : 'opacity-100'"
+      >
         <div
           v-for="(item, idx) in items"
           :key="item.id ?? idx"
@@ -192,6 +205,7 @@ const totalData = computed(() => props.totalItems ?? props.items.length)
           :page-size="String(itemsPerPage)"
           :total-data="totalData"
           :item-count="items.length"
+          :is-loading="isPageLoading"
           @update:current-page="emit('update:currentPage', $event)"
           @update:page-size="emit('update:itemsPerPage', Number($event))"
         />
