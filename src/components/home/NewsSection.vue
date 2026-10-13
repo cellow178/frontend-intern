@@ -89,20 +89,7 @@ onMounted(() => {
         :created-at="item.created_at"
       />
 
-      <!-- Placeholder dekoratif: mobile (grid 2 kolom, ganjil) -->
-      <div v-if="news.length % 2 !== 0" class="relative h-full min-h-40 hidden sm:block lg:hidden">
-        <div
-          class="absolute inset-0 bg-neutral border-2 border-secondary rounded-xl -rotate-4 shadow-sm"
-        ></div>
-        <div
-          class="absolute inset-0 bg-neutral border-2 border-dashed border-text-alt/20 rounded-xl flex flex-col items-center justify-center gap-1 shadow-sm"
-        >
-          <RiNewspaperLine class="w-5 h-5 text-text-alt/50" />
-          <span class="text-text-alt/60 text-xs text-center px-4">Nantikan kabar terbaru...</span>
-        </div>
-      </div>
-
-      <!-- Placeholder dekoratif: tablet (grid 3 kolom, sisa 1 atau 2) -->
+      <!-- Placeholder dekoratif: tablet (grid 3 kolom, sisa 1 atau 2; hidden kalau pas 3) -->
       <div
         v-for="n in tabletPlaceholderCount"
         :key="`tablet-placeholder-${n}`"
