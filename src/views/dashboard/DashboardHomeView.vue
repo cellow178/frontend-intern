@@ -331,7 +331,7 @@ onMounted(() => {
           <div class="text-2xl sm:text-3xl font-extrabold text-text-neutral">
             <template v-if="isLoadingStats">
               <span
-                class="inline-block w-10 sm:w-12 h-6 sm:h-7 bg-secondary animate-pulse rounded"
+                class="inline-block w-10 sm:w-12 h-6 sm:h-7 bg-text-alt/10 animate-pulse rounded"
               ></span>
             </template>
 
@@ -476,10 +476,10 @@ onMounted(() => {
           <div
             v-for="i in 3"
             :key="i"
-            class="p-3.5 sm:p-4 rounded-xl border border-secondary bg-secondary/30 animate-pulse space-y-2"
+            class="p-3.5 sm:p-4 rounded-xl border border-text-alt/20 bg-text-alt/10 animate-pulse space-y-2"
           >
-            <div class="h-4 bg-secondary rounded w-1/4"></div>
-            <div class="h-3 bg-secondary rounded w-3/4"></div>
+            <div class="h-4 bg-text-alt/10 rounded w-1/4"></div>
+            <div class="h-3 bg-text-alt/10 rounded w-3/4"></div>
           </div>
         </div>
 
@@ -519,7 +519,7 @@ onMounted(() => {
             </div>
 
             <span class="text-[10px] sm:text-xs text-text-alt shrink-0 self-end sm:self-center">
-              {{ formatDate(item.created_at) }}
+              {{ formatDate(item.created_at) }} WIB
             </span>
           </div>
         </div>
@@ -572,9 +572,9 @@ onMounted(() => {
             <div
               v-for="i in 3"
               :key="i"
-              class="p-3.5 sm:p-4 rounded-xl border border-secondary bg-secondary/30 animate-pulse space-y-2"
+              class="p-3.5 sm:p-4 rounded-xl bg-text-alt/10 animate-pulse space-y-2"
             >
-              <div class="h-3.5 bg-secondary rounded w-3/4"></div>
+              <div class="h-3.5 bg-text-alt/10 rounded w-3/4"></div>
             </div>
           </div>
 
