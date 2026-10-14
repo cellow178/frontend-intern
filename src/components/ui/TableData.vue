@@ -134,7 +134,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
     <!-- State Empty -->
     <div
       v-else-if="items.length === 0"
-      class="text-center text-text-alt py-12 border-t border-secondary/30"
+      class="text-center text-text-alt py-12 text-sm sm:text-base border-t border-secondary/30"
     >
       {{ emptyMessage }}
     </div>
@@ -163,7 +163,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
               v-for="(item, idx) in items"
               :key="item.id ?? idx"
               :class="idx % 2 === 0 ? 'bg-neutral' : 'bg-neutral'"
-              class="border-b border-secondary/10 hover:bg-primary/20 transition-colors"
+              class="border-b border-text-alt/20 hover:bg-primary/20 transition-colors"
             >
               <td v-for="col in columns" :key="col.key" class="px-4 py-2.5 text-text-neutral">
                 <slot :name="`col-${col.key}`" :item="item" :index="idx">
@@ -198,7 +198,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
       </div>
 
       <!-- Footer Pagination -->
-      <div class="pt-3 border-t border-secondary/20">
+      <div class="border-t border-secondary/20">
         <Pagination
           :current-page="currentPage"
           :total-page="totalPage"
