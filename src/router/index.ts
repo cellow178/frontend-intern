@@ -470,18 +470,9 @@ const router = createRouter({
           },
         },
         {
-          path: 'daftar-pengguna/:id',
-          name: 'dashboard-pengguna-detail',
-          component: () => import('@/views/dashboard/PlaceholderView.vue'),
-          meta: {
-            breadcrumb: ['Daftar Pengguna', 'Detail'],
-            permission: 'show-users',
-          },
-        },
-        {
           path: 'daftar-pengguna/create',
           name: 'dashboard-pengguna-create',
-          component: () => import('@/views/dashboard/PlaceholderView.vue'),
+          component: () => import('@/views/dashboard/form/UserFormView.vue'),
           meta: {
             breadcrumb: ['Daftar Pengguna', 'Tambah'],
             permission: 'create-users',
@@ -490,10 +481,19 @@ const router = createRouter({
         {
           path: 'daftar-pengguna/edit/:id',
           name: 'dashboard-pengguna-edit',
-          component: () => import('@/views/dashboard/PlaceholderView.vue'),
+          component: () => import('@/views/dashboard/form/UserFormView.vue'),
           meta: {
             breadcrumb: ['Daftar Pengguna', 'Edit'],
             permission: 'update-users',
+          },
+        },
+        {
+          path: 'daftar-pengguna/:id',
+          name: 'dashboard-pengguna-detail',
+          component: () => import('@/views/dashboard/detail/UserDetailView.vue'),
+          meta: {
+            breadcrumb: ['Daftar Pengguna', 'Detail'],
+            permission: 'show-users',
           },
         },
       ],

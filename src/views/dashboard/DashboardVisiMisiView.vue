@@ -209,12 +209,12 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
       <h1 class="text-xl font-bold text-text-neutral mb-6">
         Visi Sekolah <span><RequiredBadge /></span>
       </h1>
       <div v-if="isVisionLoading" class="text-text-alt py-8 text-center">
-        <LoadingSpinner size="lg" label="Memuat visi..." />
+        <LoadingSpinner size="lg" label="Memuat visi sekolah..." />
       </div>
 
       <div v-else class="flex flex-col gap-4">
@@ -232,7 +232,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold text-text-neutral">Misi Sekolah</h1>
       </div>
@@ -243,14 +243,14 @@ onUnmounted(() => {
         :items="missions"
         :is-loading="isLoading"
         :show-add-button="true"
-        add-button-label="Tambah Baru"
+        add-button-label="Tambah Misi"
         search-placeholder="Cari misi..."
         :current-page="currentPage"
         :total-page="totalPage"
         :items-per-page="pageSize"
         :total-items="totalData"
         empty-message="Tidak ada misi ditemukan."
-        loading-label="Memuat misi..."
+        loading-label="Memuat misi sekolah..."
         @add="handleAdd"
         @update:current-page="handlePageChange"
         @update:items-per-page="handlePerPageChange"

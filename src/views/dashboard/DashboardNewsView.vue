@@ -273,7 +273,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div>
       <h1 class="text-xl font-bold text-text-neutral">Kelola Berita</h1>
     </div>
@@ -289,6 +289,7 @@ onUnmounted(() => {
       :current-page="currentPage"
       :total-page="totalPage"
       :items-per-page="pageSize"
+      add-button-label="Tambah Berita"
       search-placeholder="Cari berita..."
       empty-message="Tidak ada berita ditemukan."
       loading-label="Memuat berita..."

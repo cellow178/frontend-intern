@@ -77,7 +77,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
 <template>
   <div class="flex flex-col gap-4 sm:gap-6 w-full min-w-0">
     <!-- Top Bar -->
-    <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3">
+    <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-start sm:justify-between gap-3">
       <div class="flex items-center gap-2 flex-1 min-w-0 flex-wrap">
         <!-- Search Input -->
         <div class="flex-1 max-w-md min-w-40 sm:min-w-48">

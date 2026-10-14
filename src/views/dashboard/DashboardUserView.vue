@@ -80,7 +80,8 @@ const statusMeta = computed(() => {
     email_unverified: { label: 'Belum Verifikasi', classes: 'bg-warning/15 text-warning' },
     email_verified: { label: 'Terverifikasi', classes: 'bg-info/15 text-info' },
   }
-  return (code: string) => map[code] ?? { label: code || '-', classes: 'bg-secondary/40 text-text-alt' }
+  return (code: string) =>
+    map[code] ?? { label: code || '-', classes: 'bg-secondary/40 text-text-alt' }
 })
 
 // --- Fetch User Data ---
@@ -192,7 +193,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+  <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div>
       <h1 class="text-xl font-bold text-text-neutral">Daftar Pengguna</h1>
     </div>

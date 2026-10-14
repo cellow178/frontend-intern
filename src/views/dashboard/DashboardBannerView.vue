@@ -228,7 +228,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <!-- Hero Tagline Section -->
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
       <h1 class="text-xl font-bold text-text-neutral mb-6">
         Hero Tagline <span><RequiredBadge /></span>
       </h1>
@@ -253,7 +253,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Daftar Banner Section -->
-    <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8">
+    <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold text-text-neutral">Daftar Banner</h1>
       </div>
