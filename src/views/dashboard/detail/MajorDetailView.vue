@@ -257,18 +257,20 @@ const handleConfirmDelete = async () => {
   isDeleting.value = true
   try {
     if (deleteType.value === 'competence') {
-      await api.delete(`/major-competent/${selectedDeleteId.value}`)
+      await api.delete('/major-competents/delete', { data: { id: selectedDeleteId.value } })
       toastStore.show('Kompetensi berhasil dihapus!', 'success')
     } else if (deleteType.value === 'gallery') {
-      await api.delete(`/major-gallery/${selectedDeleteId.value}`)
+      await api.delete('/major-gallery/delete', { data: { id: selectedDeleteId.value } })
       toastStore.show('Foto galeri berhasil dihapus!', 'success')
     }
     closeDeleteModal()
     fetchDetail()
   } catch (err) {
     console.error(`Gagal menghapus ${deleteType.value}:`, err)
+    const apiErr = err as { response?: { data?: { message?: string } } }
     toastStore.show(
-      `Gagal menghapus ${deleteType.value === 'competence' ? 'Kompetensi' : 'Foto Galeri'}.`,
+      apiErr.response?.data?.message ||
+        `Gagal menghapus ${deleteType.value === 'competence' ? 'Kompetensi' : 'Foto Galeri'}.`,
       'error',
     )
   } finally {
