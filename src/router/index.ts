@@ -457,6 +457,45 @@ const router = createRouter({
             permission: 'update-feedbacks-categories',
           },
         },
+        // =====================================================
+        // PENGGUNA
+        // =====================================================
+        {
+          path: 'daftar-pengguna',
+          name: 'dashboard-pengguna',
+          component: () => import('@/views/dashboard/DashboardUserView.vue'),
+          meta: {
+            breadcrumb: ['Daftar Pengguna'],
+            permission: 'view-users',
+          },
+        },
+        {
+          path: 'daftar-pengguna/:id',
+          name: 'dashboard-pengguna-detail',
+          component: () => import('@/views/dashboard/PlaceholderView.vue'),
+          meta: {
+            breadcrumb: ['Daftar Pengguna', 'Detail'],
+            permission: 'show-users',
+          },
+        },
+        {
+          path: 'daftar-pengguna/create',
+          name: 'dashboard-pengguna-create',
+          component: () => import('@/views/dashboard/PlaceholderView.vue'),
+          meta: {
+            breadcrumb: ['Daftar Pengguna', 'Tambah'],
+            permission: 'create-users',
+          },
+        },
+        {
+          path: 'daftar-pengguna/edit/:id',
+          name: 'dashboard-pengguna-edit',
+          component: () => import('@/views/dashboard/PlaceholderView.vue'),
+          meta: {
+            breadcrumb: ['Daftar Pengguna', 'Edit'],
+            permission: 'update-users',
+          },
+        },
       ],
     },
 

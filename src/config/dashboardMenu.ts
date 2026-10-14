@@ -10,6 +10,7 @@ import {
   RiChat3Line,
   RiLayoutBottomLine,
   RiListUnordered,
+  RiTeamLine,
 } from '@remixicon/vue'
 import type { Component } from 'vue'
 
@@ -103,6 +104,12 @@ export const dashboardMenu: MenuGroup[] = [
         routeName: 'dashboard-daftar-kategori',
         icon: RiListUnordered,
         permission: 'view-news-categories',
+      },
+      {
+        label: 'Daftar Pengguna',
+        routeName: 'dashboard-pengguna',
+        icon: RiTeamLine,
+        permission: 'view-users',
       },
     ],
   },
