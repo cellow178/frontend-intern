@@ -55,6 +55,14 @@ const handleLogin = async () => {
 
   // Login berhasil
   if (result.success) {
+    // Akun yang masih wajib ganti password langsung dikunci ke Profil Saya
+    // (router guard juga menegakkannya untuk semua navigasi berikutnya).
+    if (result.must_change_password) {
+      toastStore.show('Login berhasil! Mohon mengganti password anda terlebih dahulu.', 'info')
+      router.push({ name: 'profil-saya' })
+      return
+    }
+
     toastStore.show('Login berhasil!', 'success')
 
     const redirectTo = route.query.redirect as string | undefined
@@ -219,7 +227,7 @@ onMounted(() => {
 
       <!-- Deskripsi Akses -->
       <p class="relative z-10 text-neutral/60 text-sm text-center mt-4 md:mt-0">
-        Akses khusus civitas sekolah — Guru & Staff
+        Akses khusus civitas sekolah — Siswa, Guru, dan Staff
       </p>
     </div>
 

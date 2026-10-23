@@ -5,10 +5,12 @@ const props = withDefaults(
   defineProps<{
     content?: string | null
     emptyMessage?: string
+    compact?: boolean
   }>(),
   {
     content: '',
     emptyMessage: 'Tidak ada konten untuk ditampilkan.',
+    compact: false,
   },
 )
 
@@ -29,7 +31,7 @@ const isEmpty = computed(() => {
 </script>
 
 <template>
-  <div class="rich-text-container w-full min-w-0">
+  <div class="rich-text-container w-full min-w-0" :class="{ 'rich-compact': compact }">
     <!-- Konten kosong -->
     <div
       v-if="isEmpty"
@@ -51,6 +53,55 @@ const isEmpty = computed(() => {
 /* -------------------------------------------------------------
    1. HEADING & SPACING
 ------------------------------------------------------------- */
+
+/* Mode compact (bilik suara): rapatkan tipografi agar muat 1 layar */
+.rich-compact :deep(h1),
+.rich-compact :deep(h2),
+.rich-compact :deep(h3),
+.rich-compact :deep(h4) {
+  margin-top: 0.625rem !important;
+  margin-bottom: 0.25rem !important;
+}
+.rich-compact :deep(h1) {
+  font-size: 1.125rem !important;
+  line-height: 1.5rem !important;
+}
+.rich-compact :deep(h2) {
+  font-size: 1rem !important;
+  line-height: 1.375rem !important;
+}
+.rich-compact :deep(h3) {
+  font-size: 0.9375rem !important;
+  line-height: 1.25rem !important;
+}
+.rich-compact :deep(h4) {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+.rich-compact :deep(p) {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0.125rem !important;
+}
+.rich-compact :deep(p:has(> br:only-child)) {
+  min-height: 0.25rem !important;
+  margin-bottom: 0.125rem !important;
+}
+.rich-compact :deep(ul),
+.rich-compact :deep(ol) {
+  margin: 0.25rem 0 !important;
+  padding-left: 1.5rem !important;
+}
+.rich-compact :deep(li) {
+  margin-bottom: 0.125rem !important;
+}
+.rich-compact :deep(img) {
+  margin: 0.5rem auto !important;
+}
+.rich-compact :deep(blockquote) {
+  margin: 0.25rem 0 !important;
+  padding-left: 0.75rem !important;
+}
 
 .rich-text-container :deep(h1) {
   font-size: 1.375rem;

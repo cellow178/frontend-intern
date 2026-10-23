@@ -8,7 +8,7 @@ import { getFullFileUrl } from '@/utils/file'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import ImageUpload from '@/components/ui/ImageUpload.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSaveLine, RiGraduationCapLine } from '@remixicon/vue'
@@ -328,8 +328,8 @@ onMounted(async () => {
 
       <!-- Tombol Aksi -->
       <div class="flex items-center gap-3 mt-4">
-        <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
-        <Button
+        <AdminButton type="button" size="md" variant="secondary" label="Batal" @click="handleCancel" />
+        <AdminButton
           type="submit"
           size="md"
           :label="submitButtonLabel"

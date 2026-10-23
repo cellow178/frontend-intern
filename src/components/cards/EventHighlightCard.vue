@@ -92,7 +92,7 @@ const handleImageError = () => {
     <!-- Dekorasi Latar Belakang (Jika Tanpa Gambar) -->
     <div v-else class="absolute inset-0 pointer-events-none overflow-hidden">
       <div
-        class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-xl group-hover:scale-110 transition-transform duration-500"
+        class="absolute -right-8 -bottom-8 w-40 h-40 bg-neutral/10 rounded-full blur-xl group-hover:scale-110 transition-transform duration-500"
       ></div>
     </div>
 
@@ -105,7 +105,7 @@ const handleImageError = () => {
         <!-- Badge Label -->
         <div class="flex items-center">
           <span
-            class="inline-flex items-center gap-1.5 rounded-md font-semibold bg-white/20 text-neutral border border-white/20 px-3 py-1 text-xs md:text-sm"
+            class="inline-flex items-center gap-1.5 rounded-md font-semibold bg-neutral/20 text-neutral border border-neutral/20 px-3 py-1 text-xs md:text-sm"
           >
             Highlight Event
           </span>

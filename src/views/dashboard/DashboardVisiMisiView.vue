@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
@@ -220,7 +220,7 @@ onUnmounted(() => {
       <div v-else class="flex flex-col gap-4">
         <Input v-model="vision" type="textarea" :rows="3" />
         <div>
-          <Button
+          <AdminButton
             type="button"
             size="md"
             :icon-left="RiSaveLine"

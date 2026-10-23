@@ -111,7 +111,7 @@
 
         <!-- MajorGalleryCard Placeholder -->
         <div
-          class="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 md:p-6 border border-secondary/50 max-w-4xl mx-auto space-y-4 w-full"
+          class="bg-neutral rounded-2xl sm:rounded-3xl p-3 sm:p-5 md:p-6 border border-secondary/50 max-w-4xl mx-auto space-y-4 w-full"
         >
           <!-- Frame Gambar Utama Carousel -->
           <div

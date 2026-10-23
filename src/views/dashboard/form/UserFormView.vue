@@ -7,7 +7,7 @@ import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
 import Select from '@/components/ui/Select.vue'
 import Radio from '@/components/ui/Radio.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSaveLine } from '@remixicon/vue'
 
@@ -17,33 +17,41 @@ const toastStore = useToastStore()
 
 const userId = computed(() => (route.params.id ? Number(route.params.id) : null))
 const isEditMode = computed(() => !!userId.value)
+// Mode siswa: route dashboard-siswa-* mengunci role_id=3 + field NISN/masa_studi
+// (tahun lulus dihitung backend: (2000 + 2 digit NISN) + masa_studi).
+const isStudentMode = computed(() => (route.name as string | undefined)?.startsWith('dashboard-siswa') ?? false)
 
 const isLoading = ref(false)
 const isSubmitting = ref(false)
 
 // Role statis dari migrasi DB (tidak ada endpoint /roles di backend):
 // -1 developer, 1 super-admin, 2 guru, 3 siswa
-const roleOptions = [
+const ALL_ROLE_OPTIONS = [
   { value: 1, label: 'Super Admin' },
   { value: 2, label: 'Guru' },
   { value: 3, label: 'Siswa' },
   { value: -1, label: 'Developer' },
 ]
+// Halaman Pengguna/Admin: siswa dikelola di halaman Data Siswa tersendiri
+const roleOptions = computed(() =>
+  isStudentMode.value
+    ? [{ value: 3, label: 'Siswa' }]
+    : ALL_ROLE_OPTIONS.filter((r) => r.value !== 3),
+)
 
+// Sinkron backend Users::FIELD_VALIDATION: in:user_active,user_nonactive.
 const statusOptions = [
   { value: 'user_active', label: 'Aktif' },
   { value: 'user_nonactive', label: 'Nonaktif' },
-  { value: 'user_rejected', label: 'Ditolak' },
-  { value: 'email_unverified', label: 'Email Belum Verifikasi' },
-  { value: 'email_verified', label: 'Email Terverifikasi' },
 ]
 
 const formData = reactive({
   fullname: '',
   username: '',
   email: '',
+  nis: '',
   nisn: '',
-  angkatan: '',
+  masa_studi: '',
   role_id: null as number | null,
   password: '',
   password_confirmation: '',
@@ -57,6 +65,9 @@ const errors = reactive({
   email: '',
   password: '',
   role_id: '',
+  nis: '',
+  nisn: '',
+  masa_studi: '',
 })
 
 const submitButtonLabel = computed(() => {
@@ -74,14 +85,19 @@ const fetchDetail = async () => {
     formData.fullname = data.fullname || ''
     formData.username = data.username || ''
     formData.email = data.email || ''
+    formData.nis = data.nis || ''
     formData.nisn = data.nisn || ''
-    formData.angkatan = data.angkatan || ''
-    formData.role_id = data.role_id ?? null
+    formData.masa_studi =
+      data.masa_studi !== undefined && data.masa_studi !== null ? String(data.masa_studi) : ''
+    formData.role_id = isStudentMode.value ? 3 : (data.role_id ?? null)
     formData.status_code = data.status_code || 'user_active'
     formData.must_change_password = !!data.must_change_password
   } catch {
-    toastStore.show('Gagal memuat Detail Pengguna.', 'error')
-    router.push({ name: 'dashboard-pengguna' })
+    toastStore.show(
+      isStudentMode.value ? 'Gagal memuat Detail Siswa.' : 'Gagal memuat Detail Pengguna.',
+      'error',
+    )
+    router.push({ name: isStudentMode.value ? 'dashboard-siswa' : 'dashboard-pengguna' })
   } finally {
     isLoading.value = false
   }
@@ -100,7 +116,8 @@ const validate = () => {
     errors.fullname = ''
   }
 
-  if (!formData.username.trim()) {
+  // Mode siswa: username opsional (kosong => backend isi = NISN).
+  if (!isStudentMode.value && !formData.username.trim()) {
     errors.username = 'Username wajib diisi.'
     isValid = false
   } else if (formData.username.trim().length > 100) {
@@ -132,9 +149,57 @@ const validate = () => {
     errors.role_id = ''
   }
 
-  // Password: wajib saat create (min 5, backend Users::beforeInsert),
+  // Mode siswa: NIS wajib (sumber tahun masuk: 2 digit depan + masa studi
+  // = tahun lulus), NISN nasional selalu 10 digit angka, masa studi wajib 1-10.
+  if (isStudentMode.value) {
+    if (!formData.nis.trim()) {
+      errors.nis = 'NIS wajib diisi.'
+      isValid = false
+    } else if (!/^\d+$/.test(formData.nis.trim())) {
+      errors.nis = 'NIS harus berupa angka.'
+      isValid = false
+    } else if (formData.nis.trim().length > 20) {
+      errors.nis = 'NIS maksimal 20 digit.'
+      isValid = false
+    } else {
+      errors.nis = ''
+    }
+
+    if (!formData.nisn.trim()) {
+      errors.nisn = 'NISN wajib diisi.'
+      isValid = false
+    } else if (!/^\d{10}$/.test(formData.nisn.trim())) {
+      errors.nisn = 'NISN harus 10 digit angka.'
+      isValid = false
+    } else {
+      errors.nisn = ''
+    }
+
+    if (!formData.masa_studi.trim()) {
+      errors.masa_studi = 'Masa studi wajib diisi.'
+      isValid = false
+    } else if (
+      !/^\d+$/.test(formData.masa_studi.trim()) ||
+      Number(formData.masa_studi) < 1 ||
+      Number(formData.masa_studi) > 10
+    ) {
+      errors.masa_studi = 'Masa studi harus angka 1-10 tahun.'
+      isValid = false
+    } else {
+      errors.masa_studi = ''
+    }
+  } else {
+    errors.nis = ''
+    errors.nisn = ''
+    errors.masa_studi = ''
+  }
+
+  // Password: mode siswa tidak ada input password (selalu = NISN, backend
+  // Users::beforeInsert). Mode pengguna: wajib saat create (min 5),
   // opsional saat edit (kosong = tidak ganti).
-  if (!isEditMode.value || formData.password) {
+  if (isStudentMode.value) {
+    errors.password = ''
+  } else if (!isEditMode.value || formData.password) {
     if (!formData.password) {
       errors.password = 'Password wajib diisi.'
       isValid = false
@@ -171,31 +236,42 @@ const handleSubmit = async () => {
 
   isSubmitting.value = true
 
+  // Mode siswa: username kosong di frontend => kirim = NISN agar lolos
+  // validasi required backend (backend juga mengisi otomatis bila kosong).
+  const usernameToSend =
+    isStudentMode.value && formData.username.trim() === ''
+      ? formData.nisn.trim()
+      : formData.username.trim()
+
   const payload: Record<string, unknown> = {
     fullname: formData.fullname.trim(),
-    username: formData.username.trim(),
+    username: usernameToSend,
     email: emptyToNull(formData.email),
+    nis: emptyToNull(formData.nis),
     nisn: emptyToNull(formData.nisn),
-    angkatan: emptyToNull(formData.angkatan),
-    role_id: formData.role_id,
+    masa_studi: formData.masa_studi.trim() === '' ? null : Number(formData.masa_studi),
+    role_id: isStudentMode.value ? 3 : formData.role_id,
     status_code: formData.status_code,
     must_change_password: formData.must_change_password,
   }
 
-  // Kirim password hanya jika diisi (backend: kosong = tidak ganti).
-  if (formData.password) {
+  // Mode siswa: password selalu = NISN (ditentukan backend, jangan kirim).
+  // Mode pengguna: kirim password hanya jika diisi (kosong = tidak ganti).
+  if (!isStudentMode.value && formData.password) {
     payload.password = formData.password
   }
 
   try {
+    const entityLabel = isStudentMode.value ? 'Siswa' : 'Pengguna'
+    const listRoute = isStudentMode.value ? 'dashboard-siswa' : 'dashboard-pengguna'
     if (isEditMode.value) {
       await api.put('/users/update', { id: userId.value, ...payload })
-      toastStore.show('Pengguna berhasil diperbarui!', 'success')
+      toastStore.show(`${entityLabel} berhasil diperbarui!`, 'success')
     } else {
       await api.post('/users/create', payload)
-      toastStore.show('Pengguna berhasil ditambahkan!', 'success')
+      toastStore.show(`${entityLabel} berhasil ditambahkan!`, 'success')
     }
-    router.push({ name: 'dashboard-pengguna' })
+    router.push({ name: listRoute })
   } catch (err: unknown) {
     const apiErr = err as {
       response?: { data?: { message?: string; errors?: Record<string, string[]> } }
@@ -207,6 +283,9 @@ const handleSubmit = async () => {
       if (fieldErrors.email?.[0]) errors.email = fieldErrors.email[0]
       if (fieldErrors.password?.[0]) errors.password = fieldErrors.password[0]
       if (fieldErrors.role_id?.[0]) errors.role_id = fieldErrors.role_id[0]
+      if (fieldErrors.nis?.[0]) errors.nis = fieldErrors.nis[0]
+      if (fieldErrors.nisn?.[0]) errors.nisn = fieldErrors.nisn[0]
+      if (fieldErrors.masa_studi?.[0]) errors.masa_studi = fieldErrors.masa_studi[0]
     }
     toastStore.show(
       apiErr.response?.data?.message || 'Terjadi kesalahan saat menyimpan Pengguna.',
@@ -218,10 +297,14 @@ const handleSubmit = async () => {
 }
 
 const handleCancel = () => {
-  router.push({ name: 'dashboard-pengguna' })
+  router.push({ name: isStudentMode.value ? 'dashboard-siswa' : 'dashboard-pengguna' })
 }
 
 onMounted(() => {
+  if (isStudentMode.value && !isEditMode.value) {
+    formData.role_id = 3
+    formData.must_change_password = true
+  }
   if (isEditMode.value) {
     fetchDetail()
   }
@@ -233,7 +316,7 @@ onMounted(() => {
     <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <div class="border-b border-text-alt/50 pb-4 mb-8">
         <h1 class="text-xl font-bold text-text-neutral">
-          {{ isEditMode ? 'Edit Pengguna' : 'Tambah Pengguna' }}
+          {{ isEditMode ? (isStudentMode ? 'Edit Siswa' : 'Edit Pengguna') : isStudentMode ? 'Tambah Siswa' : 'Tambah Pengguna' }}
         </h1>
       </div>
 
@@ -250,7 +333,7 @@ onMounted(() => {
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4">
         <h1 class="text-xl font-bold text-text-neutral">
-          {{ isEditMode ? 'Edit Pengguna' : 'Tambah Pengguna' }}
+          {{ isEditMode ? (isStudentMode ? 'Edit Siswa' : 'Edit Pengguna') : isStudentMode ? 'Tambah Siswa' : 'Tambah Pengguna' }}
         </h1>
       </div>
 
@@ -285,7 +368,7 @@ onMounted(() => {
           <div class="flex items-center justify-between mb-1.5">
             <label class="flex items-center text-sm font-medium text-text-neutral">
               <span>Username</span>
-              <RequiredBadge />
+              <RequiredBadge v-if="!isStudentMode" />
             </label>
             <span
               class="text-xs transition-colors"
@@ -300,7 +383,7 @@ onMounted(() => {
             v-model="formData.username"
             variant="semi-rounded"
             maxlength="100"
-            placeholder="Masukkan username..."
+            :placeholder="isStudentMode ? 'Default: NISN...' : 'Masukkan username...'"
             :error="!!errors.username"
             @input="errors.username = ''"
           />
@@ -308,18 +391,40 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-text-neutral mb-1.5">NISN</label>
+          <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
+            <span>NISN (nasional, 10 digit)</span>
+            <RequiredBadge v-if="isStudentMode" />
+          </label>
           <Input
             v-model="formData.nisn"
             variant="semi-rounded"
-            maxlength="20"
-            placeholder="Masukkan NISN (opsional)..."
+            maxlength="10"
+            :placeholder="isStudentMode ? 'cth: 0082345678...' : 'Masukkan NISN (opsional)...'"
+            :error="!!errors.nisn"
+            @input="errors.nisn = ''"
           />
+          <p v-if="errors.nisn" class="text-sm text-error mt-1">{{ errors.nisn }}</p>
         </div>
       </div>
 
-      <!-- Email & Angkatan -->
+      <!-- NIS, Email & Masa Studi -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="flex flex-col gap-1.5">
+          <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
+            <span>NIS (kode sekolah)</span>
+            <RequiredBadge v-if="isStudentMode" />
+          </label>
+          <Input
+            v-model="formData.nis"
+            variant="semi-rounded"
+            maxlength="20"
+            :placeholder="isStudentMode ? 'cth: 234273345...' : 'Masukkan NIS (opsional)...'"
+            :error="!!errors.nis"
+            @input="errors.nis = ''"
+          />
+          <p v-if="errors.nis" class="text-sm text-error mt-1">{{ errors.nis }}</p>
+        </div>
+
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium text-text-neutral mb-1.5">Email</label>
           <Input
@@ -335,18 +440,27 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-text-neutral mb-1.5">Angkatan</label>
+          <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
+            <span>Masa Studi (tahun)</span>
+            <RequiredBadge v-if="isStudentMode" />
+          </label>
           <Input
-            v-model="formData.angkatan"
+            v-model="formData.masa_studi"
+            type="number"
+            min="1"
             variant="semi-rounded"
-            maxlength="20"
-            placeholder="Contoh: 2024 (opsional)..."
+            :placeholder="isStudentMode ? 'Contoh: 3...' : 'Contoh: 3 (opsional)...'"
+            :error="!!errors.masa_studi"
+            @input="errors.masa_studi = ''"
           />
+          <p v-if="errors.masa_studi" class="text-sm text-error mt-1">
+            {{ errors.masa_studi }}
+          </p>
         </div>
       </div>
 
-      <!-- Role -->
-      <div class="flex flex-col gap-1.5">
+      <!-- Role (disembunyikan di mode siswa: selalu Siswa) -->
+      <div v-if="!isStudentMode" class="flex flex-col gap-1.5">
         <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
           <span>Role</span>
           <RequiredBadge />
@@ -363,8 +477,16 @@ onMounted(() => {
         <p v-if="errors.role_id" class="text-sm text-error mt-1">{{ errors.role_id }}</p>
       </div>
 
-      <!-- Password & Konfirmasi -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <!-- Info password otomatis (mode siswa: selalu = NISN) -->
+      <div
+        v-if="isStudentMode"
+        class="rounded-xl border border-info/30 bg-info/5 px-4 py-3 text-sm text-text-neutral"
+      >
+        Password siswa otomatis sama dengan NISN dan tidak perlu diisi.
+      </div>
+
+      <!-- Password & Konfirmasi (hanya mode pengguna/admin) -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="flex flex-col gap-1.5">
           <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
             <span>Password</span>
@@ -434,8 +556,8 @@ onMounted(() => {
 
       <!-- Form Actions -->
       <div class="flex items-center gap-3 mt-4">
-        <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
-        <Button
+        <AdminButton type="button" size="md" variant="secondary" label="Batal" @click="handleCancel" />
+        <AdminButton
           type="submit"
           size="md"
           variant="primary"

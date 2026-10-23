@@ -6,7 +6,7 @@ withDefaults(
     label: string
     iconLeft?: Component
     iconRight?: Component
-    variant?: 'primary' | 'neutral'
+    variant?: 'primary' | 'neutral' | 'secondary'
     size?: 'lg' | 'md' | 'sm'
     type?: 'button' | 'submit' | 'reset'
     disabled?: boolean

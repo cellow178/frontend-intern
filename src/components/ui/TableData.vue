@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSearchLine, RiAddLine } from '@remixicon/vue'
 
@@ -112,7 +112,7 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
       </div>
 
       <!-- Add Button -->
-      <Button
+      <AdminButton
         v-if="showAddButton"
         :label="addButtonLabel"
         :icon-left="RiAddLine"
@@ -165,7 +165,12 @@ const isPageLoading = computed(() => props.isLoading && hasData.value)
               :class="idx % 2 === 0 ? 'bg-neutral' : 'bg-neutral'"
               class="border-b border-text-alt/20 hover:bg-primary/20 transition-colors"
             >
-              <td v-for="col in columns" :key="col.key" class="px-4 py-2.5 text-text-neutral">
+              <td
+                v-for="col in columns"
+                :key="col.key"
+                class="px-4 py-2.5 text-text-neutral"
+                :class="col.width ? col.width : ''"
+              >
                 <slot :name="`col-${col.key}`" :item="item" :index="idx">
                   {{ item[col.key] ?? '-' }}
                 </slot>

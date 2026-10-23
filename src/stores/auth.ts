@@ -7,6 +7,8 @@ interface User {
   username: string
   email: string
   nisn: string | null
+  masa_studi: number | null
+  must_change_password: boolean
   role_id: number
   reset_token: string | null
   reset_token_expired_at: string | null
@@ -26,6 +28,7 @@ interface LoginResponse {
   user: User
   token: string
   permissions: string[]
+  must_change_password?: boolean
   message: string
 }
 
@@ -87,11 +90,13 @@ export const useAuthStore = defineStore('auth', {
         return {
           success: true,
           message: data.message,
+          must_change_password: data.must_change_password ?? data.user?.must_change_password ?? false,
         }
       } catch (error: any) {
         return {
           success: false,
           message: error.response?.data?.message || 'message.loginFailed',
+          must_change_password: false,
         }
       } finally {
         this.loading = false
@@ -141,6 +146,17 @@ export const useAuthStore = defineStore('auth', {
         await fetchUserPromise
       } finally {
         fetchUserPromise = null
+      }
+    },
+
+    setUserFromMe(user: User, permissions: string[]) {
+      this.user = user
+      this.permissions = permissions
+    },
+
+    clearMustChangePassword() {
+      if (this.user) {
+        this.user.must_change_password = false
       }
     },
 

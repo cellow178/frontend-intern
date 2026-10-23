@@ -5,7 +5,7 @@ import { useToastStore } from '@/stores/toast'
 import { getFullFileUrl } from '@/utils/file'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import RichTextEditor from '@/components/ui/RichTextEditor.vue'
 import ImageUpload from '@/components/ui/ImageUpload.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
@@ -276,7 +276,7 @@ onMounted(() => {
         </div>
 
         <div>
-          <Button
+          <AdminButton
             type="button"
             size="md"
             :label="submitButtonLabel"

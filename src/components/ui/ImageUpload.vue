@@ -195,7 +195,7 @@ const closeZoomModal = () => {
         <div class="relative flex items-center justify-center max-w-full max-h-full">
           <button
             type="button"
-            class="absolute -top-12 right-0 sm:-right-8 text-white hover:text-gray-300 transition-colors p-1 rounded-full bg-black/40 sm:bg-transparent cursor-pointer"
+            class="absolute -top-12 right-0 sm:-right-8 text-neutral hover:text-gray-300 transition-colors p-1 rounded-full bg-black/40 sm:bg-transparent cursor-pointer"
             title="Tutup"
             @click="closeZoomModal"
           >

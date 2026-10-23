@@ -3,7 +3,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSaveLine } from '@remixicon/vue'
 
@@ -205,7 +205,7 @@ onMounted(() => {
 
         <!-- Button Simpan -->
         <div>
-          <Button
+          <AdminButton
             type="button"
             size="md"
             :label="submitButtonLabel"

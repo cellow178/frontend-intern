@@ -17,6 +17,8 @@ import {
   RiLoader4Line,
   RiDashboardLine,
   RiLogoutBoxRLine,
+  RiUserSettingsLine,
+  RiChatPollLine,
 } from '@remixicon/vue'
 import logoImg from '@/assets/logo.png'
 
@@ -55,8 +57,12 @@ const hasMajors = computed(() => {
 const majorsCol1 = computed(() => majors.value.slice(0, Math.ceil(majors.value.length / 2)))
 const majorsCol2 = computed(() => majors.value.slice(Math.ceil(majors.value.length / 2)))
 
-// Filter role dropdown menu
-const hasAccountDropdown = computed(
+// Dropdown akun tampil untuk semua user yang login (admin + siswa)
+// agar logout selalu mudah dijangkau.
+const showAccountDropdown = computed(() => isAuthenticated.value)
+
+// Link Dashboard hanya untuk role admin (siswa tidak punya akses dashboard).
+const canAccessDashboard = computed(
   () =>
     isAuthenticated.value &&
     ['super-admin', 'guru', 'developer'].includes(user.value?.role_code ?? ''),
@@ -78,9 +84,14 @@ const isWhiteMode = computed(() =>
   props.transparent ? isScrolled.value || isMobileMenuOpen.value || !isFullyLoaded.value : true,
 )
 
-const accountHref = computed(() => (isAuthenticated.value ? '/dashboard' : '/login'))
+const accountHref = computed(() => {
+  if (!isAuthenticated.value) return '/login'
+  // Siswa tidak punya akses dashboard — langsung ke halaman profil mandiri.
+  if (user.value?.role_code === 'siswa') return '/profil-saya'
+  return '/dashboard'
+})
 const accountLabel = computed(() =>
-  isAuthenticated.value ? (user.value?.username ?? 'Login Guru & Admin') : 'Login Guru & Admin',
+  isAuthenticated.value ? (user.value?.fullname ?? 'Login Civitas Sekolah') : 'Login Civitas Sekolah',
 )
 
 const scrollToSection = async (href: string) => {
@@ -268,9 +279,9 @@ onUnmounted(() => {
 
     <!-- Login/Akun (desktop) + toggle mobile -->
     <div class="flex items-center gap-3">
-      <!-- Akun dengan dropdown (super-admin & guru) HOVER MODE -->
+      <!-- Akun dengan dropdown (semua role yang login) HOVER MODE -->
       <div
-        v-if="hasAccountDropdown"
+        v-if="showAccountDropdown"
         ref="accountDropdownRef"
         class="hidden lg:block relative"
         @mouseenter="isAccountDropdownOpen = true"
@@ -288,12 +299,31 @@ onUnmounted(() => {
         >
           <div class="bg-neutral text-text-neutral rounded-2xl shadow-lg p-2 flex flex-col">
             <RouterLink
+              v-if="canAccessDashboard"
               to="/dashboard"
               @click="isAccountDropdownOpen = false"
               class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
             >
               <RiDashboardLine class="w-4 h-4 shrink-0" />
               <span>Dashboard</span>
+            </RouterLink>
+
+            <RouterLink
+              :to="accountHref"
+              @click="isAccountDropdownOpen = false"
+              class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
+            >
+              <RiUserSettingsLine class="w-4 h-4 shrink-0" />
+              <span>Profil Saya</span>
+            </RouterLink>
+
+            <RouterLink
+              to="/voting-saya"
+              @click="isAccountDropdownOpen = false"
+              class="flex items-center gap-2.5 px-4 py-2.5 rounded-lg hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
+            >
+              <RiChatPollLine class="w-4 h-4 shrink-0" />
+              <span>Voting Saya</span>
             </RouterLink>
 
             <button
@@ -309,14 +339,9 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- Akun tanpa dropdown (siswa & belum login) -->
+      <!-- Belum login -->
       <RouterLink v-else :to="accountHref" class="hidden lg:block">
-        <Button
-          :label="accountLabel"
-          size="sm"
-          :icon-right="isAuthenticated ? undefined : RiLoginBoxLine"
-          :icon-left="isAuthenticated ? RiUserLine : undefined"
-        />
+        <Button :label="accountLabel" size="sm" :icon-right="RiLoginBoxLine" />
       </RouterLink>
 
       <button
@@ -428,20 +453,39 @@ onUnmounted(() => {
           {{ item.label }}
         </a>
 
-        <!-- Mobile: super-admin & guru dapat 3 opsi -->
-        <div v-if="hasAccountDropdown" class="mt-2 pt-3 border-t-2 border-primary/20">
+        <!-- Mobile: semua user yang login dapat kartu akun + logout -->
+        <div v-if="showAccountDropdown" class="mt-2 pt-3 border-t-2 border-primary/20">
           <div class="px-1 mb-2">
-            <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.username }}</p>
+            <p class="text-sm font-semibold text-text-neutral truncate">{{ user?.fullname }}</p>
             <p class="text-xs text-primary tracking-wide">{{ user?.role_name }}</p>
           </div>
           <div class="bg-secondary rounded-xl overflow-hidden flex flex-col">
             <RouterLink
+              v-if="canAccessDashboard"
               to="/dashboard"
               @click="isMobileMenuOpen = false"
               class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
             >
               <RiDashboardLine class="w-4 h-4 shrink-0" />
               <span>Dashboard</span>
+            </RouterLink>
+
+            <RouterLink
+              :to="accountHref"
+              @click="isMobileMenuOpen = false"
+              class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
+            >
+              <RiUserSettingsLine class="w-4 h-4 shrink-0" />
+              <span>Profil Saya</span>
+            </RouterLink>
+
+            <RouterLink
+              to="/voting-saya"
+              @click="isMobileMenuOpen = false"
+              class="flex items-center gap-2.5 px-4 py-3 border-b border-neutral/40 hover:bg-secondary hover:text-primary transition-colors text-sm font-medium"
+            >
+              <RiChatPollLine class="w-4 h-4 shrink-0" />
+              <span>Voting Saya</span>
             </RouterLink>
 
             <button
@@ -456,15 +500,9 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Mobile: siswa & belum login tetap tombol biasa -->
+        <!-- Mobile: belum login tetap tombol biasa -->
         <RouterLink v-else :to="accountHref" @click="isMobileMenuOpen = false" class="mt-2">
-          <Button
-            :label="accountLabel"
-            size="sm"
-            :icon-right="isAuthenticated ? undefined : RiLoginBoxLine"
-            :icon-left="isAuthenticated ? RiUserLine : undefined"
-            class="w-full justify-center"
-          />
+          <Button :label="accountLabel" size="sm" :icon-right="RiLoginBoxLine" class="w-full justify-center" />
         </RouterLink>
       </div>
     </transition>

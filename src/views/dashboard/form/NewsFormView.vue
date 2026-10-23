@@ -8,7 +8,7 @@ import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
 import Select from '@/components/ui/Select.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import ImageUpload from '@/components/ui/ImageUpload.vue'
 import RichTextEditor from '@/components/ui/RichTextEditor.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
@@ -401,8 +401,8 @@ onUnmounted(() => {
 
       <!-- Form Actions -->
       <div class="flex items-center gap-3 mt-4">
-        <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
-        <Button
+        <AdminButton type="button" size="md" variant="secondary" label="Batal" @click="handleCancel" />
+        <AdminButton
           type="submit"
           size="md"
           variant="primary"
@@ -418,7 +418,7 @@ onUnmounted(() => {
       :is-open="isLeaveModalOpen"
       title="Tinggalkan Halaman?"
       message="Perubahan yang Anda buat belum disimpan. Apakah Anda yakin ingin keluar dari halaman ini?"
-      confirm-text="Ya, Tinggalkan"
+      confirm-text="Ya, Tinggalkan" confirm-variant="primary"
       cancel-text="Lanjut Mengedit"
       @confirm="confirmLeave"
       @cancel="cancelLeave"

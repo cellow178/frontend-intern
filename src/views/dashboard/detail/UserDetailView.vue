@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/ui/BackButton.vue'
+import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 
 interface UserDetail {
@@ -11,8 +12,9 @@ interface UserDetail {
   fullname: string
   username: string
   email: string | null
+  nis: string | null
   nisn: string | null
-  angkatan: string | null
+  masa_studi: number | null
   role_id: number
   rel_role_id: string | null
   status_code: string
@@ -28,19 +30,22 @@ interface UserDetail {
 const route = useRoute()
 const toastStore = useToastStore()
 
+const isStudentMode = computed(() =>
+  (route.name as string | undefined)?.startsWith('dashboard-siswa') ?? false,
+)
+
+// Ikut Users::calcTahunLulus: tahun lulus = (2000 + 2 digit NIS) + masa studi.
+// Cth: NIS 234273345 + masa studi 4 => 2000 + 23 + 4 = 2027.
+const calcTahunLulus = (nis: string | null, masaStudi: number | null): number | null => {
+  const masa = Number(masaStudi ?? 0)
+  if (!masa || masa < 1) return null
+  const nisStr = String(nis ?? '')
+  if (nisStr.length < 2 || !/^\d{2}/.test(nisStr.slice(0, 2))) return null
+  return 2000 + Number(nisStr.slice(0, 2)) + masa
+}
+
 const user = ref<UserDetail | null>(null)
 const isLoading = ref(true)
-
-const statusMeta = (code: string) => {
-  const map: Record<string, { label: string; classes: string }> = {
-    user_active: { label: 'Aktif', classes: 'bg-success/15 text-success' },
-    user_nonactive: { label: 'Nonaktif', classes: 'bg-error/15 text-error' },
-    user_rejected: { label: 'Ditolak', classes: 'bg-error/15 text-error' },
-    email_unverified: { label: 'Belum Verifikasi', classes: 'bg-warning/15 text-warning' },
-    email_verified: { label: 'Terverifikasi', classes: 'bg-info/15 text-info' },
-  }
-  return map[code] ?? { label: code || '-', classes: 'bg-secondary/40 text-text-alt' }
-}
 
 const formatDate = (dateStr: string | null) => {
   if (!dateStr) return '-'
@@ -86,12 +91,14 @@ onMounted(() => {
       <!-- Header -->
       <div class="flex flex-col gap-4">
         <span>
-          <BackButton to="/dashboard/daftar-pengguna" :sticky="false" />
+          <BackButton :to="isStudentMode ? '/dashboard/data-siswa' : '/dashboard/pengguna'" :sticky="false" />
         </span>
 
         <div class="border-t border-text-alt/50"></div>
 
-        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Pengguna</h1>
+        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">
+          {{ isStudentMode ? 'Detail Siswa' : 'Detail Pengguna' }}
+        </h1>
       </div>
 
       <!-- Loading -->
@@ -138,6 +145,16 @@ onMounted(() => {
           </dd>
         </div>
 
+        <!-- NIS -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">NIS</dt>
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ user.nis || '-' }}
+          </dd>
+        </div>
+
         <!-- NISN -->
         <div
           class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
@@ -148,13 +165,23 @@ onMounted(() => {
           </dd>
         </div>
 
-        <!-- Angkatan -->
+        <!-- Masa Studi -->
         <div
           class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
         >
-          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Angkatan</dt>
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Masa Studi</dt>
           <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
-            {{ user.angkatan || '-' }}
+            {{ user.masa_studi != null ? `${user.masa_studi} tahun` : '-' }}
+          </dd>
+        </div>
+
+        <!-- Tahun Lulus (dihitung) -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 py-4 lg:py-5 border-b border-text-alt/15"
+        >
+          <dt class="text-sm lg:text-base font-semibold text-text-neutral">Tahun Lulus</dt>
+          <dd class="sm:col-span-2 text-sm lg:text-base text-text-neutral wrap-break-word">
+            {{ calcTahunLulus(user.nis, user.masa_studi) ?? '-' }}
           </dd>
         </div>
 
@@ -176,12 +203,7 @@ onMounted(() => {
         >
           <dt class="text-sm lg:text-base font-semibold text-text-neutral">Status</dt>
           <dd class="sm:col-span-2 flex items-center">
-            <span
-              class="inline-flex whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold"
-              :class="statusMeta(user.status_code).classes"
-            >
-              {{ statusMeta(user.status_code).label }}
-            </span>
+            <DashboardStatusBadge :active="user.status_code === 'user_active'" />
           </dd>
         </div>
 

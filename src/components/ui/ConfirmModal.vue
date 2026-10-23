@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RiAlertLine } from '@remixicon/vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 
 defineProps<{
   isOpen: boolean
@@ -7,6 +8,7 @@ defineProps<{
   message?: string
   confirmText?: string
   cancelText?: string
+  confirmVariant?: 'danger' | 'primary'
   isLoading?: boolean
 }>()
 
@@ -24,7 +26,7 @@ const emit = defineEmits<{
       @click.self="emit('cancel')"
     >
       <div
-        class="bg-neutral rounded-2xl shadow-xl max-w-md w-full p-6 flex flex-col gap-4 border border-secondary"
+        class="bg-neutral rounded-2xl shadow-xl max-w-lg w-full p-6 flex flex-col gap-4 border border-secondary"
       >
         <div class="flex items-center gap-3">
           <div
@@ -41,24 +43,23 @@ const emit = defineEmits<{
           {{ message || 'Apakah Anda yakin ingin melanjutkan tindakan ini?' }}
         </p>
 
-        <div class="flex items-center justify-end gap-3 mt-2">
-          <button
-            type="button"
+        <slot />
+
+        <div class="flex items-center justify-end gap-2 mt-2">
+          <AdminButton
+            size="sm"
+            variant="secondary"
+            :label="cancelText || 'Batal'"
             :disabled="isLoading"
-            class="px-4 py-2 rounded-xl text-sm font-medium border border-text-alt/20 text-text-neutral bg-primary/20 hover:bg-primary/10 transition-colors disabled:opacity-50"
             @click="emit('cancel')"
-          >
-            {{ cancelText || 'Batal' }}
-          </button>
-          <button
-            type="button"
-            :disabled="isLoading"
-            class="px-4 py-2 rounded-xl text-sm font-medium bg-error text-neutral hover:bg-error/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+          />
+          <AdminButton
+            size="sm"
+            :variant="confirmVariant === 'primary' ? 'primary' : 'danger'"
+            :label="confirmText || 'Hapus'"
+            :loading="isLoading"
             @click="emit('confirm')"
-          >
-            <span v-if="isLoading">Proses...</span>
-            <span v-else>{{ confirmText || 'Hapus' }}</span>
-          </button>
+          />
         </div>
       </div>
     </div>

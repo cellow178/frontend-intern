@@ -60,7 +60,7 @@ const formattedDate = computed(() => {
     <!-- Dekorasi Latar Belakang (Jika Tanpa Gambar) -->
     <div v-else class="absolute inset-0 pointer-events-none overflow-hidden">
       <div
-        class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/10 rounded-full blur-xl group-hover:scale-110 transition-transform duration-500"
+        class="absolute -right-8 -bottom-8 w-40 h-40 bg-neutral/10 rounded-full blur-xl group-hover:scale-110 transition-transform duration-500"
       ></div>
     </div>
 
@@ -72,7 +72,7 @@ const formattedDate = computed(() => {
       <div class="flex flex-col" :class="imageUrl ? 'gap-2.5 md:gap-3' : 'gap-3 md:gap-4'">
         <div class="flex items-center gap-2.5 flex-wrap">
           <span
-            class="inline-flex items-center justify-center rounded-md font-semibold bg-white/20 text-neutral border border-white/20 px-3 py-1.5 text-xs leading-none shrink-0"
+            class="inline-flex items-center justify-center rounded-md font-semibold bg-neutral/20 text-neutral border border-white/20 px-3 py-1.5 text-xs leading-none shrink-0"
           >
             Highlight Berita
           </span>

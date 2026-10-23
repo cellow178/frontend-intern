@@ -153,7 +153,7 @@ watch(
 <template>
   <div
     v-if="galleries && galleries.length > 0"
-    class="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 md:p-6 shadow-sm border border-secondary/50 max-w-4xl mx-auto"
+    class="bg-neutral rounded-2xl sm:rounded-3xl p-3 sm:p-5 md:p-6 shadow-sm border border-secondary/50 max-w-4xl mx-auto"
     @mouseenter="stopTimer"
     @mouseleave="startTimer"
   >
@@ -177,7 +177,7 @@ watch(
 
         <!-- Petunjuk gambar dapat diperbesar -->
         <span
-          class="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg bg-black/60 px-3 py-2 text-xs font-medium text-white backdrop-blur-sm"
+          class="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-lg bg-black/60 px-3 py-2 text-xs font-medium text-neutral backdrop-blur-sm"
         >
           <RiZoomInLine />
         </span>
@@ -302,7 +302,7 @@ watch(
           type="button"
           @click="closeLightbox"
           aria-label="Tutup gambar"
-          class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-neutral/10 text-neutral transition hover:bg-neutral/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral"
         >
           <RiCloseLine />
         </button>
@@ -310,7 +310,7 @@ watch(
         <!-- Nomor gambar -->
         <div
           v-if="galleries.length > 1"
-          class="absolute top-5 left-4 sm:top-7 sm:left-7 z-20 rounded-full bg-white/10 px-3 py-1.5 text-sm text-white backdrop-blur-sm"
+          class="absolute top-5 left-4 sm:top-7 sm:left-7 z-20 rounded-full bg-neutral/10 px-3 py-1.5 text-sm text-neutral backdrop-blur-sm"
         >
           {{ currentIndex + 1 }} / {{ galleries.length }}
         </div>
@@ -321,7 +321,7 @@ watch(
           type="button"
           @click.stop="prevImage"
           aria-label="Gambar sebelumnya"
-          class="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          class="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-neutral/10 text-neutral transition hover:bg-neutral/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <RiArrowLeftSLine />
         </button>
@@ -340,7 +340,7 @@ watch(
 
           <figcaption
             v-if="activeGallery?.description"
-            class="max-w-3xl text-center text-sm sm:text-base text-white/90"
+            class="max-w-3xl text-center text-sm sm:text-base text-neutral/90"
           >
             {{ activeGallery.description }}
           </figcaption>
@@ -352,7 +352,7 @@ watch(
           type="button"
           @click.stop="nextImage"
           aria-label="Gambar selanjutnya"
-          class="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          class="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-neutral/10 text-neutral transition hover:bg-neutral/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <RiArrowRightSLine />
         </button>

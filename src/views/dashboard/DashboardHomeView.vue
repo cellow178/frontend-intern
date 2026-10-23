@@ -17,6 +17,7 @@ import {
   RiCompass3Line,
   RiEyeLine,
 } from '@remixicon/vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -303,14 +304,13 @@ onMounted(() => {
         </p>
       </div>
 
-      <button
-        type="button"
-        class="inline-flex items-center justify-center gap-2 px-3.5 py-2 bg-neutral border border-secondary text-text-neutral font-medium text-xs sm:text-sm rounded-xl shadow-sm hover:bg-secondary transition-colors cursor-pointer w-full sm:w-auto"
+      <AdminButton
         @click="openPublicSite"
-      >
-        <RiEyeLine class="w-4 h-4 text-text-alt shrink-0" />
-        <span>Lihat Website Utama</span>
-      </button>
+        size="sm"
+        variant="secondary"
+        label="Lihat Website Utama"
+        :icon-left="RiEyeLine"
+      />
     </div>
 
     <!-- 1. Cards Statistik Ringkas -->

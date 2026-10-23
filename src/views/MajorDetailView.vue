@@ -155,7 +155,7 @@ watch(
                 class="rounded-2xl md:rounded-3xl overflow-hidden bg-text-alt/20 shadow-sm border border-secondary flex items-center justify-center transition-all duration-300"
                 :class="[
                   isUsingLogo
-                    ? 'w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 aspect-square p-6 bg-white/50'
+                    ? 'w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 aspect-square p-6 bg-neutral/50'
                     : 'w-full aspect-4/3',
                 ]"
               >
@@ -344,7 +344,7 @@ watch(
             type="button"
             @click="closeLogoLightbox"
             aria-label="Tutup gambar"
-            class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-neutral/10 text-neutral transition hover:bg-neutral/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <RiCloseLine />
           </button>
@@ -361,7 +361,7 @@ watch(
 
             <figcaption
               v-if="majorData?.code"
-              class="max-w-3xl text-center text-sm sm:text-base text-white/90 uppercase tracking-wider"
+              class="max-w-3xl text-center text-sm sm:text-base text-neutral/90 uppercase tracking-wider"
             >
               {{ majorData.code }}
             </figcaption>

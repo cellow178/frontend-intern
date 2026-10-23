@@ -38,7 +38,7 @@ const goBack = () => {
 
 const colorClasses = computed(() => {
   if (props.variant === 'white') {
-    return 'text-white hover:text-white/80 active:text-white/60'
+    return 'text-neutral hover:text-neutral/80 active:text-neutral/60'
   }
   return 'text-text-neutral hover:text-primary active:text-primary/80'
 })

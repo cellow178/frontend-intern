@@ -14,6 +14,7 @@ import {
   RiArrowDownSLine,
   RiLogoutBoxRLine,
   RiHomeLine,
+  RiUserSettingsLine,
 } from '@remixicon/vue'
 import logoImg from '@/assets/logo.png'
 
@@ -264,6 +265,15 @@ onUnmounted(() => {
             >
               <RiHomeLine class="w-4 h-4 shrink-0 text-text-alt" />
               <span>Landing Page</span>
+            </RouterLink>
+
+            <RouterLink
+              :to="{ name: 'profil-saya' }"
+              @click="isAccountDropdownOpen = false"
+              class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-secondary transition-colors text-sm font-medium text-text-neutral"
+            >
+              <RiUserSettingsLine class="w-4 h-4 shrink-0 text-text-alt" />
+              <span>Profil Saya</span>
             </RouterLink>
 
             <button

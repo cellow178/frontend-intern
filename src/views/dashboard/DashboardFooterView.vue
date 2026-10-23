@@ -3,7 +3,7 @@ import { ref, reactive, onMounted, computed, nextTick } from 'vue'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSaveLine } from '@remixicon/vue'
@@ -188,7 +188,7 @@ onMounted(() => {
       </div>
 
       <div class="pt-4">
-        <Button
+        <AdminButton
           type="submit"
           size="md"
           :label="submitButtonLabel"

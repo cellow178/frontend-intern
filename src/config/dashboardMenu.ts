@@ -11,6 +11,8 @@ import {
   RiLayoutBottomLine,
   RiListUnordered,
   RiTeamLine,
+  RiContactsLine,
+  RiChatPollLine,
 } from '@remixicon/vue'
 import type { Component } from 'vue'
 
@@ -106,10 +108,22 @@ export const dashboardMenu: MenuGroup[] = [
         permission: 'view-news-categories',
       },
       {
-        label: 'Daftar Pengguna',
+        label: 'Pengguna',
         routeName: 'dashboard-pengguna',
         icon: RiTeamLine,
         permission: 'view-users',
+      },
+      {
+        label: 'Data Siswa',
+        routeName: 'dashboard-siswa',
+        icon: RiContactsLine,
+        permission: 'view-users',
+      },
+      {
+        label: 'Voting',
+        routeName: 'dashboard-voting',
+        icon: RiChatPollLine,
+        permission: 'view-votings',
       },
     ],
   },

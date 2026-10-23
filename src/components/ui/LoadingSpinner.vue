@@ -33,7 +33,7 @@ const sizeClasses = computed(() => {
 const colorClasses = computed(() => {
   switch (props.color) {
     case 'white':
-      return 'text-white'
+      return 'text-neutral'
     case 'neutral':
       return 'text-text-alt'
     case 'primary':

@@ -6,7 +6,7 @@ import { useToastStore } from '@/stores/toast'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { RiSaveLine } from '@remixicon/vue'
 
@@ -171,9 +171,9 @@ onMounted(() => {
 
       <!-- Action Buttons -->
       <div class="flex items-center gap-3 mt-4">
-        <Button type="button" size="md" variant="neutral" label="Batal" @click="handleCancel" />
+        <AdminButton type="button" size="md" variant="secondary" label="Batal" @click="handleCancel" />
 
-        <Button
+        <AdminButton
           type="submit"
           size="md"
           :label="submitButtonLabel"

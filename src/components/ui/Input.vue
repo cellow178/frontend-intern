@@ -7,7 +7,7 @@ const props = withDefaults(
   defineProps<{
     modelValue: string
     id?: string
-    type?: 'text' | 'email' | 'number' | 'password' | 'textarea' | 'tel' | 'url' | 'date'
+    type?: 'text' | 'email' | 'number' | 'password' | 'textarea' | 'tel' | 'url' | 'date' | 'datetime-local'
     placeholder?: string
     disabledPlaceholder?: string
     disabled?: boolean
@@ -17,6 +17,7 @@ const props = withDefaults(
     iconPosition?: 'left' | 'right'
     variant?: 'rounded-full' | 'semi-rounded'
     size?: 'large' | 'normal' | 'mobile'
+    tone?: 'default' | 'warning'
     min?: string
     max?: string
   }>(),
@@ -32,6 +33,7 @@ const props = withDefaults(
     iconPosition: 'left',
     variant: 'semi-rounded',
     size: 'large',
+    tone: 'default',
     min: undefined,
     max: undefined,
   },
@@ -57,7 +59,11 @@ const togglePasswordVisibility = () => {
 
 // Buka date picker bawaan browser ketika area input diklik
 const handleInputClick = () => {
-  if (props.type === 'date' && inputRef.value && 'showPicker' in inputRef.value) {
+  if (
+    (props.type === 'date' || props.type === 'datetime-local') &&
+    inputRef.value &&
+    'showPicker' in inputRef.value
+  ) {
     try {
       inputRef.value.showPicker()
     } catch {
@@ -122,6 +128,14 @@ const iconPositionClass = computed(() => currentSize.value.iconPos[props.iconPos
 const radiusClass = computed(() =>
   props.variant === 'rounded-full' ? 'rounded-full' : 'rounded-xl',
 )
+
+const toneClass = computed(() => {
+  if (props.error) return 'border-error'
+  if (props.tone === 'warning') return 'border-warning/40 bg-warning/5 focus:border-warning'
+  return 'border-text-alt/30 focus:border-primary'
+})
+
+const iconClass = computed(() => (props.tone === 'warning' ? 'text-warning' : 'text-text-alt'))
 </script>
 
 <template>
@@ -145,16 +159,16 @@ const radiusClass = computed(() =>
     <component
       :is="icon"
       v-if="icon && type !== 'password'"
-      class="text-text-alt absolute top-1/2 -translate-y-1/2 pointer-events-none transition-all"
-      :class="[currentSize.icon, iconPositionClass]"
+      class="absolute top-1/2 -translate-y-1/2 pointer-events-none transition-all"
+      :class="[currentSize.icon, iconPositionClass, iconClass]"
     />
 
     <!-- Icon Left khusus jika type="password" & ada custom icon -->
     <component
       :is="icon"
       v-if="icon && type === 'password' && iconPosition === 'left'"
-      class="text-text-alt absolute top-1/2 -translate-y-1/2 pointer-events-none transition-all"
-      :class="[currentSize.icon, currentSize.iconPos.left]"
+      class="absolute top-1/2 -translate-y-1/2 pointer-events-none transition-all"
+      :class="[currentSize.icon, currentSize.iconPos.left, iconClass]"
     />
 
     <input
@@ -171,7 +185,7 @@ const radiusClass = computed(() =>
       class="w-full appearance-none border bg-neutral text-text-neutral disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-colors"
       :class="[
         radiusClass,
-        error ? 'border-error' : 'border-text-alt/30 focus:border-primary',
+        toneClass,
         currentSize.input,
         inputPaddingClass,
         type === 'date' ? 'cursor-pointer date-input-picker' : '',

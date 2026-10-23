@@ -33,6 +33,18 @@ const router = createRouter({
       meta: { requiresAuth: false, hasLayout: false },
     },
     {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/auth/ForgotPasswordView.vue'),
+      meta: { requiresAuth: false, hasLayout: false },
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('../views/auth/ResetPasswordView.vue'),
+      meta: { requiresAuth: false, hasLayout: false },
+    },
+    {
       path: '/jurusan/:slug',
       name: 'jurusan-detail',
       component: () => import('../views/MajorDetailView.vue'),
@@ -458,45 +470,231 @@ const router = createRouter({
           },
         },
         // =====================================================
-        // PENGGUNA
+        // PENGGUNA / ADMIN (non-siswa)
         // =====================================================
         {
-          path: 'daftar-pengguna',
+          path: 'pengguna',
           name: 'dashboard-pengguna',
           component: () => import('@/views/dashboard/DashboardUserView.vue'),
           meta: {
-            breadcrumb: ['Daftar Pengguna'],
+            breadcrumb: ['Pengguna'],
             permission: 'view-users',
           },
         },
         {
-          path: 'daftar-pengguna/create',
+          path: 'pengguna/create',
           name: 'dashboard-pengguna-create',
           component: () => import('@/views/dashboard/form/UserFormView.vue'),
           meta: {
-            breadcrumb: ['Daftar Pengguna', 'Tambah'],
+            breadcrumb: ['Pengguna', 'Tambah'],
             permission: 'create-users',
           },
         },
         {
-          path: 'daftar-pengguna/edit/:id',
+          path: 'pengguna/edit/:id',
           name: 'dashboard-pengguna-edit',
           component: () => import('@/views/dashboard/form/UserFormView.vue'),
           meta: {
-            breadcrumb: ['Daftar Pengguna', 'Edit'],
+            breadcrumb: ['Pengguna', 'Edit'],
             permission: 'update-users',
           },
         },
         {
-          path: 'daftar-pengguna/:id',
+          path: 'pengguna/:id',
           name: 'dashboard-pengguna-detail',
           component: () => import('@/views/dashboard/detail/UserDetailView.vue'),
           meta: {
-            breadcrumb: ['Daftar Pengguna', 'Detail'],
+            breadcrumb: ['Pengguna', 'Detail'],
+            permission: 'show-users',
+          },
+        },
+        // =====================================================
+        // VOTING (TPS / Jarak Jauh)
+        // =====================================================
+        {
+          path: 'voting',
+          name: 'dashboard-voting',
+          component: () => import('@/views/dashboard/DashboardVotingView.vue'),
+          meta: {
+            breadcrumb: ['Voting'],
+            permission: 'view-votings',
+          },
+        },
+        {
+          path: 'voting/create',
+          name: 'dashboard-voting-create',
+          component: () => import('@/views/dashboard/form/VotingFormView.vue'),
+          meta: {
+            breadcrumb: ['Voting', 'Tambah'],
+            permission: 'create-votings',
+          },
+        },
+        {
+          path: 'voting/edit/:id',
+          name: 'dashboard-voting-edit',
+          component: () => import('@/views/dashboard/form/VotingFormView.vue'),
+          meta: {
+            breadcrumb: ['Voting', 'Edit'],
+            permission: 'update-votings',
+          },
+        },
+        {
+          path: 'voting/:votingId/kandidat/tambah',
+          name: 'dashboard-voting-candidate-create',
+          component: () => import('@/views/dashboard/form/VotingCandidateFormView.vue'),
+          meta: {
+            breadcrumb: ['Voting', 'Detail', 'Tambah Kandidat'],
+            permission: 'create-votings',
+          },
+        },
+        {
+          path: 'voting/:votingId/kandidat/:candidateId',
+          name: 'dashboard-voting-candidate-edit',
+          component: () => import('@/views/dashboard/form/VotingCandidateFormView.vue'),
+          meta: {
+            breadcrumb: ['Voting', 'Detail', 'Edit Kandidat'],
+            permission: 'update-votings',
+          },
+        },
+        {
+          path: 'voting/:id',
+          name: 'dashboard-voting-detail',
+          component: () => import('@/views/dashboard/detail/VotingDetailView.vue'),
+          meta: {
+            breadcrumb: ['Voting', 'Detail'],
+            permission: 'show-votings',
+          },
+        },
+        // =====================================================
+        // DATA SISWA (role_id=3)
+        // =====================================================
+        {
+          path: 'data-siswa',
+          name: 'dashboard-siswa',
+          component: () => import('@/views/dashboard/DashboardStudentView.vue'),
+          meta: {
+            breadcrumb: ['Data Siswa'],
+            permission: 'view-users',
+          },
+        },
+        {
+          path: 'data-siswa/import',
+          name: 'dashboard-siswa-import',
+          component: () => import('@/views/dashboard/StudentImportView.vue'),
+          meta: {
+            breadcrumb: ['Data Siswa', 'Import Excel'],
+            permission: 'create-users',
+          },
+        },
+        {
+          path: 'data-siswa/bersihkan-lulusan',
+          name: 'dashboard-siswa-purge',
+          component: () => import('@/views/dashboard/StudentPurgeView.vue'),
+          meta: {
+            breadcrumb: ['Data Siswa', 'Bersihkan Lulusan'],
+            permission: 'delete-users',
+          },
+        },
+        {
+          path: 'data-siswa/create',
+          name: 'dashboard-siswa-create',
+          component: () => import('@/views/dashboard/form/UserFormView.vue'),
+          meta: {
+            breadcrumb: ['Data Siswa', 'Tambah'],
+            permission: 'create-users',
+          },
+        },
+        {
+          path: 'data-siswa/edit/:id',
+          name: 'dashboard-siswa-edit',
+          component: () => import('@/views/dashboard/form/UserFormView.vue'),
+          meta: {
+            breadcrumb: ['Data Siswa', 'Edit'],
+            permission: 'update-users',
+          },
+        },
+        {
+          path: 'data-siswa/:id',
+          name: 'dashboard-siswa-detail',
+          component: () => import('@/views/dashboard/detail/UserDetailView.vue'),
+          meta: {
+            breadcrumb: ['Data Siswa', 'Detail'],
             permission: 'show-users',
           },
         },
       ],
+    },
+
+    // =========================================================
+    // PROFIL SAYA — halaman mandiri (di luar shell DashboardMenu agar
+    // siswa yang terkunci pun bisa buka tanpa sidebar admin)
+    // =========================================================
+    {
+      path: '/profil-saya',
+      name: 'profil-saya',
+      component: () => import('@/views/ProfileSayaView.vue'),
+      meta: {
+        requiresAuth: true,
+        hasLayout: false,
+      },
+    },
+
+    // =========================================================
+    // BILIK TPS — halaman publik tanpa login akun (laptop bilik).
+    // /bilik/12 = login bilik event 12; tanpa :id = voting TPS yang dibuka.
+    // Surat suara & selesai halaman sendiri agar tombol back tidak bisa
+    // mengintip pilihan pemilih sebelumnya.
+    // =========================================================
+    {
+      path: '/bilik/surat-suara',
+      name: 'bilik-vote',
+      component: () => import('@/views/BilikVoteView.vue'),
+      meta: {
+        requiresAuth: false,
+        hasLayout: false,
+      },
+    },
+    {
+      path: '/bilik/selesai',
+      name: 'bilik-done',
+      component: () => import('@/views/BilikDoneView.vue'),
+      meta: {
+        requiresAuth: false,
+        hasLayout: false,
+      },
+    },
+    {
+      path: '/bilik/:id?',
+      name: 'bilik',
+      component: () => import('@/views/BilikView.vue'),
+      meta: {
+        requiresAuth: false,
+        hasLayout: false,
+      },
+    },
+
+    // =========================================================
+    // VOTING SAYA — halaman mandiri untuk akun login (mode Jarak Jauh).
+    // Surat suara route sendiri (seperti bilik TPS) agar tombol back
+    // tidak kembali ke daftar di halaman yang sama.
+    // =========================================================
+    {
+      path: '/voting-saya',
+      name: 'voting-saya',
+      component: () => import('@/views/VotingSayaView.vue'),
+      meta: {
+        requiresAuth: true,
+        hasLayout: false,
+      },
+    },
+    {
+      path: '/voting-saya/:votingId',
+      name: 'voting-saya-vote',
+      component: () => import('@/views/RemoteVoteView.vue'),
+      meta: {
+        requiresAuth: true,
+        hasLayout: false,
+      },
     },
 
     // =========================================================
@@ -541,6 +739,17 @@ router.beforeEach(async (to) => {
 
   if (typeof to.meta.permission === 'string' && !authStore.hasPermission(to.meta.permission)) {
     return { name: 'dashboard' }
+  }
+
+  // Siswa yang flag wajib-ganti-password-nya masih aktif dikunci ke halaman
+  // Profil Saya sampai mereka mengganti password (backend ikut menolak login
+  // ulang, ini mencegah mereka lolos via tombol back / URL langsung).
+  if (
+    authStore.user?.must_change_password === true &&
+    to.name !== 'profil-saya' &&
+    to.name !== 'login'
+  ) {
+    return { name: 'profil-saya' }
   }
 
   return true

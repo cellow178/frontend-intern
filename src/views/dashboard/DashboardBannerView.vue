@@ -6,7 +6,7 @@ import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { getFullFileUrl, type FileSource } from '@/utils/file'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import AdminButton from '@/components/ui/AdminButton.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
@@ -240,7 +240,7 @@ onUnmounted(() => {
       <div v-else class="flex flex-col gap-4">
         <Input v-model="heroTaglineTitle" type="textarea" :rows="3" />
         <div>
-          <Button
+          <AdminButton
             type="button"
             size="md"
             :icon-left="RiSaveLine"
@@ -325,7 +325,7 @@ onUnmounted(() => {
                   class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                 />
                 <div
-                  class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+                  class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-neutral"
                 >
                   <RiExternalLinkLine class="w-5 h-5" />
                 </div>
@@ -409,7 +409,7 @@ onUnmounted(() => {
                 class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
               />
               <div
-                class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-white"
+                class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center text-neutral"
               >
                 <RiExternalLinkLine class="w-6 h-6" />
               </div>
