@@ -5,6 +5,7 @@ import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import BackButton from '@/components/ui/BackButton.vue'
 import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
@@ -300,14 +301,25 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="isLoading" class="flex justify-center py-16">
-    <LoadingSpinner size="lg" label="Memuat data voting..." />
-  </div>
-  <form
-    v-else
+  <div class="flex flex-col gap-4">
+    <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div>
+        <BackButton :to="isEditMode && votingId ? `/dashboard/voting/${votingId}` : '/dashboard/voting'" :sticky="false" />
+      </div>
+
+      <div class="text-text-alt py-16 text-center">
+        <LoadingSpinner size="lg" label="Memuat data voting..." />
+      </div>
+    </div>
+    <form
+      v-else
     @submit.prevent="handleSubmit"
     class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8 max-w-4xl flex flex-col gap-4 sm:gap-5"
   >
+    <div>
+      <BackButton :to="isEditMode && votingId ? `/dashboard/voting/${votingId}` : '/dashboard/voting'" :sticky="false" />
+    </div>
+
     <!-- Header -->
     <div class="border-b border-text-alt/50 pb-4">
       <h1 class="text-lg sm:text-xl font-bold text-text-neutral flex items-center gap-2">
@@ -512,5 +524,6 @@ onUnmounted(() => {
     cancel-text="Lanjut Mengedit"
     @confirm="confirmLeave"
     @cancel="cancelLeave"
-  />
+    />
+  </div>
 </template>

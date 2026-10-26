@@ -13,6 +13,7 @@ import ImageUpload from '@/components/ui/ImageUpload.vue'
 import RichTextEditor from '@/components/ui/RichTextEditor.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import BackButton from '@/components/ui/BackButton.vue'
 import { RiGraduationCapLine, RiSaveLine } from '@remixicon/vue'
 
 interface MajorLogo {
@@ -343,6 +344,10 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div>
+        <BackButton to="/dashboard/jurusan" :sticky="false" />
+      </div>
+
       <div class="border-b border-text-alt/50 pb-4 mb-8">
         <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiGraduationCapLine class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? 'Edit Jurusan' : 'Tambah Jurusan' }}
@@ -359,6 +364,10 @@ onUnmounted(() => {
       @submit.prevent="handleSubmit"
       class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <div>
+        <BackButton to="/dashboard/jurusan" :sticky="false" />
+      </div>
+
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4">
         <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiGraduationCapLine class="w-5 h-5 text-primary shrink-0" />

@@ -53,7 +53,7 @@ const positionClasses = computed(() =>
     type="button"
     @click="goBack"
     :aria-label="label"
-    class="btn-slide-left-anim inline-flex items-center gap-2 text-sm md:text-base font-medium cursor-pointer py-2 px-1 -ml-1 rounded-lg"
+    class="btn-slide-left-anim inline-flex w-fit self-start items-center gap-2 text-sm md:text-base font-medium cursor-pointer py-2 px-1 -ml-1 rounded-lg"
     :class="[colorClasses, positionClasses]"
   >
     <RiArrowLeftLine class="w-5 h-5 shrink-0" />

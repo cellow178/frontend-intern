@@ -8,6 +8,7 @@ import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import BackButton from '@/components/ui/BackButton.vue'
 import { RiSaveLine, RiGraduationCapLine } from '@remixicon/vue'
 
 const route = useRoute()
@@ -208,6 +209,10 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col gap-4">
     <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
+      <div>
+        <BackButton :to="resolvedMajorId ? `/dashboard/jurusan/${resolvedMajorId}?tab=${activeTab}` : '/dashboard/jurusan'" :sticky="false" />
+      </div>
+
       <div class="border-b border-text-alt/50 pb-4 mb-8">
         <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiGraduationCapLine class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? 'Edit Kompetensi Jurusan' : 'Tambah Kompetensi Jurusan' }}
@@ -224,6 +229,10 @@ onMounted(async () => {
       @submit.prevent="handleSubmit"
       class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
+      <div>
+        <BackButton :to="resolvedMajorId ? `/dashboard/jurusan/${resolvedMajorId}?tab=${activeTab}` : '/dashboard/jurusan'" :sticky="false" />
+      </div>
+
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4">
         <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiGraduationCapLine class="w-5 h-5 text-primary shrink-0" />
