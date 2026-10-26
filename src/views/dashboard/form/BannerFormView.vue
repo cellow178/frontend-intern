@@ -159,7 +159,6 @@ onMounted(() => {
       @submit.prevent="handleSubmit"
       class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-8"
     >
-      <span><BackButton :sticky="false" /></span>
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4">
         <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral">
