@@ -8,7 +8,7 @@ import Input from '@/components/ui/Input.vue'
 import Radio from '@/components/ui/Radio.vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { RiSaveLine } from '@remixicon/vue'
+import { RiCompass3Line, RiSaveLine } from '@remixicon/vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -145,7 +145,7 @@ onMounted(() => {
   <div class="flex flex-col gap-4">
     <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <div class="border-b border-text-alt/50 pb-4 mb-8">
-        <h1 class="text-xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiCompass3Line class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? 'Edit Misi Sekolah' : 'Tambah Misi Sekolah' }}
         </h1>
       </div>
@@ -162,7 +162,7 @@ onMounted(() => {
     >
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4">
-        <h1 class="text-xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiCompass3Line class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? 'Edit Misi Sekolah' : 'Tambah Misi Sekolah' }}
         </h1>
       </div>

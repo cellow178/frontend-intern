@@ -4,19 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
 import FeedbackTypeBadge from '@/components/ui/FeedbackTypeBadge.vue'
-import {
-  RiNewspaperLine,
-  RiCalendarEventLine,
-  RiMapPinLine,
-  RiChat3Line,
-  RiGraduationCapLine,
-  RiImageLine,
-  RiVideoLine,
-  RiUser3Line,
-  RiArrowRightLine,
-  RiCompass3Line,
-  RiEyeLine,
-} from '@remixicon/vue'
+import { RiArrowRightLine, RiCalendarEventLine, RiChat3Line, RiCompass3Line, RiDashboardLine, RiEyeLine, RiGraduationCapLine, RiImageLine, RiMapPinLine, RiNewspaperLine, RiUser3Line, RiVideoLine } from '@remixicon/vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 
 const router = useRouter()
@@ -298,7 +286,7 @@ onMounted(() => {
     <!-- Header Welcome & Preview Link -->
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-xl sm:text-2xl font-bold text-text-neutral">Dashboard</h1>
+        <h1 class="flex items-center gap-2 text-xl sm:text-2xl font-bold text-text-neutral"><RiDashboardLine class="w-5 h-5 text-primary shrink-0" />Dashboard</h1>
         <p class="text-xs sm:text-sm text-text-alt mt-0.5 sm:mt-1">
           Ringkasan aktivitas dan pengelolaan konten website sekolah.
         </p>

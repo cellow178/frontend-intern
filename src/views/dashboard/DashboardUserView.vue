@@ -11,7 +11,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
 import Select from '@/components/ui/Select.vue'
 import Input from '@/components/ui/Input.vue'
-import { RiSearchLine } from '@remixicon/vue'
+import { RiSearchLine, RiTeamLine } from '@remixicon/vue'
 
 // --- Role non-siswa (backend: -1 developer, 1 super-admin, 2 guru) ---
 const NON_SISWA_ROLE_FILTER = JSON.stringify({ operator: 'in', value: [-1, 1, 2] })
@@ -323,7 +323,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div class="flex flex-col gap-1">
-      <h1 class="text-xl font-bold text-text-neutral">Pengguna / Admin</h1>
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiTeamLine class="w-5 h-5 text-primary shrink-0" />Pengguna / Admin</h1>
       <p class="text-sm text-text-alt">Kelola akun developer, super admin, dan guru.</p>
     </div>
 

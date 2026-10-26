@@ -89,13 +89,12 @@ onMounted(() => {
 <template>
   <section
     id="kritik-saran"
-    class="bg-secondary px-6 py-10 scroll-mt-14 relative sm:px-8 lg:px-12 lg:py-16"
+    class="bg-secondary min-h-screen px-6 py-10 scroll-mt-6 sm:scroll-mt-12 lg:scroll-mt-6 relative sm:px-8 lg:px-12 lg:py-16 flex items-center"
   >
     <div
-      class="max-w-7xl mx-auto flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-start"
+      class="max-w-7xl mx-auto w-full flex flex-col gap-10 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-stretch"
     >
-      <!-- Kolom kiri: judul -->
-      <div class="flex flex-col gap-6 lg:justify-between lg:h-full lg:gap-0">
+      <div class="flex flex-col lg:h-full lg:justify-between">
         <div class="flex items-center gap-3 sm:gap-4">
           <div
             class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center shrink-0 sm:w-16 sm:h-16 sm:rounded-2xl"
@@ -111,7 +110,7 @@ onMounted(() => {
         </div>
         <img
           :src="ilustrasiKritikSaran"
-          class="hidden w-full lg:block"
+          class="hidden w-full lg:block mt-auto"
           alt="Ilustrasi kritik dan saran"
         />
       </div>

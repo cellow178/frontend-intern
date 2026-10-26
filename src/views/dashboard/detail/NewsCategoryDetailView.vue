@@ -6,6 +6,7 @@ import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/ui/BackButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import { RiListUnordered } from '@remixicon/vue'
 
 interface NewsCategoryDetail {
   id: number
@@ -70,7 +71,7 @@ onMounted(() => {
 
         <div class="border-t border-text-alt/50"></div>
 
-        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Kategori Berita</h1>
+        <h1 class="flex items-center gap-2 text-xl lg:text-2xl font-bold text-text-neutral"><RiListUnordered class="w-6 h-6 text-primary shrink-0" />Detail Kategori Berita</h1>
       </div>
 
       <!-- Loading -->

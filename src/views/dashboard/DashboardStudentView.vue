@@ -12,12 +12,7 @@ import Select from '@/components/ui/Select.vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import Input from '@/components/ui/Input.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
-import {
-  RiUploadLine,
-  RiGraduationCapLine,
-  RiPrinterLine,
-  RiDeleteBinLine,
-} from '@remixicon/vue'
+import { RiDeleteBinLine, RiGraduationCapLine, RiPrinterLine, RiContactsLine, RiUploadLine } from '@remixicon/vue'
 
 // --- Role siswa (backend role id 3) ---
 const SISWA_ROLE_ID = 3
@@ -67,6 +62,7 @@ const selectedStatus = ref<string>('')
 const selectedTahunLulus = ref<string>('')
 const selectedTahunMasuk = ref<string>('')
 const selectedMasaStudi = ref<string>('')
+const selectedGantiPw = ref<string>('')
 const tahunMasukOptions = ref<{ value: string; label: string }[]>([])
 const tahunLulusOptions = ref<{ value: string; label: string }[]>([])
 const masaStudiOptions = ref<{ value: string; label: string }[]>([])
@@ -123,6 +119,14 @@ const statusOptions = [
   { value: 'user_nonactive', label: 'Nonaktif (Lulus)' },
 ]
 
+// Filter wajib-ganti-password: FIELD_FILTERABLE boolean (=).
+// Nilai dikirim sebagai string 'true'/'false' agar tidak hilang di is_blank.
+const gantiPwOptions = [
+  { value: '', label: 'Semua Status PW' },
+  { value: 'true', label: 'Belum Ganti PW' },
+  { value: 'false', label: 'Sudah Ganti PW' },
+]
+
 const tahunLulusFilterOptions = computed(() => [
   { value: '', label: 'Semua Tahun Kelulusan' },
   ...tahunLulusOptions.value,
@@ -167,8 +171,11 @@ const fetchStudents = async () => {
         tahun_lulus: selectedTahunLulus.value || undefined,
         tahun_masuk: selectedTahunMasuk.value || undefined,
         masa_studi: selectedMasaStudi.value || undefined,
+        must_change_password: selectedGantiPw.value || undefined,
         limit: pageSize.value,
         page: currentPage.value,
+        sort_by: 'nis',
+        sort: 'desc',
       },
       signal: fetchAbortController.signal,
     })
@@ -197,6 +204,7 @@ const handleResetFilters = () => {
   selectedTahunLulus.value = ''
   selectedTahunMasuk.value = ''
   selectedMasaStudi.value = ''
+  selectedGantiPw.value = ''
   onFilterChange()
 }
 
@@ -475,7 +483,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div class="flex flex-col gap-1">
-      <h1 class="text-xl font-bold text-text-neutral">Data Siswa</h1>
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiContactsLine class="w-5 h-5 text-primary shrink-0" />Data Siswa</h1>
       <p class="text-sm text-text-alt">
         Kelola akun siswa: import Excel, kelulusan, dan reset password.
       </p>
@@ -541,6 +549,16 @@ onUnmounted(() => {
               variant="semi-rounded"
               placeholder=""
               :options="statusOptions"
+              @update:model-value="onFilterChange"
+            />
+          </div>
+          <div class="w-full sm:w-fit sm:min-w-44">
+            <Select
+              v-model="selectedGantiPw"
+              size="normal"
+              variant="semi-rounded"
+              placeholder=""
+              :options="gantiPwOptions"
               @update:model-value="onFilterChange"
             />
           </div>

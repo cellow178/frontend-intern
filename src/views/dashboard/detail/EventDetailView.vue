@@ -9,6 +9,7 @@ import BackButton from '@/components/ui/BackButton.vue'
 import EnumStatusBadge from '@/components/ui/EnumStatusBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import RichTextContent from '@/components/ui/RichTextContent.vue'
+import { RiCalendarEventLine } from '@remixicon/vue'
 
 interface EventImageCover {
   ext: string
@@ -113,7 +114,7 @@ onMounted(() => {
         <span><BackButton to="/dashboard/event" :sticky="false" /></span>
 
         <div class="border-t border-text-alt/50"></div>
-        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Event</h1>
+        <h1 class="flex items-center gap-2 text-xl lg:text-2xl font-bold text-text-neutral"><RiCalendarEventLine class="w-6 h-6 text-primary shrink-0" />Detail Event</h1>
       </div>
 
       <!-- Loading -->

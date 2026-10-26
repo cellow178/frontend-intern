@@ -5,7 +5,7 @@ import { useToastStore } from '@/stores/toast'
 import Input from '@/components/ui/Input.vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { RiSaveLine } from '@remixicon/vue'
+import { RiSaveLine, RiNavigationLine } from '@remixicon/vue'
 
 const toastStore = useToastStore()
 
@@ -117,7 +117,7 @@ onMounted(() => {
     <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4 mb-8">
-        <h1 class="text-xl font-bold text-text-neutral">Video & Lokasi</h1>
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiNavigationLine class="w-5 h-5 text-primary shrink-0" />Video & Lokasi</h1>
       </div>
 
       <div v-if="isLoading" class="text-text-alt py-16 text-center">

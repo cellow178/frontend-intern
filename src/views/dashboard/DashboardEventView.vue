@@ -11,7 +11,7 @@ import Select from '@/components/ui/Select.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { RiImageLine, RiMapPinFill, RiExternalLinkLine } from '@remixicon/vue'
+import { RiCalendarEventLine, RiExternalLinkLine, RiImageLine, RiMapPinFill } from '@remixicon/vue'
 
 // --- Interfaces ---
 interface EventItem {
@@ -224,7 +224,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div>
-      <h1 class="text-xl font-bold text-text-neutral">Kelola Event</h1>
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiCalendarEventLine class="w-5 h-5 text-primary shrink-0" />Kelola Event</h1>
     </div>
 
     <TableData

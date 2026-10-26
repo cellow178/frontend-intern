@@ -9,7 +9,7 @@ import Select from '@/components/ui/Select.vue'
 import Radio from '@/components/ui/Radio.vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { RiSaveLine } from '@remixicon/vue'
+import { RiSaveLine, RiContactsLine, RiTeamLine } from '@remixicon/vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -91,7 +91,7 @@ const fetchDetail = async () => {
       data.masa_studi !== undefined && data.masa_studi !== null ? String(data.masa_studi) : ''
     formData.role_id = isStudentMode.value ? 3 : (data.role_id ?? null)
     formData.status_code = data.status_code || 'user_active'
-    formData.must_change_password = !!data.must_change_password
+    formData.must_change_password = isStudentMode.value ? !!data.must_change_password : false
   } catch {
     toastStore.show(
       isStudentMode.value ? 'Gagal memuat Detail Siswa.' : 'Gagal memuat Detail Pengguna.',
@@ -247,9 +247,14 @@ const handleSubmit = async () => {
     fullname: formData.fullname.trim(),
     username: usernameToSend,
     email: emptyToNull(formData.email),
-    nis: emptyToNull(formData.nis),
-    nisn: emptyToNull(formData.nisn),
-    masa_studi: formData.masa_studi.trim() === '' ? null : Number(formData.masa_studi),
+    // Pengguna/admin cukup: nama, username, email, role, password, status.
+    // Field khas siswa (nis/nisn/masa_studi) selalu null di mode pengguna.
+    nis: isStudentMode.value ? emptyToNull(formData.nis) : null,
+    nisn: isStudentMode.value ? emptyToNull(formData.nisn) : null,
+    masa_studi:
+      isStudentMode.value && formData.masa_studi.trim() !== ''
+        ? Number(formData.masa_studi)
+        : null,
     role_id: isStudentMode.value ? 3 : formData.role_id,
     status_code: formData.status_code,
     must_change_password: formData.must_change_password,
@@ -315,7 +320,9 @@ onMounted(() => {
   <div class="flex flex-col gap-4">
     <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <div class="border-b border-text-alt/50 pb-4 mb-8">
-        <h1 class="text-xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral">
+          <RiContactsLine v-if="isStudentMode" class="w-5 h-5 text-primary shrink-0" />
+          <RiTeamLine v-else class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? (isStudentMode ? 'Edit Siswa' : 'Edit Pengguna') : isStudentMode ? 'Tambah Siswa' : 'Tambah Pengguna' }}
         </h1>
       </div>
@@ -330,9 +337,11 @@ onMounted(() => {
       @submit.prevent="handleSubmit"
       class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl flex flex-col gap-5"
     >
-      <!-- Card Header -->
+      <!-- Card Header (ikon beda: siswa vs pengguna) -->
       <div class="border-b border-text-alt/50 pb-4">
-        <h1 class="text-xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral">
+          <RiContactsLine v-if="isStudentMode" class="w-5 h-5 text-primary shrink-0" />
+          <RiTeamLine v-else class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? (isStudentMode ? 'Edit Siswa' : 'Edit Pengguna') : isStudentMode ? 'Tambah Siswa' : 'Tambah Pengguna' }}
         </h1>
       </div>
@@ -362,7 +371,7 @@ onMounted(() => {
         <p v-if="errors.fullname" class="text-sm text-error mt-1">{{ errors.fullname }}</p>
       </div>
 
-      <!-- Username & NISN -->
+      <!-- Username & Email (berlaku untuk siswa & pengguna) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="flex flex-col gap-1.5">
           <div class="flex items-center justify-between mb-1.5">
@@ -391,41 +400,6 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
-            <span>NISN (nasional, 10 digit)</span>
-            <RequiredBadge v-if="isStudentMode" />
-          </label>
-          <Input
-            v-model="formData.nisn"
-            variant="semi-rounded"
-            maxlength="10"
-            :placeholder="isStudentMode ? 'cth: 0082345678...' : 'Masukkan NISN (opsional)...'"
-            :error="!!errors.nisn"
-            @input="errors.nisn = ''"
-          />
-          <p v-if="errors.nisn" class="text-sm text-error mt-1">{{ errors.nisn }}</p>
-        </div>
-      </div>
-
-      <!-- NIS, Email & Masa Studi -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div class="flex flex-col gap-1.5">
-          <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
-            <span>NIS (kode sekolah)</span>
-            <RequiredBadge v-if="isStudentMode" />
-          </label>
-          <Input
-            v-model="formData.nis"
-            variant="semi-rounded"
-            maxlength="20"
-            :placeholder="isStudentMode ? 'cth: 234273345...' : 'Masukkan NIS (opsional)...'"
-            :error="!!errors.nis"
-            @input="errors.nis = ''"
-          />
-          <p v-if="errors.nis" class="text-sm text-error mt-1">{{ errors.nis }}</p>
-        </div>
-
-        <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium text-text-neutral mb-1.5">Email</label>
           <Input
             v-model="formData.email"
@@ -438,26 +412,63 @@ onMounted(() => {
           />
           <p v-if="errors.email" class="text-sm text-error mt-1">{{ errors.email }}</p>
         </div>
+      </div>
 
+      <!-- Khusus siswa: NISN + NIS + Masa Studi -->
+      <template v-if="isStudentMode">
         <div class="flex flex-col gap-1.5">
           <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
-            <span>Masa Studi (tahun)</span>
-            <RequiredBadge v-if="isStudentMode" />
+            <span>NISN (nasional, 10 digit)</span>
+            <RequiredBadge />
           </label>
           <Input
-            v-model="formData.masa_studi"
-            type="number"
-            min="1"
+            v-model="formData.nisn"
             variant="semi-rounded"
-            :placeholder="isStudentMode ? 'Contoh: 3...' : 'Contoh: 3 (opsional)...'"
-            :error="!!errors.masa_studi"
-            @input="errors.masa_studi = ''"
+            maxlength="10"
+            placeholder="cth: 0082345678..."
+            :error="!!errors.nisn"
+            @input="errors.nisn = ''"
           />
-          <p v-if="errors.masa_studi" class="text-sm text-error mt-1">
-            {{ errors.masa_studi }}
-          </p>
+          <p v-if="errors.nisn" class="text-sm text-error mt-1">{{ errors.nisn }}</p>
         </div>
-      </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="flex flex-col gap-1.5">
+            <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
+              <span>NIS</span>
+              <RequiredBadge />
+            </label>
+            <Input
+              v-model="formData.nis"
+              variant="semi-rounded"
+              maxlength="20"
+              placeholder="cth: 234273345..."
+              :error="!!errors.nis"
+              @input="errors.nis = ''"
+            />
+            <p v-if="errors.nis" class="text-sm text-error mt-1">{{ errors.nis }}</p>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="flex items-center text-sm font-medium text-text-neutral mb-1.5">
+              <span>Masa Studi (tahun)</span>
+              <RequiredBadge />
+            </label>
+            <Input
+              v-model="formData.masa_studi"
+              type="number"
+              min="1"
+              variant="semi-rounded"
+              placeholder="Contoh: 3..."
+              :error="!!errors.masa_studi"
+              @input="errors.masa_studi = ''"
+            />
+            <p v-if="errors.masa_studi" class="text-sm text-error mt-1">
+              {{ errors.masa_studi }}
+            </p>
+          </div>
+        </div>
+      </template>
 
       <!-- Role (disembunyikan di mode siswa: selalu Siswa) -->
       <div v-if="!isStudentMode" class="flex flex-col gap-1.5">
@@ -533,8 +544,8 @@ onMounted(() => {
         />
       </div>
 
-      <!-- Wajib Ganti Password -->
-      <div class="flex flex-col gap-2">
+      <!-- Wajib Ganti Password (khusus siswa; pengguna atur via reset) -->
+      <div v-if="isStudentMode" class="flex flex-col gap-2">
         <label class="text-sm font-medium text-text-neutral sm:text-base">
           Wajib Ganti Password Saat Login Berikutnya
         </label>

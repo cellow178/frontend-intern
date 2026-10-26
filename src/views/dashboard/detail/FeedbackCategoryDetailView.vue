@@ -6,6 +6,7 @@ import { useToastStore } from '@/stores/toast'
 import BackButton from '@/components/ui/BackButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import { RiFeedbackLine } from '@remixicon/vue'
 
 interface FeedbackCategoryDetail {
   id: number
@@ -70,7 +71,7 @@ onMounted(() => {
 
         <div class="border-t border-text-alt/50"></div>
 
-        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl lg:text-2xl font-bold text-text-neutral"><RiFeedbackLine class="w-6 h-6 text-primary shrink-0" />
           Detail Kategori Kritik & Saran
         </h1>
       </div>

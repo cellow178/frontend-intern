@@ -12,7 +12,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
 import NewsCategoryBadge from '@/components/ui/NewsCategoryBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { RiImageLine, RiExternalLinkLine } from '@remixicon/vue'
+import { RiExternalLinkLine, RiImageLine, RiNewspaperLine } from '@remixicon/vue'
 
 // --- Interfaces ---
 interface NewsImageCover {
@@ -275,7 +275,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div>
-      <h1 class="text-xl font-bold text-text-neutral">Kelola Berita</h1>
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiNewspaperLine class="w-5 h-5 text-primary shrink-0" />Kelola Berita</h1>
     </div>
 
     <TableData

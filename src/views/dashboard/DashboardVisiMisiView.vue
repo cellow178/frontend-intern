@@ -11,7 +11,7 @@ import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
-import { RiSaveLine } from '@remixicon/vue'
+import { RiCompass3Line, RiFlagLine, RiSaveLine } from '@remixicon/vue'
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -210,7 +210,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
-      <h1 class="text-xl font-bold text-text-neutral mb-6">
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral mb-6"><RiCompass3Line class="w-5 h-5 text-primary shrink-0" />
         Visi Sekolah <span><RequiredBadge /></span>
       </h1>
       <div v-if="isVisionLoading" class="text-text-alt py-8 text-center">
@@ -234,7 +234,7 @@ onUnmounted(() => {
 
     <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold text-text-neutral">Misi Sekolah</h1>
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiCompass3Line class="w-5 h-5 text-primary shrink-0" />Misi Sekolah</h1>
       </div>
 
       <TableData

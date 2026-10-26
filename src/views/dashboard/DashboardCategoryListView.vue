@@ -8,6 +8,7 @@ import TableData, { type Column } from '@/components/ui/TableData.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
+import { RiListUnordered } from '@remixicon/vue'
 
 interface NewsCategory {
   id: number
@@ -230,7 +231,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
-    <h1 class="text-xl font-bold text-text-neutral">Daftar Kategori</h1>
+    <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiListUnordered class="w-5 h-5 text-primary shrink-0" />Daftar Kategori</h1>
 
     <TableTabs :tabs="tabs" v-model="activeTab" @update:model-value="onTabChange">
       <template #news-categories>

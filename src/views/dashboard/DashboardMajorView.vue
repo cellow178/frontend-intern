@@ -9,7 +9,7 @@ import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import TableData, { type Column } from '@/components/ui/TableData.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
-import { RiImageLine } from '@remixicon/vue'
+import { RiGraduationCapLine, RiImageLine } from '@remixicon/vue'
 
 // --- Interfaces ---
 interface MajorLogo {
@@ -193,7 +193,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-3 bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
     <div>
-      <h1 class="text-xl font-bold text-text-neutral">Kelola Jurusan</h1>
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiGraduationCapLine class="w-5 h-5 text-primary shrink-0" />Kelola Jurusan</h1>
     </div>
 
     <TableData

@@ -1,13 +1,13 @@
 import {
   RiDashboardLine,
   RiImageLine,
-  RiUser3Line,
+  RiSchoolLine,
   RiCompass3Line,
   RiNavigationLine,
   RiGraduationCapLine,
   RiCalendarEventLine,
   RiNewspaperLine,
-  RiChat3Line,
+  RiFeedbackLine,
   RiLayoutBottomLine,
   RiListUnordered,
   RiTeamLine,
@@ -51,7 +51,7 @@ export const dashboardMenu: MenuGroup[] = [
       {
         label: 'Profil Sekolah',
         routeName: 'dashboard-profil',
-        icon: RiUser3Line,
+        icon: RiSchoolLine,
         permission: 'view-global-config',
       },
       {
@@ -87,7 +87,7 @@ export const dashboardMenu: MenuGroup[] = [
       {
         label: 'Kritik & Saran',
         routeName: 'dashboard-kritik-saran',
-        icon: RiChat3Line,
+        icon: RiFeedbackLine,
         permission: 'view-feedbacks',
       },
       {

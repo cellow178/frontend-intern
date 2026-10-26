@@ -12,7 +12,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import Select from '@/components/ui/Select.vue'
 import { getFullFileUrl } from '@/utils/file'
-import { RiEditLine, RiLockLine, RiQrCodeLine, RiAddLine, RiErrorWarningLine } from '@remixicon/vue'
+import { RiAddLine, RiChatPollLine, RiEditLine, RiErrorWarningLine, RiLockLine, RiQrCodeLine } from '@remixicon/vue'
 
 interface Candidate {
   id: number
@@ -536,7 +536,7 @@ onUnmounted(() => {
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div class="flex flex-col gap-1.5 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-              <h1 class="text-xl font-bold text-text-neutral">{{ detail.title }}</h1>
+              <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiChatPollLine class="w-5 h-5 text-primary shrink-0" />{{ detail.title }}</h1>
               <span
                 class="text-xs font-semibold px-2.5 py-1 rounded-full shrink-0"
                 :class="

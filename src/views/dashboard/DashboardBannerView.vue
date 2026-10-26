@@ -13,13 +13,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
-import {
-  RiInformationLine,
-  RiEditBoxLine,
-  RiDeleteBinLine,
-  RiSaveLine,
-  RiExternalLinkLine,
-} from '@remixicon/vue'
+import { RiDeleteBinLine, RiEditBoxLine, RiExternalLinkLine, RiImageLine, RiInformationLine, RiSaveLine } from '@remixicon/vue'
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -229,7 +223,7 @@ onUnmounted(() => {
   <div class="flex flex-col gap-4">
     <!-- Hero Tagline Section -->
     <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
-      <h1 class="text-xl font-bold text-text-neutral mb-6">
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral mb-6"><RiImageLine class="w-5 h-5 text-primary shrink-0" />
         Hero Tagline <span><RequiredBadge /></span>
       </h1>
 
@@ -255,7 +249,7 @@ onUnmounted(() => {
     <!-- Daftar Banner Section -->
     <div class="bg-neutral rounded-2xl shadow-sm p-4 sm:p-6 lg:p-8">
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold text-text-neutral">Daftar Banner</h1>
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiImageLine class="w-5 h-5 text-primary shrink-0" />Daftar Banner</h1>
       </div>
 
       <TableData

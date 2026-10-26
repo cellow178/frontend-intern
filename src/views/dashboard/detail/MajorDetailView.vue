@@ -12,7 +12,7 @@ import TableData, { type Column } from '@/components/ui/TableData.vue'
 import DashboardIconButton from '@/components/ui/DashboardIconButton.vue'
 import DashboardStatusBadge from '@/components/ui/DashboardStatusBadge.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
-import { RiExternalLinkLine } from '@remixicon/vue'
+import { RiExternalLinkLine, RiGraduationCapLine } from '@remixicon/vue'
 
 // Interfaces
 interface MajorCompetent {
@@ -308,7 +308,7 @@ watch(
 
         <div class="border-t border-text-alt/50"></div>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <h1 class="text-xl lg:text-2xl font-bold text-text-neutral wrap-break-word">
+          <h1 class="flex items-center gap-2 text-xl lg:text-2xl font-bold text-text-neutral wrap-break-word"><RiGraduationCapLine class="w-6 h-6 text-primary shrink-0" />
             {{ major ? major.major_name : 'Detail Jurusan' }}
           </h1>
 

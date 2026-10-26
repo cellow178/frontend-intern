@@ -13,7 +13,7 @@ import ImageUpload from '@/components/ui/ImageUpload.vue'
 import RichTextEditor from '@/components/ui/RichTextEditor.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
-import { RiSaveLine } from '@remixicon/vue'
+import { RiCalendarEventLine, RiSaveLine } from '@remixicon/vue'
 
 interface EventCoverImage {
   field_value?: string
@@ -314,7 +314,7 @@ onUnmounted(() => {
   <div class="flex flex-col gap-4">
     <div v-if="isLoading" class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
       <div class="border-b border-text-alt/50 pb-4 mb-8">
-        <h1 class="text-xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiCalendarEventLine class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? 'Edit Event' : 'Tambah Event' }}
         </h1>
       </div>
@@ -331,7 +331,7 @@ onUnmounted(() => {
     >
       <!-- Card Header -->
       <div class="border-b border-text-alt/50 pb-4">
-        <h1 class="text-xl font-bold text-text-neutral">
+        <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiCalendarEventLine class="w-5 h-5 text-primary shrink-0" />
           {{ isEditMode ? 'Edit Event' : 'Tambah Event' }}
         </h1>
       </div>

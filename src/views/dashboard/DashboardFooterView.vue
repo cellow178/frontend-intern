@@ -6,7 +6,7 @@ import Input from '@/components/ui/Input.vue'
 import AdminButton from '@/components/ui/AdminButton.vue'
 import RequiredBadge from '@/components/ui/RequiredBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { RiSaveLine } from '@remixicon/vue'
+import { RiLayoutBottomLine, RiSaveLine } from '@remixicon/vue'
 
 const toastStore = useToastStore()
 
@@ -117,7 +117,7 @@ onMounted(() => {
   <div class="bg-neutral rounded-2xl shadow-sm p-6 sm:p-8 max-w-4xl">
     <!-- Card Header -->
     <div class="border-b border-text-alt/50 pb-4 mb-8">
-      <h1 class="text-xl font-bold text-text-neutral">Konfigurasi Footer</h1>
+      <h1 class="flex items-center gap-2 text-xl font-bold text-text-neutral"><RiLayoutBottomLine class="w-5 h-5 text-primary shrink-0" />Konfigurasi Footer</h1>
     </div>
 
     <div v-if="isLoading" class="text-text-alt py-16 text-center">

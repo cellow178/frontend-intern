@@ -8,6 +8,7 @@ import EnumStatusBadge from '@/components/ui/EnumStatusBadge.vue'
 import CategoryBadge from '@/components/ui/NewsCategoryBadge.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import RichTextContent from '@/components/ui/RichTextContent.vue'
+import { RiNewspaperLine } from '@remixicon/vue'
 
 interface ImgCover {
   ext: string
@@ -103,7 +104,7 @@ onMounted(() => {
 
         <div class="border-t border-text-alt/50"></div>
 
-        <h1 class="text-xl lg:text-2xl font-bold text-text-neutral">Detail Berita</h1>
+        <h1 class="flex items-center gap-2 text-xl lg:text-2xl font-bold text-text-neutral"><RiNewspaperLine class="w-6 h-6 text-primary shrink-0" />Detail Berita</h1>
       </div>
 
       <!-- Loading -->
